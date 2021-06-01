@@ -119,18 +119,29 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ChooseClassPage.xaml.cs">
+      <DependentUpon>ChooseClassPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Common.cs" />
+    <Compile Include="GamePage.xaml.cs">
+      <DependentUpon>GamePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InputNameBox.xaml.cs">
       <DependentUpon>InputNameBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Lore.cs" />
+    <Compile Include="LorePlayer.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="NewGamePage.xaml.cs">
       <DependentUpon>NewGamePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Payload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RGB.cs" />
     <Compile Include="SaveData.cs" />
+    <Compile Include="SpriteSheet.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -138,7 +149,30 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\DARK.M" />
+    <Content Include="Assets\DOME.M" />
+    <Content Include="Assets\GAEA.M" />
+    <Content Include="Assets\GROUND1.M" />
+    <Content Include="Assets\GROUND2.M" />
+    <Content Include="Assets\GROUND3.M" />
+    <Content Include="Assets\GROUND4.M" />
+    <Content Include="Assets\GROUND5.M" />
+    <Content Include="Assets\HDSGATE.M" />
+    <Content Include="Assets\KOBOLD.M" />
+    <Content Include="Assets\LASTDTCH.M" />
+    <Content Include="Assets\LIGHT.M" />
+    <Content Include="Assets\LORE.M" />
+    <Content Include="Assets\lore_sprite.png" />
+    <Content Include="Assets\lore_tile.png" />
+    <Content Include="Assets\MENACE.M" />
+    <Content Include="Assets\ORCTOWN.M" />
+    <Content Include="Assets\TOMB.M" />
+    <Content Include="Assets\TROLTOWN.M" />
+    <Content Include="Assets\UNDERGRD.M" />
+    <Content Include="Assets\VALIANT.M" />
+    <Content Include="Assets\VESPER.M" />
     <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Assets\WizardEyeTile.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -153,6 +187,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ChooseClassPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GamePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="InputNameBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

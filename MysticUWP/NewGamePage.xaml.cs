@@ -541,13 +541,22 @@ namespace MysticUWP
 							mPlayer.Luck = mTransData[2];
 
 							Window.Current.CoreWindow.KeyUp -= newGamePageKeyEvent;
-							//Frame.Navigate(typeof(ChooseClassPage), mPlayer);
+							Frame.Navigate(typeof(ChooseClassPage), mPlayer);
 						}
 					}
 				}
 			};
 
 			Window.Current.CoreWindow.KeyUp += newGamePageKeyEvent;
+		}
+
+		protected override void OnNavigatedTo(NavigationEventArgs e)
+		{
+			mPlayer.Name = e.Parameter.ToString();
+			mPlayer.Gender = GenderType.Male;
+			mPlayer.ClassType = ClassCategory.Sword;
+
+			base.OnNavigatedTo(e);
 		}
 
 		private class QuestionInfo

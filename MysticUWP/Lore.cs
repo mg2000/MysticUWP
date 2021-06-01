@@ -171,27 +171,27 @@ namespace MysticUWP
 			set;
 		}
 
-		//public string NameJosa
-		//{
-		//	get
-		//	{
-		//		if (Common.HasJongsung(Name[Name.Length - 1]))
-		//			return Name + "의";
-		//		else
-		//			return Name + "가";
-		//	}
-		//}
+		public string NameJosa
+		{
+			get
+			{
+				if (Common.HasJongsung(Name[Name.Length - 1]))
+					return Name + "의";
+				else
+					return Name + "가";
+			}
+		}
 
-		//public string NameSubjectJosa
-		//{
-		//	get
-		//	{
-		//		if (Common.HasJongsung(Name[Name.Length - 1]))
-		//			return Name + "은";
-		//		else
-		//			return Name + "는";
-		//	}
-		//}
+		public string NameSubjectJosa
+		{
+			get
+			{
+				if (Common.HasJongsung(Name[Name.Length - 1]))
+					return Name + "은";
+				else
+					return Name + "는";
+			}
+		}
 
 		public string NameMokjukJosa
 		{
@@ -293,91 +293,49 @@ namespace MysticUWP
 			set;
 		}
 
-		//public bool IsClassAvailable(int requestClass)
-		//{
-		//	if (ClassType == ClassCategory.Sword)
-		//	{
-		//		switch (requestClass)
-		//		{
-		//			case 1:
-		//				if (SwordSkill >= 10 && AxeSkill >= 10 && SpearSkill >= 10 && BowSkill >= 10 && ShieldSkill >= 10)
-		//					return true;
-		//				else
-		//					return false;
-		//			case 2:
-		//				if (SwordSkill >= 10 && AxeSkill >= 10 && SpearSkill >= 5 && ShieldSkill >= 20)
-		//					return true;
-		//				else
-		//					return false;
-		//			case 3:
-		//				if (SwordSkill >= 40)
-		//					return true;
-		//				else
-		//					return false;
-		//			case 4:
-		//				if (AxeSkill >= 5 && SpearSkill >= 5 && BowSkill >= 40)
-		//					return true;
-		//				else
-		//					return false;
-		//			case 5:
-		//				if (FistSkill >= 40)
-		//					return true;
-		//				else
-		//					return false;
-		//			case 6:
-		//				if (SwordSkill >= 10 && BowSkill >= 10 && FistSkill >= 20)
-		//					return true;
-		//				else
-		//					return false;
-		//			default:
-		//				if (SwordSkill >= 25 && SpearSkill >= 5 && ShieldSkill >= 20 && FistSkill >= 10)
-		//					return true;
-		//				else
-		//					return false;
-		//		}
-		//	}
-		//	else
-		//	{
-		//		switch (requestClass)
-		//		{
-		//			case 1:
-		//				if (AttackMagic >= 10 && PhenoMagic >= 10 && CureMagic >= 10)
-		//					return true;
-		//				else
-		//					return false;
-		//			case 2:
-		//				if (SummonMagic >= 10 && PhenoMagic >= 10 && CureMagic >= 10)
-		//					return true;
-		//				else
-		//					return false;
-		//			case 3:
-		//				if (SummonMagic >= 10 && CureMagic >= 10)
-		//					return true;
-		//				else
-		//					return false;
-		//			case 4:
-		//				if (AttackMagic >= 40 && PhenoMagic >= 25 && CureMagic >= 25)
-		//					return true;
-		//				else
-		//					return false;
-		//			case 5:
-		//				if (AttackMagic >= 20 && PhenoMagic >= 20 && CureMagic >= 40 && SummonMagic >= 40)
-		//					return true;
-		//				else
-		//					return false;
-		//			case 6:
-		//				if (AttackMagic >= 10 && PhenoMagic >= 40 && CureMagic >= 30 && SummonMagic >= 20)
-		//					return true;
-		//				else
-		//					return false;
-		//			default:
-		//				if (AttackMagic >= 40 && PhenoMagic >= 40 && CureMagic >= 40 && SpecialMagic >= 20 && ESPMagic >= 20 && SummonMagic >= 20)
-		//					return true;
-		//				else
-		//					return false;
-		//		}
-		//	}
-		//}
+		public bool IsClassAvailable(int requestClass)
+		{
+			if (ClassType == ClassCategory.Sword)
+			{
+				switch (requestClass)
+				{
+					case 1:
+						return SwordSkill >= 10 && AxeSkill >= 10 && SpearSkill >= 10 && BowSkill >= 10 && ShieldSkill >= 10;
+					case 2:
+						return SwordSkill >= 10 && AxeSkill >= 10 && SpearSkill >= 5 && ShieldSkill >= 20;
+					case 3:
+						return SwordSkill >= 40;
+					case 4:
+						return AxeSkill >= 5 && SpearSkill >= 5 && BowSkill >= 40;
+					case 5:
+						return FistSkill >= 40;
+					case 6:
+						return SwordSkill >= 10 && BowSkill >= 10 && FistSkill >= 20;
+					default:
+						return SwordSkill >= 25 && SpearSkill >= 5 && ShieldSkill >= 20 && FistSkill >= 10;
+				}
+			}
+			else
+			{
+				switch (requestClass)
+				{
+					case 1:
+						return AttackMagic >= 10 && PhenoMagic >= 10 && CureMagic >= 10;
+					case 2:
+						return SummonMagic >= 10 && PhenoMagic >= 10 && CureMagic >= 10;
+					case 3:
+						return SummonMagic >= 10 && CureMagic >= 10;
+					case 4:
+						return AttackMagic >= 40 && PhenoMagic >= 25 && CureMagic >= 25;
+					case 5:
+						return AttackMagic >= 20 && PhenoMagic >= 20 && CureMagic >= 40 && SummonMagic >= 40;
+					case 6:
+						return AttackMagic >= 10 && PhenoMagic >= 40 && CureMagic >= 30 && SummonMagic >= 20;
+					default:
+						return AttackMagic >= 40 && PhenoMagic >= 40 && CureMagic >= 40 && SpecialMagic >= 20 && ESPMagic >= 20 && SummonMagic >= 20;
+				}
+			}
+		}
 
 		public string GenderStr
 		{
@@ -395,27 +353,27 @@ namespace MysticUWP
 			}
 		}
 
-		//public string ClassTypeStr
-		//{
-		//	get
-		//	{
-		//		switch (ClassType)
-		//		{
-		//			case ClassCategory.Sword:
-		//				return "전투사계";
-		//			default:
-		//				return "마법사계";
-		//		}
-		//	}
-		//}
+		public string ClassTypeStr
+		{
+			get
+			{
+				switch (ClassType)
+				{
+					case ClassCategory.Sword:
+						return "전투사계";
+					default:
+						return "마법사계";
+				}
+			}
+		}
 
-		//public string ClassStr
-		//{
-		//	get
-		//	{
-		//		return Common.GetClass(ClassType, Class);
-		//	}
-		//}
+		public string ClassStr
+		{
+			get
+			{
+				return Common.GetClass(ClassType, Class);
+			}
+		}
 
 		//public void UpdatePotentialExperience()
 		//{
