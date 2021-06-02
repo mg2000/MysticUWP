@@ -375,13 +375,13 @@ namespace MysticUWP
 			}
 		}
 
-		//public void UpdatePotentialExperience()
-		//{
-		//	if (1 <= Level && Level <= 40)
-		//		PotentialExperience = Common.GetLevelUpExperience(Level);
-		//	else
-		//		PotentialExperience = 0;
-		//}
+		public void UpdatePotentialExperience()
+		{
+			if (1 <= Level && Level <= 40)
+				PotentialExperience = Common.GetLevelUpExperience(Level);
+			else
+				PotentialExperience = 0;
+		}
 
 		public bool IsAvailable
 		{

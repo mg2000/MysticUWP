@@ -119,10 +119,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BattleEnemyData.cs" />
     <Compile Include="ChooseClassPage.xaml.cs">
       <DependentUpon>ChooseClassPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common.cs" />
+    <Compile Include="EnemyData.cs" />
     <Compile Include="GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>
