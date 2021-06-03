@@ -299,7 +299,7 @@ namespace MysticUWP
 							else
 							{
 								Window.Current.CoreWindow.KeyUp -= mainPageKeyUpEvent;
-								//Frame.Navigate(typeof(GamePage), null);
+								Frame.Navigate(typeof(GamePage), null);
 							}
 						}
 						else

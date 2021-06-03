@@ -8,41 +8,46 @@ namespace MysticUWP
 {
 	class SaveData
 	{
-		//public List<Lore> PlayerList
-		//{
-		//	get;
-		//	set;
-		//}
+		public List<Lore> PlayerList
+		{
+			get;
+			set;
+		}
 
-		//public Lore AssistPlayer
-		//{
-		//	get;
-		//	set;
-		//}
+		public Lore AssistPlayer
+		{
+			get;
+			set;
+		}
 
-		//public LorePlayer Party
-		//{
-		//	get;
-		//	set;
-		//}
+		public LorePlayer Party
+		{
+			get;
+			set;
+		}
 
-		//public Map Map
-		//{
-		//	get;
-		//	set;
-		//}
+		public MapHeader MapHeader
+		{
+			get;
+			set;
+		}
 
-		//public int Encounter
-		//{
-		//	get;
-		//	set;
-		//}
+		public int Encounter
+		{
+			get;
+			set;
+		}
 
-		//public int MaxEnemy
-		//{
-		//	get;
-		//	set;
-		//}
+		public int MaxEnemy
+		{
+			get;
+			set;
+		}
+
+		public bool Cruel {
+			get;
+			set;
+		}
 
 		public long SaveTime
 		{

@@ -555,7 +555,7 @@ namespace MysticUWP
 			}
 
 			for (var i = 0; i < mClassTextList.Count; i++)
-				mClassTextList[i].Text = (i + 1) + ". " + Common.GetClass(mPlayer.ClassType, i + 1);
+				mClassTextList[i].Text = i + 1 + ". " + Common.GetClass(mPlayer.ClassType, i + 1);
 			UpdateClassAvailable();
 
 			base.OnNavigatedTo(e);
