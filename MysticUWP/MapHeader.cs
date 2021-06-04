@@ -92,7 +92,7 @@ namespace MysticUWP
 			set;
 		}
 
-		public int Default
+		public byte Default
 		{
 			get;
 			set;

@@ -161,6 +161,7 @@ namespace MysticUWP
 		private Random mRand = new Random();
 
 		private bool mEbony = false;
+		private bool mDark = false;
 		private bool mMoonLight = false;
 
 		private bool mTimeWatch = false;
@@ -978,12 +979,12 @@ namespace MysticUWP
 						for (var i = 1; i <= 7; i++)
 						{
 							if (Common.GetWeaponName(mWeaponTypeID * 7 + i).Length < 3)
-								weaponNameArr[i - 1] = $"{Common.GetWeaponName(mWeaponTypeID * 7 + i)}\t\t\t금 {weaponPrice[mWeaponTypeID, i - 1].ToString("#,#0")} 개";
+								weaponNameArr[i - 1] = $"{Common.GetWeaponName(mWeaponTypeID * 7 + i)}\t\t\t금 {weaponPrice[mWeaponTypeID, i - 1]:#,#0} 개";
 							else if (Common.GetWeaponName(mWeaponTypeID * 7 + i).Length < 5)
-								weaponNameArr[i - 1] = $"{Common.GetWeaponName(mWeaponTypeID * 7 + i)}\t\t금 {weaponPrice[mWeaponTypeID, i - 1].ToString("#,#0")} 개";
+								weaponNameArr[i - 1] = $"{Common.GetWeaponName(mWeaponTypeID * 7 + i)}\t\t금 {weaponPrice[mWeaponTypeID, i - 1]:#,#0} 개";
 							else
 
-								weaponNameArr[i - 1] = $"{Common.GetWeaponName(mWeaponTypeID * 7 + i)}\t금 {weaponPrice[mWeaponTypeID, i - 1].ToString("#,#0")} 개";
+								weaponNameArr[i - 1] = $"{Common.GetWeaponName(mWeaponTypeID * 7 + i)}\t금 {weaponPrice[mWeaponTypeID, i - 1]:#,#0} 개";
 						}
 
 						ShowMenu(MenuMode.BuyWeapon, weaponNameArr);
@@ -1226,6 +1227,39 @@ namespace MysticUWP
 							mParty.Etc[0] = 10;
 							UpdateView();
 							InvokeAnimation(AnimationType.CaptureProtagonist);
+						}
+						else if (specialEvent == SpecialEventType.GotoCourt) {
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
+
+							InvokeAnimation(AnimationType.GotoCourt);
+						}
+						else if (specialEvent == SpecialEventType.Interrogation) {
+							Dialog(new string[] {
+								$"[color={RGB.LightBlue}] 이 자는 여기 이 창으로 광산업자를 찔러 죽였습니다." +
+								"  우리 둘이 공교롭게도 이 자가 그를 찔렀던 이 창을 뽑아내는 것을 목격하고는 즉시 체포 했습니다." +
+								" 우리들의 경해로는 광산업자와의 금전 관계로 인해  저질러진 살인이라고 보아집니다.[/color]",
+								$"[color={RGB.LightBlue}] 그리고 이 창을 증거물로 제시하겠습니다.[/color]"
+							});
+
+							InvokeAnimation(AnimationType.SubmitProof);
+						}
+						else if (specialEvent == SpecialEventType.Punishment) {
+							Talk(new string[] {
+								" 로드안이 말했다.",
+								"",
+								$"[color={RGB.LightGreen}] 당신은 이곳의 법률을 알고 있겠지요?" +
+								"  범죄없는 평화로운 세상을 만들기 위해  살인자는 모두 사형 또는 종신형에 처한다는 것도 알고 있을거요." +
+								" 당신은 전과가 없기 때문에 사형을 선고하지는 않겠소.  그렇지만 최대한 자비를 베풀어도 종신형은 면치 못할 꺼요.[/color]"
+							}, SpecialEventType.GotoJail);
+						}
+						else if (specialEvent == SpecialEventType.GotoJail) {
+							ClearDialog();
+							InvokeAnimation(AnimationType.GotoJail);
+						}
+						else if (specialEvent == SpecialEventType.LiveJail) {
+							ClearDialog();
+							InvokeAnimation(AnimationType.LiveJail);
 						}
 					}
 
@@ -1849,8 +1883,6 @@ namespace MysticUWP
 							ShowChooseTrainMagicMemberMenu();
 						else if (menuMode == MenuMode.BuyWeapon || menuMode == MenuMode.BuyShield || menuMode == MenuMode.BuyArmor)
 							ShowWeaponShopMenu();
-						else if (menuMode == MenuMode.JoinFriend)
-							AfterJoinFriendEvent();
 						else if (menuMode != MenuMode.None && menuMode != MenuMode.BattleLose && menuMode != MenuMode.ChooseGameOverLoadGame && mSpecialEvent == SpecialEventType.None)
 						{
 							if (menuMode == MenuMode.CastOneMagic ||
@@ -1896,6 +1928,166 @@ namespace MysticUWP
 								mYAxis = mPrevY;
 							}
 							
+						}
+						else if (menuMode == MenuMode.JoinFriend)
+							AfterJoinFriendEvent();
+						else if (menuMode == MenuMode.JoinAlcor) {
+							if (mMenuFocusID == 0)
+							{
+								if (mPlayerList.Count < 5)
+								{
+									var alcor = new Lore()
+									{
+										Name = "알코르",
+										Gender = GenderType.Male,
+										Class = 3,
+										ClassType = ClassCategory.Sword,
+										Level = 2,
+										Strength = 15,
+										Mentality = 5,
+										Concentration = 6,
+										Endurance = 12,
+										Resistance = 15,
+										Agility = 14,
+										Accuracy = 16,
+										Luck = 12,
+										Poison = 0,
+										Unconscious = 0,
+										Dead = 0,
+										SP = 0,
+										Experience = 0,
+										Weapon = 3,
+										Shield = 0,
+										Armor = 1,
+										PotentialAC = 2,
+										SwordSkill = 40,
+										AxeSkill = 0,
+										SpearSkill = 0,
+										BowSkill = 0,
+										ShieldSkill = 0,
+										FistSkill = 10
+									};
+
+									alcor.HP = alcor.Endurance * alcor.Level * 10;
+									alcor.UpdatePotentialExperience();
+									UpdateItem(alcor);
+
+									UpdateTileInfo(21, 49, 44);
+									SetBit(36);
+								}
+								else
+								{
+									Dialog(" 벌써 사람이 모두 채워져 있군요.  다음 기회를 기다리지요.");
+								}
+							}
+							else
+								ShowNoThanks();
+						}
+						else if (menuMode == MenuMode.JoinMizar)
+						{
+							if (mMenuFocusID == 0)
+							{
+								if (mPlayerList.Count < 5)
+								{
+									var mizar = new Lore()
+									{
+										Name = "미자르",
+										Gender = GenderType.Male,
+										Class = 2,
+										ClassType = ClassCategory.Sword,
+										Level = 2,
+										Strength = 13,
+										Mentality = 6,
+										Concentration = 8,
+										Endurance = 15,
+										Resistance = 16,
+										Agility = 16,
+										Accuracy = 15,
+										Luck = 14,
+										Poison = 0,
+										Unconscious = 0,
+										Dead = 0,
+										SP = 0,
+										Experience = 0,
+										Weapon = 2,
+										Shield = 1,
+										Armor = 2,
+										PotentialAC = 2,
+										SwordSkill = 20,
+										AxeSkill = 10,
+										SpearSkill = 5,
+										BowSkill = 0,
+										ShieldSkill = 10,
+										FistSkill = 10
+									};
+
+									mizar.HP = mizar.Endurance * mizar.Level * 10;
+									mizar.UpdatePotentialExperience();
+									UpdateItem(mizar);
+
+									UpdateTileInfo(21, 53, 44);
+									SetBit(37);
+								}
+								else
+								{
+									Dialog(" 벌써 사람이 모두 채워져 있군요.  다음 기회를 기다리지요.");
+								}
+							}
+							else
+								ShowNoThanks();
+						}
+						else if (menuMode == MenuMode.JoinAntaresJr)
+						{
+							if (mMenuFocusID == 0)
+							{
+								if (mPlayerList.Count < 5)
+								{
+									var antaresJr = new Lore()
+									{
+										Name = "안타레스 Jr.",
+										Gender = GenderType.Male,
+										Class = 4,
+										ClassType = ClassCategory.Magic,
+										Level = 15,
+										Strength = 10,
+										Mentality = 20,
+										Concentration = 20,
+										Endurance = 15,
+										Resistance = 17,
+										Agility = 19,
+										Accuracy = 17,
+										Luck = 18,
+										Poison = 0,
+										Unconscious = 0,
+										Dead = 0,
+										SP = 0,
+										Experience = 0,
+										Weapon = 0,
+										Shield = 0,
+										Armor = 2,
+										PotentialAC = 0,
+										AttackMagic = 60,
+										PhenoMagic = 30,
+										CureMagic = 30,
+										SpecialMagic = 0,
+										ESPMagic = 0,
+										SummonMagic = 0
+									};
+
+									antaresJr.HP = antaresJr.Endurance * antaresJr.Level * 10;
+									antaresJr.UpdatePotentialExperience();
+									UpdateItem(antaresJr);
+
+									UpdateTileInfo(17, 37, 47);
+									SetBit(38);
+								}
+								else
+								{
+									Dialog(" 벌써 사람이 모두 채워져 있군.  다음 기회를 기다리도록 하지.");
+								}
+							}
+							else
+								ShowNoThanks();
 						}
 					}
 					else if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
@@ -3622,7 +3814,7 @@ namespace MysticUWP
 								else
 								{
 									var payment = mCurePlayer.Endurance * mCurePlayer.Level * 10 - mCurePlayer.HP;
-									payment = payment * mCurePlayer.Level * 10 / 2 + 1;
+									payment = (int)Math.Round(payment * (double)mCurePlayer.Level / 10) + 1;
 
 									if (mParty.Gold < payment)
 										ShowNotEnoughMoney(mSpecialEvent = SpecialEventType.NotCured);
@@ -3633,7 +3825,7 @@ namespace MysticUWP
 
 										DisplayHP();
 
-										Talk($"[color={RGB.White}]{mCurePlayer.Name}의 모든 건강이 회복되었다[/color]", SpecialEventType.CureComplete);
+										Talk($"[color={RGB.White}]{mCurePlayer.GenderPronoun}의 모든 건강이 회복되었다[/color]", SpecialEventType.CureComplete);
 									}
 								}
 							}
@@ -3831,6 +4023,12 @@ namespace MysticUWP
 									break;
 							}
 
+							if (mTrainSkillList[mMenuFocusID].Item2 == 0)
+							{
+								Talk("당신의 계급과 맞지 않습니다", SpecialEventType.CantTrainMagic);
+								return;
+							}
+
 							if (skill >= mTrainSkillList[mMenuFocusID].Item2)
 							{
 								Talk("이 분야는 더 배울 것이 없습니다", SpecialEventType.CantTrain);
@@ -3958,7 +4156,9 @@ namespace MysticUWP
 									break;
 							}
 
-							if (skill >= mTrainSkillList[mMenuFocusID].Item2)
+							if (mTrainSkillList[mMenuFocusID].Item2 == 0)
+								Talk("당신의 계급과 맞지 않습니다", SpecialEventType.CantTrainMagic);
+							else if (skill >= mTrainSkillList[mMenuFocusID].Item2)
 								Talk("이 분야는 더 배울 것이 없습니다", SpecialEventType.CantTrainMagic);
 							else
 							{
@@ -4951,7 +5151,7 @@ namespace MysticUWP
 				"아니오, 원하지 않습니다."});
 		}
 
-			private void TalkMode(int moveX, int moveY, VirtualKey key = VirtualKey.None)
+		private void TalkMode(int moveX, int moveY, VirtualKey key = VirtualKey.None)
 		{
 			void ShowClassTrainingMenu()
 			{
@@ -5009,6 +5209,105 @@ namespace MysticUWP
 				else if (moveX == 26 && moveY == 25) {
 					Dialog(" 자네 이것 좀 봐. 이건 내가 오래 전에 광산 일을 하면서 발견한 건데 이상한 점이 있어. 이건 어떤 형식의 표음 문자가 적힌 석판인데 공교롭게도 30만년 전 지층에서 나왔다네." +
 					" 그리고  이건 더 오래된 지층에서 나온  공룡의 머리뼈인데  마법으로 관통 당한 구멍이 선명하게 나타나 있다네.  공룡과 인류는 서로 다른 시대를 살았는데 이건 정말 이상하지 않은가 ?");
+				}
+			}
+			else if (mMapName == "Lore") {
+				if ((moveX == 90 && moveY == 64) || (moveX == 93 && moveY == 67) || (moveX == 86 && moveY == 72))
+					ShowGroceryMenu();
+				else if ((moveX == 7 && moveY == 70) || (moveX == 13 && moveY == 68) || (moveX == 13 && moveY == 72))
+					ShowWeaponShopMenu();
+				else if ((moveX == 85 && moveY == 11) || (moveX == 86 && moveY == 13))
+					ShowHospitalMenu();
+				else if (moveX == 15 && moveY == 63)
+					ShowItemStoreMenu();
+				else if ((moveX == 20 && moveY == 11) || (moveX == 24 && moveY == 12))
+					ShowClassTrainingMenu();
+				else if (moveX == 11 && moveY == 12)
+					ShowExpStoreMenu();
+				else if (moveX == 11 && moveY == 48)
+					Dialog($"[color={RGB.Yellow}] 이 세계의 창시자는 안영기님이시며 그는 위대한 프로그래머입니다.[/color]");
+				else if (moveX == 14 && moveY == 54)
+				{
+					if (!GetBit(35))
+					{
+						Dialog(new string[] {
+							$" 당신이 혹시  내 아들 카노푸스와 같은 감방을 사용했던 {mPlayerList[0].Name} 아닌가요?",
+							" 역시 그렇군요. 당신이 베스퍼성으로 원정을 간다는 말을 들었습니다. 만약 여유가 있으시다면  내 아들을 당신의 일행에 참가 시켜 주실 수 있겠습니까?" +
+							" 지금은 비록 절도 죄로 잡혀 있는 몸이지만  원래 내 아들의 꿈은 로어성 최의 전사가 되는 것이었습니다.  아마 짐은 되지 않을 것입니다. 제발 부탁합니다."
+						});
+					}
+					else
+						Dialog($" {mPlayerList[0].Name}님. 제 아들을 잘 부탁합니다.");
+				}
+				else if (moveX == 21 && moveY == 49)
+				{
+					Ask($" 나의 이름은 [color={RGB.LightCyan}]알코르[/color]라고 하오.  나는 이곳의 검사로서 나의 길을 개척하려하오. 특히 당신과 함께 베스퍼성의 원정을 하고 싶은데 당신 생각은 어떻소?"
+					, MenuMode.JoinAlcor, new string[] {
+						"그거 좋은 생각이군요",
+						"미안하지만 그런 좀 어렵군요"
+					});
+				}
+				else if (moveX == 21 && moveY == 53)
+				{
+					Ask($" 나는 이곳의 기사로 있는 [color={RGB.LightCyan}]미자르[/color]라고하오. 당신의 임무에 동참한다면  큰 영광으로 여기겠소."
+						, MenuMode.JoinMizar, new string[] {
+						"그럼 그렇게 하시오",
+						"하지만 그건 좀 곤란하오"
+						});
+				}
+				else if (moveX == 12 && moveY == 26)
+					Dialog($" 거기 {mPlayerList[0].GenderStr}분, 어서 앉으시지요.");
+				else if (moveX == 17 && moveY == 26)
+					Dialog($" 우리 주점의 명물인 코리아 위스키 맛 좀 보시겠습니까?");
+				else if (moveX == 20 && moveY == 37)
+					Dialog($" 과음은 삼가하십시요.");
+				else if (moveX == 17 && moveY == 37)
+				{
+					Dialog(" 자네를 못 볼줄 알았는데 다시 보게 되었군. 자! 그 기념으로 한 잔 받게나. 완~~~샷 !!");
+
+					if (mParty.Etc[4] > 0)
+					{
+						Dialog(new string[] {
+							"",
+							" 당신의 모습을 보니  내가 가이아 테라의 수석 위저드로 있을 때가  생각나는군.  자네를 도와주고픈 마음이 있는데 자네는 어떤가?"
+						});
+
+						ShowMenu(MenuMode.JoinAntaresJr, new string[] {
+							"역시 안타레스답군요",
+							"안됐지만 사양하겠습니다"
+						});
+					}
+				}
+				else if (moveX == 12 && moveY == 31)
+					Dialog(" 역시 술은 코리아 위스키(소주)가 최고야.");
+				else if (moveX == 14 && moveY == 34)
+					Dialog(" 음냐, 음냐, 쿨쿨쿨...");
+				else if (moveX == 17 && moveY == 32)
+				{
+					Dialog(new string[] {
+						" 이 세계는 다섯개의 대륙이 있다고 하더군요.",
+						" 로어 대륙, 가이아 테라,  아프로디테 테라, 이쉬도 테라, 우라누스 테라가 있다고 들었습니다."
+					});
+				}
+				else if (moveX == 9 && moveY == 29)
+					Dialog(" 만약 당신이 베스퍼성으로 가려 한다면,  가이아 테라를 거쳐  그 성이 있는  아프로디테테라로 가야 합니다.");
+				else if (moveX == 49 && moveY == 10)
+					Dialog(" 당신은 정말 행운입니다.  로드안님은 한 번 선고내린 피고인에 대해서는  절대로 사면 시켜 주는 일이 없었는데 말입니다.");
+				else if (moveX == 52 && moveY == 10)
+					Dialog(" 당신은 로드안님에 의해서 선택 되어진 인간입니다.");
+				else if (moveX == 40 && moveY == 9)
+				{
+					if (mParty.Etc[19] == 0)
+						Dialog(" 특별한 일이 없는한 우리 둘은 평생 여기서 지낼거요.");
+					else
+						Dialog(" 나도 자네처럼 모험을 하고 싶소.");
+				}
+				else if (moveX == 62 && moveY == 8) {
+					Dialog(" 나는 다른 종족과의 화합에 대한 책을  발간하려다가 사형 선고를 받았습니다. 나는 정말 억울합니다." +
+					"  로드안님의 말인즉 악을 행하는 다른 종족과의 화합은  악과의 화합을 말하는 것이라는 겁니다." +
+					" 내가 아는 몇몇의 종족들은 해들 끼치기도 하지만 그것은 그저 그들의 속성일 뿐이지 결코 본성이 악한 것은 아닙니다." +
+					" 로드안님을 위시한 이곳의 교육체계는 너무나 선을 강조하며 악을 배척하려 합니다." +
+					" 하지만 어느 정도의 필요악도 있어야 하며 이런 교육 방식에 의한 평화는 잠시뿐이지  마침내는 자체적으로 붕괴해 버릴겁니다.");
 				}
 			}
 		}
@@ -8345,21 +8644,24 @@ namespace MysticUWP
 
 		private void UpdateView()
 		{
-			bool dark;
-
 			if (mMapHeader.TileType == PositionType.Den)
-				dark = true;
+				mDark = true;
 			else
-				dark = false;
+				mDark = false;
 
 			if (10 <= mParty.Day % 30 + 1 && mParty.Day % 30 + 1 <= 20)
 				mMoonLight = true;
 			else
 				mMoonLight = false;
 
+			if (mMapHeader.TileType == PositionType.Den)
+				mMoonLight = false;
+			else if (mMapHeader.TileType == PositionType.Town)
+				mMoonLight = true;
+
 			if (7 > mParty.Hour || mParty.Hour > 17)
 			{
-				dark = true;
+				mDark = true;
 				if (mParty.Hour == 18)
 				{
 					if (0 <= mParty.Min && mParty.Min <= 19)
@@ -8409,7 +8711,7 @@ namespace MysticUWP
 			}
 
 
-			if (dark && mParty.Etc[0] > 0)
+			if (mDark && mParty.Etc[0] > 0)
 			{
 				if (1 <= mParty.Etc[0] && mParty.Etc[0] <= 2)
 				{
@@ -8767,10 +9069,10 @@ namespace MysticUWP
 			var stream = (await mapFile.OpenReadAsync()).AsStreamForRead();
 			var reader = new BinaryReader(stream);
 
-			mMapHeader = new MapHeader();
-
 			lock (mapLock)
 			{
+				mMapHeader = new MapHeader();
+
 				var mapNameLen = reader.ReadByte();
 				mMapHeader.ID = Encoding.UTF8.GetString(reader.ReadBytes(mapNameLen));
 
@@ -9246,6 +9548,11 @@ namespace MysticUWP
 				Talk(noMoneyStr, specialEvent);
 		}
 
+		private void ShowNoThanks()
+		{
+			Dialog("당신이 바란다면 ...");
+		}
+
 		private void canvas_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
 		{
 			args.TrackAsyncAction(LoadImages(sender.Device).AsAsyncAction());
@@ -9386,7 +9693,40 @@ namespace MysticUWP
 						Task.Delay(500).Wait();
 					}
 				}
+				else if (mAnimationEvent == AnimationType.GotoCourt) {
+					AnimateTransition();
+				}
+				else if (mAnimationEvent == AnimationType.GotoCourt2) {
+					for (var i = 1; i <= 6; i++)
+					{
+						mAnimationFrame = i;
+						Task.Delay(700).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.SubmitProof)
+				{
+					for (var i = 1; i <= 6; i++)
+					{
+						mAnimationFrame = i;
+						if (i == 3)
+							Task.Delay(2000).Wait();
+						else
+							Task.Delay(1000).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.GotoJail)
+				{
+					AnimateTransition();
+				}
+				else if (mAnimationEvent == AnimationType.LiveJail)
+				{
+					AnimateTransition();
+					Task.Delay(2000).Wait();
 
+				}
+				else if (mAnimationEvent == AnimationType.MeetCanopus) {
+					Task.Delay(2000).Wait();
+				}
 			});
 
 			await animationTask;
@@ -9408,6 +9748,77 @@ namespace MysticUWP
 					"",
 					$"[color={RGB.LightBlue}] 우리는 당신을 살인 혐의로 체포합니다.  그리고 이 창은 증거물로 압수 하겠습니다.  변명은 법정에서 하십시요.[/color]"
 				}, SpecialEventType.GotoCourt);
+			}
+			else if (mAnimationEvent == AnimationType.GotoCourt)
+			{
+				mMapName = "Lore";
+
+				await RefreshGame();
+
+				mXAxis = 50;
+				mYAxis = 30;
+
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				if (mPlayerList[0].ClassType == ClassCategory.Magic)
+					mFace = 9;
+				else
+					mFace = 1;
+
+				InvokeAnimation(AnimationType.GotoCourt2);
+			}
+			else if (mAnimationEvent == AnimationType.GotoCourt2)
+			{
+				Talk(new string[] {
+					" 로드안이 병사에게 말했다.",
+					"",
+					$"[color={RGB.LightGreen}] 이 자는 누구인데 여기로 끌고 왔소?[/color]"
+				}, SpecialEventType.Interrogation);
+			}
+			else if (mAnimationEvent == AnimationType.SubmitProof)
+			{
+				mSpecialEvent = SpecialEventType.Punishment;
+				ContinueText.Visibility = Visibility.Visible;
+			}
+			else if (mAnimationEvent == AnimationType.GotoJail)
+			{
+				mXAxis = 38;
+				mYAxis = 9;
+
+				InvokeAnimation(AnimationType.MeetCanopus);
+			}
+			else if (mAnimationEvent == AnimationType.MeetCanopus)
+			{
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				var tile = GetTileInfo(mXAxis + 2, mYAxis);
+				UpdateTileInfo(mXAxis + 2, mYAxis, GetTileInfo(mXAxis + 1, mYAxis));
+				UpdateTileInfo(mXAxis + 1, mYAxis, tile);
+
+				Talk(new string[] {
+					$"[color={RGB.LightBlue}] 나의 동료가 한 명 생겼군.  나는 1년 반 전에 절도 상해 혐의로  종신형을 선고 받은[/color] [color={RGB.LightCyan}]카노푸스[/color][color={RGB.LightBlue}]라고 하네." +
+					"  우리는 같이 평생을 살 동이니 잘 지내도록 하지.[/color]"
+				}, SpecialEventType.LiveJail);
+			}
+			else if (mAnimationEvent == AnimationType.LiveJail)
+			{
+				var tile = GetTileInfo(mXAxis + 2, mYAxis);
+				UpdateTileInfo(mXAxis + 2, mYAxis, GetTileInfo(mXAxis + 1, mYAxis));
+				UpdateTileInfo(mXAxis + 1, mYAxis, tile);
+
+				mParty.Year = 674;
+				mParty.Day = 18;
+				mParty.Hour = 8;
+				mParty.Min = 0;
+				mParty.Sec = 0;
+				UpdateView();
+
+				Dialog(" 때는 674년 1월 19일.  당신은 여기서 약 두달을 지냈다.");
+
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
 			}
 			else
 			{
@@ -9516,15 +9927,15 @@ namespace MysticUWP
 
 		private void canvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
 		{
-			//void AnimateTransition(int frame, int x, int y)
-			//{
-			//	// 총 117 프레임
-			//	for (var i = 0; i < frame; i++)
-			//	{
-			//		args.DrawingSession.FillRectangle(new Rect((x - 4) * 52 + (i * 4), (y - 5) * 52, 2, 52 * 11), Colors.Black);
-			//		args.DrawingSession.FillRectangle(new Rect((x - 4) * 52 + ((116 - i) * 4) + 2, (y - 5) * 52, 2, 52 * 11), Colors.Black);
-			//	}
-			//}
+			void AnimateTransition(int frame, int x, int y)
+			{
+				// 총 117 프레임
+				for (var i = 0; i < frame; i++)
+				{
+					args.DrawingSession.FillRectangle(new Rect((x - 4) * 52 + (i * 4), (y - 5) * 52, 2, 52 * 11), Colors.Black);
+					args.DrawingSession.FillRectangle(new Rect((x - 4) * 52 + ((116 - i) * 4) + 2, (y - 5) * 52, 2, 52 * 11), Colors.Black);
+				}
+			}
 
 			var playerX = mXAxis;
 			var playerY = mYAxis;
@@ -9568,12 +9979,36 @@ namespace MysticUWP
 
 				if (mCharacterTiles != null && mFace >= 0)
 				{
-					mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
+					if (mAnimationEvent != AnimationType.GotoCourt2)
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
 
 					if (mAnimationEvent == AnimationType.CaptureProtagonist && mAnimationFrame > 0)
 					{
 						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + (6 - mAnimationFrame)), Vector4.One);
 						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + (6 - mAnimationFrame)), Vector4.One);
+					}
+					else if (mAnimationEvent == AnimationType.GotoCourt) {
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + 1), Vector4.One);
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + 1), Vector4.One);
+					}
+					if (mAnimationEvent == AnimationType.GotoCourt2 && mAnimationFrame > 0)
+					{
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (6 - mAnimationFrame)), Vector4.One);
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (6 - mAnimationFrame)), Vector4.One);
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis + (6 - mAnimationFrame)), Vector4.One);
+					}
+					if (mAnimationEvent == AnimationType.SubmitProof && mAnimationFrame > 0)
+					{
+						if (mAnimationFrame <= 3)
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis - mAnimationFrame), Vector4.One);
+						else
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis - 3 + (mAnimationFrame - 3)), Vector4.One);
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), Vector4.One);
+					}
+					else if (mAnimationEvent == AnimationType.GotoJail)
+					{
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis), Vector4.One);
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), Vector4.One);
 					}
 					//	if (mAnimationEvent == AnimationType.EnterFortressOfMephistopheles && mAnimationFrame <= 6)
 					//	{
@@ -9589,18 +10024,10 @@ namespace MysticUWP
 				}
 			}
 
-			//if ((mAnimationEvent == AnimationType.SleepLoreCastle ||
-			//	mAnimationEvent == AnimationType.LandUnderground ||
-			//	mAnimationEvent == AnimationType.LandUnderground2 ||
-			//	mAnimationEvent == AnimationType.RecallToCastleLore ||
-			//	mAnimationEvent == AnimationType.ReturnCastleLore ||
-			//	mAnimationEvent == AnimationType.ReturnCastleLore2 ||
-			//	mAnimationEvent == AnimationType.TalkLordAhn ||
-			//	mAnimationEvent == AnimationType.TalkLordAhn2 ||
-			//	mAnimationEvent == AnimationType.EnterUnderworld ||
-			//	mAnimationEvent == AnimationType.ReturnToGround ||
-			//	mAnimationEvent == AnimationType.MeetNecromancer) && mAnimationFrame <= 117)
-			//	AnimateTransition(mAnimationFrame, playerX, playerY);
+			if (mAnimationEvent == AnimationType.GotoCourt ||
+				mAnimationEvent == AnimationType.GotoJail ||
+				mAnimationEvent == AnimationType.LiveJail)
+				AnimateTransition(mAnimationFrame, playerX, playerY);
 		}
 
 		private void DrawTile(CanvasSpriteBatch sb, byte[] layer, int index, int playerX, int playerY)
@@ -9610,10 +10037,34 @@ namespace MysticUWP
 
 			Vector4 tint;
 
-			if ((layer[index] & 0x80) > 0 || (mXWide == 0 && mYWide == 0) || (playerX - mXWide <= column && column <= playerX + mXWide && playerY - mYWide <= row && row <= playerY + mYWide))
-				tint = Vector4.One;
+			var darkness = false;
+			if (playerX - mXWide <= column && column <= playerX + mXWide && playerY - mYWide <= row && row <= playerY + mYWide)
+				darkness = false;
 			else
-				tint = new Vector4(0.1f, 0.1f, 0.6f, 1);
+				darkness = true;
+
+			if (!mDark)
+				darkness = false;
+
+			if (mEbony && mParty.Etc[0] == 0)
+				darkness = true;
+
+			if ((layer[index] & 0x80) > 0)
+				tint = Vector4.One;
+			else if (mMoonLight || !darkness)
+			{
+				if (darkness)
+					tint = new Vector4(0.1f, 0.1f, 0.6f, 1);
+				else
+					tint = Vector4.One;
+			}
+			else
+			{
+				if (darkness)
+					tint = new Vector4(0.0f, 0.0f, 0.0f, 1);
+				else
+					tint = Vector4.One;
+			}
 
 			if (mMapTiles != null)
 			{
@@ -9637,17 +10088,14 @@ namespace MysticUWP
 
 				byte tileIdx = GetTileInfo(layer, index);
 
-				//	if (mSpecialEvent == SpecialEventType.Penetration)
-				//	{
-				//		if ((mMapHeader.TileType == PositionType.Den || mMapHeader.TileType == PositionType.Keep) && tileIdx == 52)
-				//			tileIdx = 0;
-				//	}
-				//	else if (mMapName == 2 && tileIdx == 52)
-				//		tileIdx = 48;
-				//	//#if DEBUG
-				//	//else if (tileIdx == 0 || ((mMapHeader.TileType == PositionType.Den || mMapHeader.TileType == PositionType.Keep) && tileIdx == 52))
-				//	//#else
-				//	else if (tileIdx == 0)
+				if (mSpecialEvent == SpecialEventType.Penetration)
+				{
+					if ((mMapHeader.TileType == PositionType.Den || mMapHeader.TileType == PositionType.Keep) && tileIdx == 52)
+						tileIdx = 0;
+				}
+				else if (tileIdx == 0)
+					tileIdx = mMapHeader.Default;
+
 				//	//#endif
 				//	{
 				//		//#if DEBUG
@@ -9953,7 +10401,11 @@ namespace MysticUWP
 			ReadProphesy5,
 			ReadProphesyLast,
 			SeeMurderCase,
-			GotoCourt
+			GotoCourt,
+			Interrogation,
+			Punishment,
+			GotoJail,
+			LiveJail
 		}
 
 		private enum BattleEvent
@@ -9979,7 +10431,13 @@ namespace MysticUWP
 			HearAncientEvil,
 			MeetFriend,
 			LeftManager,
-			CaptureProtagonist
+			CaptureProtagonist,
+			GotoCourt,
+			GotoCourt2,
+			SubmitProof,
+			GotoJail,
+			MeetCanopus,
+			LiveJail
 		}
 
 		private enum SpinnerType
@@ -10074,7 +10532,10 @@ namespace MysticUWP
 			Hospital,
 			TrainingCenter,
 			ChooseMagicJob,
-			JoinFriend
+			JoinFriend,
+			JoinAlcor,
+			JoinMizar,
+			JoinAntaresJr
 		}
 	}
 }
