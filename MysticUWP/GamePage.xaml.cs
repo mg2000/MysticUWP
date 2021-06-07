@@ -1221,20 +1221,23 @@ namespace MysticUWP
 								$"[color={RGB.White}]              세상에 나타 날 것이다.[/color]"
 							});
 						}
-						else if (specialEvent == SpecialEventType.SeeMurderCase) {
+						else if (specialEvent == SpecialEventType.SeeMurderCase)
+						{
 							ClearDialog();
 
 							mParty.Etc[0] = 10;
 							UpdateView();
 							InvokeAnimation(AnimationType.CaptureProtagonist);
 						}
-						else if (specialEvent == SpecialEventType.GotoCourt) {
+						else if (specialEvent == SpecialEventType.GotoCourt)
+						{
 							mAnimationEvent = AnimationType.None;
 							mAnimationFrame = 0;
 
 							InvokeAnimation(AnimationType.GotoCourt);
 						}
-						else if (specialEvent == SpecialEventType.Interrogation) {
+						else if (specialEvent == SpecialEventType.Interrogation)
+						{
 							Dialog(new string[] {
 								$"[color={RGB.LightBlue}] 이 자는 여기 이 창으로 광산업자를 찔러 죽였습니다." +
 								"  우리 둘이 공교롭게도 이 자가 그를 찔렀던 이 창을 뽑아내는 것을 목격하고는 즉시 체포 했습니다." +
@@ -1244,7 +1247,8 @@ namespace MysticUWP
 
 							InvokeAnimation(AnimationType.SubmitProof);
 						}
-						else if (specialEvent == SpecialEventType.Punishment) {
+						else if (specialEvent == SpecialEventType.Punishment)
+						{
 							Talk(new string[] {
 								" 로드안이 말했다.",
 								"",
@@ -1253,13 +1257,82 @@ namespace MysticUWP
 								" 당신은 전과가 없기 때문에 사형을 선고하지는 않겠소.  그렇지만 최대한 자비를 베풀어도 종신형은 면치 못할 꺼요.[/color]"
 							}, SpecialEventType.GotoJail);
 						}
-						else if (specialEvent == SpecialEventType.GotoJail) {
+						else if (specialEvent == SpecialEventType.GotoJail)
+						{
 							ClearDialog();
 							InvokeAnimation(AnimationType.GotoJail);
 						}
-						else if (specialEvent == SpecialEventType.LiveJail) {
+						else if (specialEvent == SpecialEventType.LiveJail)
+						{
 							ClearDialog();
 							InvokeAnimation(AnimationType.LiveJail);
+						}
+						else if (specialEvent == SpecialEventType.RequestSuppressVariantPeoples)
+						{
+							Dialog(" 하지만  그전에 먼저 할 일이 생겼소.  지금 배리언트 피플즈에서 대대적인 반란이 발생했는데 빨리 진압하지 않으면  다른 성으로까지 번질지도 모르오." +
+							"  이번의 반란은  나에 대한 반역임과 동시에  선에 대한 도전이라고 받아들이고 있소.  그들의 이런 행위는 여지껏 지켜온 평화를 깨어 버리려는  에인션트 이블의 마지막 발악인것 같소.");
+
+							SetBit(50);
+							mParty.Etc[19]++;
+						}
+						else if (specialEvent == SpecialEventType.PassCrystal)
+						{
+							InvokeAnimation(AnimationType.PassCrystal2);
+						}
+						else if (specialEvent == SpecialEventType.SealCrystal)
+						{
+							Dialog(new string[] {
+								$"[color={RGB.LightGreen}] 자, 이제 이것을 아무도 구제 할 수 없는 곳으로 보내 버려야겠소.  그곳은 바로 로어 대륙의 지하에 있는 하데스 테라라고들 하는 곳이오.[/color]"
+							});
+
+							InvokeAnimation(AnimationType.SealCrystal2);
+						}
+						else if (specialEvent == SpecialEventType.SendUranos)
+						{
+							Talk($"[color={RGB.LightGreen}] 그럼, 이제 당신을 우라누스 테라로 보내 주겠소.[/color]", SpecialEventType.ClearRoom);
+						}
+						else if (specialEvent == SpecialEventType.ClearRoom)
+						{
+							Talk($"[color={RGB.LightGreen}]  그전에 당신은 새로운 모습으로 태어날꺼요. 그러기 위해서는  당신의 일행들과 나의 신하들이 자리를 피해줘야만 하오." +
+							"  그 이유는 차차 알려 드리리다.", SpecialEventType.TransformProtagonist);
+						}
+						else if (specialEvent == SpecialEventType.TransformProtagonist)
+						{
+							while (mPlayerList.Count > 1)
+								mPlayerList.RemoveAt(1);
+
+							Dialog(" 잠시간의 침묵이 흘렀다.");
+							InvokeAnimation(AnimationType.TransformProtagonist);
+						}
+						else if (specialEvent == SpecialEventType.TransformProtagonist2)
+						{
+							Talk(new string[] {
+								$"[color={RGB.LightGreen}] 정말 미안하게 됐네, {mPlayerList[0].Name}.[/color]",
+								$"[color={RGB.LightGreen}] 당신은  여지껏 나를 위해 일해 주었는데 나는 당신에게 이렇게 할 수 밖에는 없다네. 나는  처음부터 이미 당신을  지목하고 있었지." +
+								" 나와의 관계를 만들기 위해서  당신을 살인죄로 몰았던 것도 나였고,  항상 천리안과 투시로  당신을 감시하던 사람도  바로 나였다네." +
+								" 지금의 당신은  나 로드안을 제외하고는 명실공히 이 세계 최강의 용사이지. 내가 지금 하려는 이야기를 잘 들어보게.[/color]"
+							}, SpecialEventType.TransformProtagonist3);
+						}
+						else if (specialEvent == SpecialEventType.TransformProtagonist3)
+						{
+							Talk($"[color={RGB.LightGreen}] 이곳은 현재 너무 평화가 지속되어서 사람들이 현재의 평화를 전혀 고마워 할줄을 모른다네." +
+							"  그래서 내가 새로운 일을 지금 꾸미려하지." +
+							" 그 일이란 어떤 악의 추종자가 이 세계에 나타나  사람들을 위협하고 악을 퍼뜨려서 이 세계의 평화를 말살하려고 할때" +
+							" 나와 내가 선택한 인물의 활약으로 세계는 다시 평화를 찾게되고  주민들은 더욱 나에게 감사하며 선을 지키려 노력한다는 내용일세." +
+							" 이런 일을 내가 꾸몄다는 것을  아무도 알지못한다면 나는 분명히  평화의 구세주로서의 자리를  확보하게 된다네." +
+							"  여기서 필요한 사람은  바로 위에서 말한 '악의 추종자'가 될  사람이네.  하지만 아무도 지원하지 않을거란건  뻔한 사실이지." +
+							" 그래서 세계를 위협 할 만한 능력을 가진  당신을 이런식으로 끌어 들인거라네." +
+							" 당신은 항상 악을 퍼뜨리려  이 세계에  발을 내리지만 번번히 나와 내가 선택한 용사에 의해 패배하게 되지. 그것이 바로 당신이 이제 지게될 운명이라네." +
+							"  당신은 이제 스스로의 자유의사에 관계없이 운명에 묶여서 행동하게 될걸세. 하지만 패배를 너무 의식할 필요는 없네.  최종적인 승리는 당신이 하게 만들어 줄테니까...[/color]"
+							, SpecialEventType.TransformProtagonist4);
+						}
+						else if (specialEvent == SpecialEventType.TransformProtagonist4)
+						{
+							Dialog(" 로드안은 말을 마치자  당신을 향해  백색의 가루를 뿌리며 주문을 외우기 시작했다.");
+							InvokeAnimation(AnimationType.TransformProtagonist2);
+						}
+						else if (specialEvent == SpecialEventType.FollowSolider) {
+							InvokeAnimation(AnimationType.FollowSoldier);
 						}
 					}
 
@@ -5138,6 +5211,11 @@ namespace MysticUWP
 					
 				}
 			}
+			else if (mMapName == "Lore") {
+				if (mXAxis == 43 && mYAxis == 9 && mParty.Etc[19] == 0) {
+					InvokeAnimation(AnimationType.ComeSoldier);
+				}
+			}
 
 			return triggered;
 		}
@@ -5302,12 +5380,198 @@ namespace MysticUWP
 					else
 						Dialog(" 나도 자네처럼 모험을 하고 싶소.");
 				}
-				else if (moveX == 62 && moveY == 8) {
+				else if (moveX == 62 && moveY == 8)
+				{
 					Dialog(" 나는 다른 종족과의 화합에 대한 책을  발간하려다가 사형 선고를 받았습니다. 나는 정말 억울합니다." +
 					"  로드안님의 말인즉 악을 행하는 다른 종족과의 화합은  악과의 화합을 말하는 것이라는 겁니다." +
 					" 내가 아는 몇몇의 종족들은 해들 끼치기도 하지만 그것은 그저 그들의 속성일 뿐이지 결코 본성이 악한 것은 아닙니다." +
 					" 로드안님을 위시한 이곳의 교육체계는 너무나 선을 강조하며 악을 배척하려 합니다." +
 					" 하지만 어느 정도의 필요악도 있어야 하며 이런 교육 방식에 의한 평화는 잠시뿐이지  마침내는 자체적으로 붕괴해 버릴겁니다.");
+				}
+				else if (moveX == 39 && moveY == 14)
+				{
+					Dialog(new string[] {
+						$" 넌 옆 방에 있었던 {mPlayerList[0].Name} 아냐.",
+						" 이제 제법 로드안의 충실한 개가 되었군. 그가 주는 달콤한 사탕에 꼬리를 흔드는 격이라..."
+					});
+				}
+				else if (moveX == 60 && moveY == 14)
+				{
+					Dialog(" 나는 전과가 많아서 사형선고를 받았습니다. 로드안님도 너무하십니다.  범죄없는  세상을 만드는 것도 좋지만 나 같은 좀도둑에게도 사형을 선고하시다니...");
+				}
+				else if (moveX == 71 && moveY == 77)
+				{
+					Dialog(" 여기는 로어성의 묘지입니다. 함부로 들어가지 마십시요.");
+				}
+				else if (moveX == 63 && moveY == 75)
+				{
+					Dialog(new string[] {
+						" 비석에 어떤 글이 적혀 있었다.",
+						"",
+						"",
+						$"[color={RGB.White}]   여기는 위대한 예언자 데네브의 묘[/color]",
+						$"[color={RGB.White}]     620년 8월 30일 여기에 잠들다[/color]",
+						"",
+						"",
+						$" 당신이 자세히 보니 묘비의 아래쪽에 희미하게 [color={RGB.LightCyan}]27,6[/color]이라고 새겨져 있음을 알았다."
+					});
+				}
+				else if (moveX == 55 && moveY == 63)
+				{
+					Dialog(" 이 세상에 존재하는 모든 선의 대표자는  로드안님이며 악의 대표자는 에인션트 이블입니다.");
+				}
+				else if (moveX == 58 && moveY == 81)
+				{
+					Dialog(" 세상의 악은 모두 응징되어야 합니다.  아마 그건 로드안님만이 할 수 있을 겁니다.");
+				}
+				else if (moveX == 9 && moveY == 72)
+				{
+					Dialog(" 로어 대륙에는 이곳 로어성과 대륙의 남동쪽에 있는 라스트 디치성이 있습니다. 로어성은 지식의 성전이란 뜻이며  라스트 디치성은 최후까지 버티는 자들의 성이란 뜻입니다.");
+				}
+				else if (moveX == 79 && moveY == 22)
+				{
+					Dialog(" 나는 대륙의 남동쪽에 있는 메너스 금광에서 일하고 있습니다.");
+				}
+				else if (moveX == 23 && moveY == 36)
+				{
+					Dialog(" 오크족과 트롤족은 미개 종족이라  우리와는 차원이 틀리지요.");
+				}
+				else if (moveX == 89 && moveY == 41)
+				{
+					Dialog(" 트롤족은 주로 동굴속에 살며 호전적인 성품을 지녔어요.");
+				}
+				else if (moveX == 30 && moveY == 63)
+				{
+					Dialog(" 에인션트 이블은  이 세상에 악을 뿌리고 다니는 아주 나쁜 자입니다.");
+				}
+				else if (moveX == 89 && moveY == 81)
+				{
+					Dialog(" 천신의 대륙과  대지신의 대륙은  큰 산맥을 경계로 나누어져 있다던데요.");
+				}
+				else if (moveX == 61 && moveY == 37)
+				{
+					Dialog(" 트롤족에 의한 베스퍼성 침공은 에인션트 이블이 배후 조종한 것이라고  로드안님이 그러시더군요.");
+				}
+				else if (moveX == 41 && moveY == 30)
+				{
+					Dialog(" 크리스탈로 소환 시킨 몇몇의 생물들은 절대 주인을 배반하지 않는다고 하더군요.");
+				}
+				else if ((moveX == 49 && moveY == 50) || (moveX == 51 && moveY == 50))
+					Dialog(" 당신의 성공을 진심으로 기원합니다.");
+				else if (47 <= moveX && moveX <= 53 && 30 <= moveY && moveY <= 36)
+				{
+					if (mParty.Etc[19] < 3)
+						Dialog(" 어서 우리 성주님을 만나 보시지요.");
+					else
+						Dialog(" 만세, 만세, 만만세, 로드안 만세");
+				}
+				else if (moveX == 50 && moveY == 27)
+				{
+					if (mParty.Etc[19] == 2)
+					{
+						Talk(new string[] {
+						" 나는 베스퍼성 원정에 따른  지원자를  찾고 있었소. 여러 방면으로 수소문한 끝에 당신을 선택하게 된거요." +
+						" 만약 당신이 베스퍼성 원정을 성공리에 끝낸다면  당신의 전과는 말끔이 없에 주겠소.  그리고 당신이 원하는 삶을 제공해 줄 의양도 있소." +
+						" 당신이 주축이 되어 여러 용사들을 합세 시킬 수도 있소. 당신이 성공적으로 임무를 완수하기 위한  자금도 주겠소." +
+						"  베스퍼성의  위치를  잘 모르겠다면  마을 사람들에게 물어 보면 될거요.  다른 성에서 온 원정대와  별개로 행동해도  상관없소." +
+						" 그리고  내가 다른 성의 성주들에게도 당신에게 호의를 베풀어 주도록 부탁했으니  아프로디테 테라까지 가는데 별 어려움은 없을거요. 당신을 믿겠소.",
+						"",
+						$"[color={RGB.LightCyan}] [[ 황금 + 5,000 ][/color]"
+						}, SpecialEventType.None);
+
+						mParty.Gold += 5_000;
+						mParty.Etc[19]++;
+					}
+					else if (mParty.Etc[19] == 3)
+					{
+						Dialog(" 당신은 아프로디테 테라의 베스퍼성으로  지금 즉시 떠나야 하오.");
+					}
+					else if (mParty.Etc[19] == 4)
+					{
+						Dialog(new string[] {
+							$" {mPlayerList[0].Name}, 정말 장한 일을 해주었소.",
+							" 이제 당신은 완전한 자유의 몸이오. 이건 나의 성의라오.",
+							$"[color={RGB.LightCyan}] [[ 황금 + 40,000 ] [[ 경험치 + 200,000 ][/color]"
+						});
+
+						mParty.Gold += 40_000;
+						foreach (var player in mPlayerList)
+						{
+							player.Experience += 200_000;
+						}
+
+						if (mAssistPlayer != null)
+							mAssistPlayer.Experience += 200_000;
+
+						mParty.Etc[19]++;
+					}
+					else if (mParty.Etc[19] == 5)
+					{
+						Talk(" 당신에게  한 가지 부탁을  더 해도 되겠소? 이 일은 당신과 같은 영웅들만이  할 수 있기 때문에  당신에게 부탁하는 것이오." +
+						"  아직 이 세계에는 인간 이외에 코볼트족과 드라코니안족이 있소." +
+						"  그 종족들은 오크나 트롤같은 하급 종족에 비해서는  월등한 전투력을 가지고 있는데다가 드라코니안족 같은 경우에 있어서는 우리보다 더 뛰어난 지능과 문화를 가지고 있소." +
+						"  그들은 2개의 대륙을 차지하고 있으면서 항상 인간들을 배척하고 있기 때문에 인간들의 진출을 방해하는 요소라고  할 수 있소." +
+						" 만약 그들이 우리들이 있는 대륙을  침범한다면 어떻게 될런지는 충분히 예상될거요." +
+						" 특히 드라코니안족이 덤벼든다면 로어 대륙을 제외하고는 모두 전멸 될것이 뻔한 일인데다가 이곳 역시도 그리 오래는 대항하기 힘들것이오." +
+						" 그들이 숭배하고 있는 악의 화신 에인션트 이블이 그들을 선동하여 이곳으로 쳐들어왔을때를 상상해 봤소?  아마  수천년을 유지해오던 이곳의 평화는 산산히 깨어져 버릴 것이오."
+						, SpecialEventType.None);
+
+						mParty.Etc[19]++;
+					}
+					else if (mParty.Etc[19] == 6)
+					{
+						Dialog(" 당신에게 부탁하겠소.  코볼트족과 드라코니안족을 선제 공격하여  이곳의 평화를 보장하고  신대륙 개척을 앞당기게 해주시오." +
+						"  만약 당신이 그 두 종족을 멸해준다면 나는 우라누스테라를 당신에게 넘겨줄 의양도 있소. 제발 부탁하오.");
+					}
+					else if (mParty.Etc[19] == 7)
+					{
+						Talk(new string[] {
+						$" 돌아왔군요. {mPlayerList[0].Name}.",
+						" 역시 내가 보는 눈은 정확했소.  당신이라면 분명히  우리에게  승리를 안겨줄거란걸 알았소. 당신에게 주기로 약속한 우라누스 테라도 곧 당신의 손에 들어갈 거요." +
+						" 그리고 그때 당신은 그곳의 성주가 되는 것이오.",
+						$"[color={RGB.LightCyan}]  [[ 황금 + 100,000 ] [[ 경험치 + 2,500,000][/color]"
+						}, SpecialEventType.RequestSuppressVariantPeoples);
+
+						mParty.Gold += 100_000;
+						
+						foreach (var player in mPlayerList) {
+							player.Experience += 2_500_000;
+						}
+
+						if (mAssistPlayer != null)
+							mAssistPlayer.Experience += 2_500_000;
+					}
+					else if (mParty.Etc[19] == 8) {
+						Dialog(" 즉시 배리언트 피플즈로 가서 폭동을 진압해 주시오." +
+						"  당신이 그 일을 끝내고 돌아오면 나는 당신에게 공작의 작위와 함께 우라누스 테라에  당신의 공국을 건설하도록 허락해 주겠소.");
+					}
+					else if (mParty.Etc[19] == 9) {
+						Talk(new string[] {
+							" 당신 덕택에  세상은 완전한 평화를 얻게 되었소.  그리고 약속한대로 당신에게 우라누스 테라의 통치권과 공작의 칭호를 내려주겠소.",
+							$" 축하하오, {mPlayerList[0].Name} 공작...",
+							" 그런데  미안하지만 한가지 부탁만  더 들어주겠소? 당신이 멸망시킨 네종족이 사실은 완전히 사라진게 아니오." +
+							" 그들은 지금 현재, 죽어간 그 종족의 의지가  하나로 뭉쳐  자신이 있던 대륙에  원혼이 되어 남아있소." +
+							"  그것들 중에서는  스스로의 의지로 이곳을 향해 오는 원혼도 있소." +
+							"  그 원혼들이 이 대륙에 들어와서 우리에게 복수하기 전에 우리가 먼저 그들을 발견하여 강한 힘속에 봉인 시켜 버려야하오." +
+							" 그래서 부탁하건데, 이 크리스탈 볼을 받으시오. 이 크리스탈 볼 속을 들여다 보면 오크, 트롤, 코볼트, 드라코니안 종족의 원혼이 있는 장소가 드러날꺼요." +
+							" 그리고 그 장소에서 그들의 원혼을 발견하여 크리스탈 볼 속에 봉인 시켜 버리시오. 네 종족을 모두 봉인 시켰을때  그 크리스탈 볼을 나에게 가져오면  그이후는 내가 알아서 하겠소." +
+							"  그리고  당신의 영토인 우라누스 테라로 이동 시켜 주겠소.",
+							$"[color={RGB.LightCyan}] [[ 크리스탈 볼 + 1 ][/color]"
+						}, SpecialEventType.None);
+
+						mParty.Crystal[8]++;
+						mParty.Etc[19]++;
+					}
+					else if (mParty.Etc[19] == 10) {
+						mXAxis = 50;
+						mYAxis = 30;
+
+						mFace = 1;
+						if (mPlayerList[0].ClassType == ClassCategory.Magic)
+							mFace += 8;
+
+						InvokeAnimation(AnimationType.PassCrystal);
+					}
 				}
 			}
 		}
@@ -9676,9 +9940,11 @@ namespace MysticUWP
 					Task.Delay(1000).Wait();
 				else if (mAnimationEvent == AnimationType.MeetFriend)
 					Task.Delay(1000).Wait();
-				else if (mAnimationEvent == AnimationType.LeftManager) {
+				else if (mAnimationEvent == AnimationType.LeftManager)
+				{
 					var tile = 43;
-					for (var y = 32; y < 36; y++) {
+					for (var y = 32; y < 36; y++)
+					{
 						UpdateTileInfo(26, y - 1, tile);
 						tile = GetTileInfo(26, y);
 						UpdateTileInfo(26, y, 21);
@@ -9686,17 +9952,20 @@ namespace MysticUWP
 					}
 					UpdateTileInfo(26, 35, tile);
 				}
-				else if (mAnimationEvent == AnimationType.CaptureProtagonist) {
+				else if (mAnimationEvent == AnimationType.CaptureProtagonist)
+				{
 					for (var i = 1; i <= 5; i++)
 					{
 						mAnimationFrame = i;
 						Task.Delay(500).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.GotoCourt) {
+				else if (mAnimationEvent == AnimationType.GotoCourt)
+				{
 					AnimateTransition();
 				}
-				else if (mAnimationEvent == AnimationType.GotoCourt2) {
+				else if (mAnimationEvent == AnimationType.GotoCourt2)
+				{
 					for (var i = 1; i <= 6; i++)
 					{
 						mAnimationFrame = i;
@@ -9724,8 +9993,49 @@ namespace MysticUWP
 					Task.Delay(2000).Wait();
 
 				}
-				else if (mAnimationEvent == AnimationType.MeetCanopus) {
+				else if (mAnimationEvent == AnimationType.MeetCanopus)
+				{
 					Task.Delay(2000).Wait();
+				}
+				else if (mAnimationEvent == AnimationType.PassCrystal)
+				{
+					AnimateTransition();
+					Task.Delay(1000).Wait();
+				}
+				else if (mAnimationEvent == AnimationType.PassCrystal2)
+				{
+					for (var i = 1; i <= 5; i++)
+					{
+						mAnimationFrame = i;
+						if (i == 3)
+							Task.Delay(1000).Wait();
+						else
+							Task.Delay(500).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.SealCrystal || mAnimationEvent == AnimationType.SealCrystal2)
+				{
+					Task.Delay(1000).Wait();
+				}
+				else if (mAnimationEvent == AnimationType.TransformProtagonist)
+					Task.Delay(3000).Wait();
+				else if (mAnimationEvent == AnimationType.TransformProtagonist2)
+					Task.Delay(2000).Wait();
+				else if (mAnimationEvent == AnimationType.ComeSoldier) {
+					for (var i = 1; i <= 3; i++) {
+						mAnimationFrame = i;
+						Task.Delay(1000).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.FollowSoldier) {
+					for (var i = 1; i <= 5; i++)
+					{
+						mAnimationFrame = i;
+						if (i == 1)
+							Task.Delay(2000).Wait();
+						else
+							Task.Delay(800).Wait();
+					}
 				}
 			});
 
@@ -9819,6 +10129,74 @@ namespace MysticUWP
 
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
+			}
+			else if (mAnimationEvent == AnimationType.PassCrystal) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				Talk(new string[] {
+				$"[color={RGB.LightGreen}] 오, {mPlayerList[0].Name} 공작![/color]",
+				$"[color={RGB.LightGreen}] 당신은 나의 마지막 부탁까지 훌륭하게 들어주었소.  이제는 당신에게 더 이상 이런 일을 시키지 않겠다고 약속하오." +
+				"  먼저, 네 종족의 원혼을 봉인한 크리스탈 볼을 이리 주시오.[/color]"
+				}, SpecialEventType.PassCrystal);
+			}
+			else if (mAnimationEvent == AnimationType.PassCrystal2) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				Dialog($"[color={RGB.LightGreen}] 이제는 이 수정구슬을 완전히 봉인해서 다시는 그들의 원혼이 우리를 위협하지 못하게 해야겠소.[/color]");
+				InvokeAnimation(AnimationType.SealCrystal);
+			}
+			else if (mAnimationEvent == AnimationType.SealCrystal) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				Talk(new string[] {
+					"",
+					" 로드안의  손에 들린 크리스탈 볼이  가볍게 떠오르기 시작했다. 로드안은 차츰 양손의 기력을 증강 시켰고 크리스탈 볼은 붉게 달아오르기 시작했다." +
+					" 곧이어 크리스탈 볼은 이글거리는 에너지 공으로 변하였다."
+				}, SpecialEventType.SealCrystal, true);
+			}
+			else if (mAnimationEvent == AnimationType.SealCrystal2)
+			{
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				Talk(new string[] {
+					"",
+					" 로드안이 양손을 내리자 에너지 공은 서서히 밑으로 떨어지기 시작했다.  그리고는 바닥에 스며드는 것처럼 땅속으로 사라져 버렸다."
+				}, SpecialEventType.SendUranos, true);
+			}
+			else if (mAnimationEvent == AnimationType.TransformProtagonist) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				Talk(new string[] {
+					"",
+					" 지금  주위에는 아무도 없다는 것을  확인한 로드안은  갑자기 당신을 향해 독심을 사용하기 시작했다." +
+					"  당신은 긴장을 완전히 풀고 있었던데다가 로드안의 갑작스런 최면에 말려들어  방어를 할 기회도 없이  그에게 독심술을 당하였다." +
+					" 당신은 곧 당신의 자유의사를 잃어버렸고 정신이 아득해지기 시작하였다."
+				}, SpecialEventType.TransformProtagonist2, true);
+			}
+			else if (mAnimationEvent == AnimationType.TransformProtagonist2) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				Talk(new string[] {
+					$"[color={RGB.LightGreen}] 당신은 이제 악의 추종자로서의 형체를 갖추었다네. 4 m 가량의 키와 강력한 마력을 겸비한 악의 최대 전투사로서..." +
+					$"  당신은 이제[/color] [color={RGB.LightCyan}]네크로만서[/color][color={RGB.LightGreen}]란 이름으로  이 세상의 평화가 오래 지속 될 때  이 세상을 위협하려 내려올 운명을 가지게 되었다네." +
+					"  당신은 그때  우라누스 테라를 기점으로 세력을 뻗치게 될걸세. 그때는 당신이 우라누스 테라의 주인이 될거라네. 아마 그때서야  내가 당신에게 우라누스 테라를 주겠다는 약속이 지켜질 걸세.[/color]",
+					"",
+					$"[color={RGB.LightGreen}] 그럼... 안녕, 네크로만서.[/color]"
+				}, SpecialEventType.SendNecromancer);
+			}
+			else if (mAnimationEvent == AnimationType.ComeSoldier)
+			{
+				Talk($"[color={RGB.LightBlue}] 어이, {mPlayerList[0].Name}. 로드안님이 널 찾으신다. 따라와![/color]", SpecialEventType.FollowSolider);
+			}
+			else if (mAnimationEvent == AnimationType.FollowSoldier)
+			{
+				
 			}
 			else
 			{
@@ -9979,7 +10357,7 @@ namespace MysticUWP
 
 				if (mCharacterTiles != null && mFace >= 0)
 				{
-					if (mAnimationEvent != AnimationType.GotoCourt2)
+					if (mAnimationEvent != AnimationType.GotoCourt2 && mAnimationEvent != AnimationType.FollowSoldier)
 						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
 
 					if (mAnimationEvent == AnimationType.CaptureProtagonist && mAnimationFrame > 0)
@@ -10010,17 +10388,8 @@ namespace MysticUWP
 						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis), Vector4.One);
 						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), Vector4.One);
 					}
-					//	if (mAnimationEvent == AnimationType.EnterFortressOfMephistopheles && mAnimationFrame <= 6)
-					//	{
-					//		mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY + (6 - mAnimationFrame)), Vector4.One);
-					//	}
-					//	else
-					//	{
-
-
-					//		if (mMenuMode == MenuMode.MeetAhnYoungKi)
-					//			mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(playerX - 1, playerY), Vector4.One);
-					//	}
+					else if (mAnimationEvent == AnimationType.FollowSoldier) 
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX + (mAnimationFrame - 1), playerY), Vector4.One);
 				}
 			}
 
@@ -10096,134 +10465,24 @@ namespace MysticUWP
 				else if (tileIdx == 0)
 					tileIdx = mMapHeader.Default;
 
-				//	//#endif
-				//	{
-				//		//#if DEBUG
-				//		//					tileIdx = 0;
-				//		//#else
-				//		switch (mMapName)
-				//		{
-				//			case 1:
-				//				tileIdx = 41;
-				//				break;
-				//			case 2:
-				//				tileIdx = 44;
-				//				break;
-				//			case 3:
-				//				tileIdx = 10;
-				//				break;
-				//			case 4:
-				//				tileIdx = 10;
-				//				break;
-				//			case 5:
-				//				tileIdx = 0;
-				//				break;
-				//			case 6:
-				//				tileIdx = 44;
-				//				break;
-				//			case 7:
-				//				tileIdx = 45;
-				//				break;
-				//			case 8:
-				//				tileIdx = 47;
-				//				break;
-				//			case 9:
-				//				tileIdx = 47;
-				//				break;
-				//			case 10:
-				//				tileIdx = 0;
-				//				break;
-				//			case 11:
-				//				tileIdx = 41;
-				//				break;
-				//			case 12:
-				//				tileIdx = 0;
-				//				break;
-				//			case 13:
-				//				tileIdx = 41;
-				//				break;
-				//			case 14:
-				//				tileIdx = 43;
-				//				break;
-				//			case 15:
-				//				tileIdx = 44;
-				//				break;
-				//			case 16:
-				//				tileIdx = 42;
-				//				break;
-				//			case 17:
-				//				tileIdx = 0;
-				//				break;
-				//			case 18:
-				//				tileIdx = 41;
-				//				break;
-				//		}
-				//		//#endif
-				//	}
-
-				//	if (mAnimationEvent == AnimationType.Cookie)
-				//	{
-
-				//		if (column == playerX - 1 && row == playerY + (6 - mAnimationFrame))
-				//			mMapTiles.Draw(sb, 50 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//		else
-				//			mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//	}
-				//	else if (mAnimationEvent == AnimationType.LordAhnCall)
-				//	{
-				//		if (row == 48 && 1 <= mAnimationFrame && mAnimationFrame <= 4)
-				//		{
-				//			if (column == 23 - mAnimationFrame)
-				//				mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//			else
-				//				mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//		}
-				//		else if (mAnimationFrame >= 5)
-				//		{
-				//			if (column == 19)
-				//			{
-				//				if (playerY > 48 && row == 44 + mAnimationFrame)
-				//				{
-				//					mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//				}
-				//				else if (playerY < 48 && row == playerY - (mAnimationFrame - 5))
-				//				{
-				//					mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//				}
-				//				else
-				//					mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//			}
-				//			else
-				//				mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//		}
-				//		else
-				//			mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//	}
-				//	else if (mAnimationEvent == AnimationType.LeaveSoldier)
-				//	{
-				//		if (mAnimationFrame <= 3)
-				//		{
-				//			if (column == mAnimationFrame + 18 && row == playerY)
-				//				mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//			else
-				//				mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//		}
-				//		else if (mAnimationFrame <= Math.Abs(playerY - 48) + 3)
-				//		{
-				//			if (playerY < 48 && row == playerY + (mAnimationFrame - 3) && column == 21)
-				//				mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//			else if (playerY > 48 && row == playerY - (mAnimationFrame - 3) && column == 21)
-				//				mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//			else
-				//				mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//		}
-				//		else if (column == 22 && row == 48)
-				//			mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//		else
-				//			mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				//	}
-				//	else
-				mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				if (mAnimationEvent == AnimationType.ComeSoldier && mAnimationFrame > 0) {
+					if (column == playerX + (5 - mAnimationFrame) && playerY == row)
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.FollowSoldier && mAnimationFrame > 0) {
+					if (column == playerX + 1 && playerY == row)
+						mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else if (column == playerX + 2 && playerY == row && mAnimationFrame <= 2)
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else if (column == playerX + mAnimationFrame && playerY == row && mAnimationFrame >= 3)
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else
+					mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 			}
 		}
 
@@ -10405,7 +10664,18 @@ namespace MysticUWP
 			Interrogation,
 			Punishment,
 			GotoJail,
-			LiveJail
+			LiveJail,
+			RequestSuppressVariantPeoples,
+			PassCrystal,
+			SealCrystal,
+			SendUranos,
+			ClearRoom,
+			TransformProtagonist,
+			TransformProtagonist2,
+			TransformProtagonist3,
+			TransformProtagonist4,
+			SendNecromancer,
+			FollowSolider
 		}
 
 		private enum BattleEvent
@@ -10437,7 +10707,16 @@ namespace MysticUWP
 			SubmitProof,
 			GotoJail,
 			MeetCanopus,
-			LiveJail
+			LiveJail,
+			PassCrystal,
+			PassCrystal2,
+			SealCrystal,
+			SealCrystal2,
+			TransformProtagonist,
+			TransformProtagonist2,
+			SendNecromancer,
+			ComeSoldier,
+			FollowSoldier
 		}
 
 		private enum SpinnerType
