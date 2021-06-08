@@ -1334,6 +1334,13 @@ namespace MysticUWP
 						else if (specialEvent == SpecialEventType.FollowSolider) {
 							InvokeAnimation(AnimationType.FollowSoldier);
 						}
+						else if (specialEvent == SpecialEventType.LordAhnMission) {
+							Talk($"[color={RGB.LightGreen}] 당신이  살인 죄로 잡혀오기 전까지는  주위 사람들에게 매우 인정받은 용감한 사람이었다는 것을 알고 있소." +
+							"  내가 지금 부탁하는  몇가지를 들어 준다면 당신에게 그 댓가로 자유로운 삶을 보장하겠소.[/color]", SpecialEventType.LeaveSoldier);
+						}
+						else if (specialEvent == SpecialEventType.LeaveSoldier) {
+							InvokeAnimation(AnimationType.LeaveSoldier);
+						}
 					}
 
 
@@ -10037,6 +10044,29 @@ namespace MysticUWP
 							Task.Delay(800).Wait();
 					}
 				}
+				else if (mAnimationEvent == AnimationType.FollowSoldier2) {
+					AnimateTransition();
+
+					Task.Delay(2000).Wait();
+
+					mXAxis = 50;
+					mYAxis = 30;
+
+					mFace = 1;
+					if (mPlayerList[0].ClassType == ClassCategory.Magic)
+						mFace += 8;
+
+					for (var i = 118; i <= 123; i++) {
+						mAnimationFrame = i;
+						Task.Delay(700).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.LeaveSoldier) {
+					for (var i = 1; i <= 6; i++) {
+						mAnimationFrame = i;
+						Task.Delay(700).Wait();
+					}
+				}
 			});
 
 			await animationTask;
@@ -10196,7 +10226,29 @@ namespace MysticUWP
 			}
 			else if (mAnimationEvent == AnimationType.FollowSoldier)
 			{
-				
+				InvokeAnimation(AnimationType.FollowSoldier2);
+			}
+			else if (mAnimationEvent == AnimationType.FollowSoldier2)
+			{
+				Talk(new string[] {
+					$"[color={RGB.LightGreen}] 음.. 당신이 {mPlayerList[0].NameObjectJosa} 사람이오?[/color]",
+					$"[color={RGB.LightGreen}] 내가 당신을 특별히 부른 이유는  다름이 아니라  당신을 특별 사면 시켜주려는 의도에서라오.[/color]"
+				}, SpecialEventType.LordAhnMission);
+			}
+			else if (mAnimationEvent == AnimationType.LeaveSoldier) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				Talk(" 674년 1월 17일 날, 로어 세계에서는 커다란 참변이 있었소. 당신은 이전에도 인류와 타종족간에 사이가 않좋았다는 것을 기억 할 거요." +
+				"또한  사소한 영토분쟁이 많았던 것도 사실이오." +
+				"  그런데 바로 이날 수백년의 역사를 지님 아프로디테 테라의 베스퍼성이 트롤족에 의해 완전히 함락 당했던 것이오." +
+				" 거기서 가까스로 탈출한 사람들의 말을 빌면 그 날 베스퍼성은 처절한 절규와  아비규환 속에서  아이들이나 부녀자 할것없이 모두 처참히 죽어 갔다고 하오." +
+				"  트롤족은 시체가 즐비한 거리에서  환각 작용제를 맞으며  광적인 살인을 계속 해대었다고 하는 탈출자의 말을 듣고" +
+				"  나는 분을 참지 못해 모든 성주들을 불러서 타종족과의 전쟁을 결의 했소. 이렇게 함으로서 베스퍼성에서 죽어간 사람들의 원혼을 달래 주려는 의도라오.",
+				SpecialEventType.None);
+
+				mParty.Etc[19] = 2;
+				SetBit(0);
 			}
 			else
 			{
@@ -10357,7 +10409,7 @@ namespace MysticUWP
 
 				if (mCharacterTiles != null && mFace >= 0)
 				{
-					if (mAnimationEvent != AnimationType.GotoCourt2 && mAnimationEvent != AnimationType.FollowSoldier)
+					if (mAnimationEvent != AnimationType.GotoCourt2 && mAnimationEvent != AnimationType.FollowSoldier && mAnimationEvent != AnimationType.FollowSoldier2)
 						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
 
 					if (mAnimationEvent == AnimationType.CaptureProtagonist && mAnimationFrame > 0)
@@ -10369,13 +10421,13 @@ namespace MysticUWP
 						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + 1), Vector4.One);
 						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + 1), Vector4.One);
 					}
-					if (mAnimationEvent == AnimationType.GotoCourt2 && mAnimationFrame > 0)
+					else if (mAnimationEvent == AnimationType.GotoCourt2 && mAnimationFrame > 0)
 					{
 						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (6 - mAnimationFrame)), Vector4.One);
 						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (6 - mAnimationFrame)), Vector4.One);
 						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis + (6 - mAnimationFrame)), Vector4.One);
 					}
-					if (mAnimationEvent == AnimationType.SubmitProof && mAnimationFrame > 0)
+					else if (mAnimationEvent == AnimationType.SubmitProof && mAnimationFrame > 0)
 					{
 						if (mAnimationFrame <= 3)
 							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis - mAnimationFrame), Vector4.One);
@@ -10390,12 +10442,22 @@ namespace MysticUWP
 					}
 					else if (mAnimationEvent == AnimationType.FollowSoldier) 
 						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX + (mAnimationFrame - 1), playerY), Vector4.One);
+					else if (mAnimationEvent == AnimationType.FollowSoldier2 && mAnimationFrame >= 118)
+					{
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (123 - mAnimationFrame)), Vector4.One);
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (123 - mAnimationFrame)), Vector4.One);
+					}
+					else if (mAnimationEvent == AnimationType.LeaveSoldier && mAnimationFrame > 0)
+					{
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (mAnimationFrame - 1)), Vector4.One);
+					}
 				}
 			}
 
-			if (mAnimationEvent == AnimationType.GotoCourt ||
+			if ((mAnimationEvent == AnimationType.GotoCourt ||
 				mAnimationEvent == AnimationType.GotoJail ||
-				mAnimationEvent == AnimationType.LiveJail)
+				mAnimationEvent == AnimationType.LiveJail || 
+				mAnimationEvent == AnimationType.FollowSoldier2) && mAnimationFrame <= 117)
 				AnimateTransition(mAnimationFrame, playerX, playerY);
 		}
 
@@ -10465,19 +10527,28 @@ namespace MysticUWP
 				else if (tileIdx == 0)
 					tileIdx = mMapHeader.Default;
 
-				if (mAnimationEvent == AnimationType.ComeSoldier && mAnimationFrame > 0) {
+				if (mAnimationEvent == AnimationType.ComeSoldier && mAnimationFrame > 0)
+				{
 					if (column == playerX + (5 - mAnimationFrame) && playerY == row)
 						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 					else
 						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				}
-				else if (mAnimationEvent == AnimationType.FollowSoldier && mAnimationFrame > 0) {
+				else if (mAnimationEvent == AnimationType.FollowSoldier && mAnimationFrame > 0)
+				{
 					if (column == playerX + 1 && playerY == row)
 						mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 					else if (column == playerX + 2 && playerY == row && mAnimationFrame <= 2)
 						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 					else if (column == playerX + mAnimationFrame && playerY == row && mAnimationFrame >= 3)
 						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.FollowSoldier2 && mAnimationFrame > 0)
+				{
+					if (column == playerX + 1 && playerY == row && mAnimationFrame <= 117)
+						mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 					else
 						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				}
@@ -10675,7 +10746,9 @@ namespace MysticUWP
 			TransformProtagonist3,
 			TransformProtagonist4,
 			SendNecromancer,
-			FollowSolider
+			FollowSolider,
+			LordAhnMission,
+			LeaveSoldier
 		}
 
 		private enum BattleEvent
@@ -10716,7 +10789,9 @@ namespace MysticUWP
 			TransformProtagonist2,
 			SendNecromancer,
 			ComeSoldier,
-			FollowSoldier
+			FollowSoldier,
+			FollowSoldier2,
+			LeaveSoldier
 		}
 
 		private enum SpinnerType
