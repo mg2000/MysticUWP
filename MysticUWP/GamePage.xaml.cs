@@ -766,118 +766,6 @@ namespace MysticUWP
 					}
 				}
 
-				bool IsUsableWeapon(Lore player, int weapon)
-				{
-					if (player.ClassType == ClassCategory.Magic)
-						return false;
-					else
-					{
-						if ((player.Class == 1 || player.Class == 2 || player.Class == 3 || player.Class == 6 || player.Class == 7) && 1 <= weapon && weapon <= 7)
-							return true;
-						else if ((player.Class == 1 || player.Class == 2 || player.Class == 4) && 8 <= weapon && weapon <= 14)
-							return true;
-						else if ((player.Class == 1 || player.Class == 2 || player.Class == 4 || player.Class == 6 || player.Class == 7) && 15 <= weapon && weapon <= 21)
-							return true;
-						else if ((player.Class == 1 || player.Class == 4 || player.Class == 6 || player.Class == 7) && 22 <= weapon && weapon <= 28)
-							return true;
-						else
-							return false;
-					}
-				}
-
-				bool IsUsableShield(Lore player)
-				{
-					if (player.ClassType == ClassCategory.Magic)
-						return false;
-					else
-					{
-						if (player.Class == 1 || player.Class == 2 || player.Class == 3 || player.Class == 7)
-							return true;
-						else
-							return false;
-					}
-				}
-
-				bool IsUsableArmor(Lore player, int armor)
-				{
-					if (player.ClassType == ClassCategory.Magic && armor == 1)
-						return true;
-					else if (player.ClassType == ClassCategory.Sword && ((1 <= armor && armor <= 10) || armor == 255))
-						return true;
-					else
-						return false;
-				}
-
-				void UpdateItem(Lore player)
-				{
-					var weaponData = new int[,,] {
-						{
-							{ 15, 15, 15, 15, 15, 25, 15 },
-							{ 30, 30, 25, 25, 25, 25, 30 },
-							{ 35, 40, 35, 35, 35, 35, 40 },
-							{ 45, 48, 50, 40, 40, 40, 40 },
-							{ 50, 55, 60, 50, 50, 50, 55 },
-							{ 60, 70, 70, 60, 60, 60, 65 },
-							{ 70, 70, 80, 70, 70, 70, 70 }
-						},
-						{
-							{ 15, 15, 15, 15, 15, 15, 15 },
-							{ 35, 30, 30, 37, 30, 30, 30 },
-							{ 35, 40, 35, 35, 35, 35, 35 },
-							{ 52, 45, 45, 45, 45, 45, 45 },
-							{ 60, 60, 55, 55, 55, 55, 55 },
-							{ 75, 70, 70, 70, 70, 70, 70 },
-							{ 80, 85, 80, 80, 80, 80, 80 }
-						},
-						{
-							{ 10, 10, 10, 25, 10, 20, 10 },
-							{ 35, 40, 35, 35, 35, 35, 40 },
-							{ 35, 30, 30, 35, 30, 30, 30 },
-							{ 40, 40, 40, 45, 40, 40, 40 },
-							{ 60, 60, 60, 60, 60, 60, 60 },
-							{ 80, 80, 80, 80, 80, 80, 80 },
-							{ 90, 90, 90, 90, 90, 90, 90 }
-						},
-						{
-							{ 10, 10, 10, 15, 10, 15, 10 },
-							{ 10, 10, 10, 10, 10, 20, 10 },
-							{ 20, 20, 20, 27, 20, 20, 20 },
-							{ 35, 35, 35, 40, 35, 38, 35 },
-							{ 45, 45, 45, 55, 45, 45, 45 },
-							{ 55, 55, 55, 65, 55, 55, 55 },
-							{ 70, 70, 70, 85, 70, 70, 70 }
-						}
-					};
-
-					if (IsUsableWeapon(player, player.Weapon))
-					{
-						if (player.Weapon > 0)
-						{
-							int sort = (player.Weapon - 1) / 7;
-							int order = player.Weapon % 7;
-							player.WeaPower = weaponData[sort, order, player.Class - 1];
-						}
-						else
-							player.WeaPower = 5;
-					}
-
-					if (IsUsableShield(player))
-						player.ShiPower = player.Shield;
-					else
-						player.ShiPower = 0;
-
-					if (IsUsableArmor(player, player.Armor))
-					{
-						player.ArmPower = player.Armor;
-						if (player.Armor == 255)
-							player.ArmPower = 20;
-					}
-					else
-						player.ArmPower = 0;
-
-					player.AC = player.PotentialAC + player.ArmPower;
-				}
-
 				void ShowHealType()
 				{
 					AppendText(new string[] { $"[color={RGB.White}]어떤 치료입니까?[/color]" });
@@ -1340,6 +1228,15 @@ namespace MysticUWP
 						}
 						else if (specialEvent == SpecialEventType.LeaveSoldier) {
 							InvokeAnimation(AnimationType.LeaveSoldier);
+						}
+						else if (specialEvent == SpecialEventType.ConfirmPardon) {
+							InvokeAnimation(AnimationType.ConfirmPardon);
+						}
+						else if (specialEvent == SpecialEventType.ConfirmPardon2) {
+							InvokeAnimation(AnimationType.ConfirmPardon3);
+						}
+						else if (specialEvent == SpecialEventType.JoinCanopus) {
+							InvokeAnimation(AnimationType.JoinCanopus);
 						}
 					}
 
@@ -2007,167 +1904,9 @@ namespace MysticUWP
 								mXAxis = mPrevX;
 								mYAxis = mPrevY;
 							}
+							else if (menuMode == MenuMode.JoinCanopus)
+								InvokeAnimation(AnimationType.LeaveCanopus);
 							
-						}
-						else if (menuMode == MenuMode.JoinFriend)
-							AfterJoinFriendEvent();
-						else if (menuMode == MenuMode.JoinAlcor) {
-							if (mMenuFocusID == 0)
-							{
-								if (mPlayerList.Count < 5)
-								{
-									var alcor = new Lore()
-									{
-										Name = "알코르",
-										Gender = GenderType.Male,
-										Class = 3,
-										ClassType = ClassCategory.Sword,
-										Level = 2,
-										Strength = 15,
-										Mentality = 5,
-										Concentration = 6,
-										Endurance = 12,
-										Resistance = 15,
-										Agility = 14,
-										Accuracy = 16,
-										Luck = 12,
-										Poison = 0,
-										Unconscious = 0,
-										Dead = 0,
-										SP = 0,
-										Experience = 0,
-										Weapon = 3,
-										Shield = 0,
-										Armor = 1,
-										PotentialAC = 2,
-										SwordSkill = 40,
-										AxeSkill = 0,
-										SpearSkill = 0,
-										BowSkill = 0,
-										ShieldSkill = 0,
-										FistSkill = 10
-									};
-
-									alcor.HP = alcor.Endurance * alcor.Level * 10;
-									alcor.UpdatePotentialExperience();
-									UpdateItem(alcor);
-
-									UpdateTileInfo(21, 49, 44);
-									SetBit(36);
-								}
-								else
-								{
-									Dialog(" 벌써 사람이 모두 채워져 있군요.  다음 기회를 기다리지요.");
-								}
-							}
-							else
-								ShowNoThanks();
-						}
-						else if (menuMode == MenuMode.JoinMizar)
-						{
-							if (mMenuFocusID == 0)
-							{
-								if (mPlayerList.Count < 5)
-								{
-									var mizar = new Lore()
-									{
-										Name = "미자르",
-										Gender = GenderType.Male,
-										Class = 2,
-										ClassType = ClassCategory.Sword,
-										Level = 2,
-										Strength = 13,
-										Mentality = 6,
-										Concentration = 8,
-										Endurance = 15,
-										Resistance = 16,
-										Agility = 16,
-										Accuracy = 15,
-										Luck = 14,
-										Poison = 0,
-										Unconscious = 0,
-										Dead = 0,
-										SP = 0,
-										Experience = 0,
-										Weapon = 2,
-										Shield = 1,
-										Armor = 2,
-										PotentialAC = 2,
-										SwordSkill = 20,
-										AxeSkill = 10,
-										SpearSkill = 5,
-										BowSkill = 0,
-										ShieldSkill = 10,
-										FistSkill = 10
-									};
-
-									mizar.HP = mizar.Endurance * mizar.Level * 10;
-									mizar.UpdatePotentialExperience();
-									UpdateItem(mizar);
-
-									UpdateTileInfo(21, 53, 44);
-									SetBit(37);
-								}
-								else
-								{
-									Dialog(" 벌써 사람이 모두 채워져 있군요.  다음 기회를 기다리지요.");
-								}
-							}
-							else
-								ShowNoThanks();
-						}
-						else if (menuMode == MenuMode.JoinAntaresJr)
-						{
-							if (mMenuFocusID == 0)
-							{
-								if (mPlayerList.Count < 5)
-								{
-									var antaresJr = new Lore()
-									{
-										Name = "안타레스 Jr.",
-										Gender = GenderType.Male,
-										Class = 4,
-										ClassType = ClassCategory.Magic,
-										Level = 15,
-										Strength = 10,
-										Mentality = 20,
-										Concentration = 20,
-										Endurance = 15,
-										Resistance = 17,
-										Agility = 19,
-										Accuracy = 17,
-										Luck = 18,
-										Poison = 0,
-										Unconscious = 0,
-										Dead = 0,
-										SP = 0,
-										Experience = 0,
-										Weapon = 0,
-										Shield = 0,
-										Armor = 2,
-										PotentialAC = 0,
-										AttackMagic = 60,
-										PhenoMagic = 30,
-										CureMagic = 30,
-										SpecialMagic = 0,
-										ESPMagic = 0,
-										SummonMagic = 0
-									};
-
-									antaresJr.HP = antaresJr.Endurance * antaresJr.Level * 10;
-									antaresJr.UpdatePotentialExperience();
-									UpdateItem(antaresJr);
-
-									UpdateTileInfo(17, 37, 47);
-									SetBit(38);
-								}
-								else
-								{
-									Dialog(" 벌써 사람이 모두 채워져 있군.  다음 기회를 기다리도록 하지.");
-								}
-							}
-							else
-								ShowNoThanks();
 						}
 					}
 					else if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
@@ -5108,6 +4847,183 @@ namespace MysticUWP
 								AfterJoinFriendEvent();
 							}
 						}
+						else if (menuMode == MenuMode.JoinFriend)
+							AfterJoinFriendEvent();
+						else if (menuMode == MenuMode.JoinAlcor)
+						{
+							if (mMenuFocusID == 0)
+							{
+								if (mPlayerList.Count < 5)
+								{
+									var alcor = new Lore()
+									{
+										Name = "알코르",
+										Gender = GenderType.Male,
+										Class = 3,
+										ClassType = ClassCategory.Sword,
+										Level = 2,
+										Strength = 15,
+										Mentality = 5,
+										Concentration = 6,
+										Endurance = 12,
+										Resistance = 15,
+										Agility = 14,
+										Accuracy = 16,
+										Luck = 12,
+										Poison = 0,
+										Unconscious = 0,
+										Dead = 0,
+										SP = 0,
+										Experience = 0,
+										Weapon = 3,
+										Shield = 0,
+										Armor = 1,
+										PotentialAC = 2,
+										SwordSkill = 40,
+										AxeSkill = 0,
+										SpearSkill = 0,
+										BowSkill = 0,
+										ShieldSkill = 0,
+										FistSkill = 10
+									};
+
+									alcor.HP = alcor.Endurance * alcor.Level * 10;
+									alcor.UpdatePotentialExperience();
+									UpdateItem(alcor);
+
+									mPlayerList.Add(alcor);
+									DisplayPlayerInfo();
+
+									UpdateTileInfo(21, 49, 44);
+									SetBit(36);
+								}
+								else
+								{
+									Dialog(" 벌써 사람이 모두 채워져 있군요.  다음 기회를 기다리지요.");
+								}
+							}
+							else
+								ShowNoThanks();
+						}
+						else if (menuMode == MenuMode.JoinMizar)
+						{
+							if (mMenuFocusID == 0)
+							{
+								if (mPlayerList.Count < 5)
+								{
+									var mizar = new Lore()
+									{
+										Name = "미자르",
+										Gender = GenderType.Male,
+										Class = 2,
+										ClassType = ClassCategory.Sword,
+										Level = 2,
+										Strength = 13,
+										Mentality = 6,
+										Concentration = 8,
+										Endurance = 15,
+										Resistance = 16,
+										Agility = 16,
+										Accuracy = 15,
+										Luck = 14,
+										Poison = 0,
+										Unconscious = 0,
+										Dead = 0,
+										SP = 0,
+										Experience = 0,
+										Weapon = 2,
+										Shield = 1,
+										Armor = 2,
+										PotentialAC = 2,
+										SwordSkill = 20,
+										AxeSkill = 10,
+										SpearSkill = 5,
+										BowSkill = 0,
+										ShieldSkill = 10,
+										FistSkill = 10
+									};
+
+									mizar.HP = mizar.Endurance * mizar.Level * 10;
+									mizar.UpdatePotentialExperience();
+									UpdateItem(mizar);
+
+									mPlayerList.Add(mizar);
+									DisplayPlayerInfo();
+
+									UpdateTileInfo(21, 53, 44);
+									SetBit(37);
+								}
+								else
+								{
+									Dialog(" 벌써 사람이 모두 채워져 있군요.  다음 기회를 기다리지요.");
+								}
+							}
+							else
+								ShowNoThanks();
+						}
+						else if (menuMode == MenuMode.JoinAntaresJr)
+						{
+							if (mMenuFocusID == 0)
+							{
+								if (mPlayerList.Count < 5)
+								{
+									var antaresJr = new Lore()
+									{
+										Name = "안타레스 Jr.",
+										Gender = GenderType.Male,
+										Class = 4,
+										ClassType = ClassCategory.Magic,
+										Level = 15,
+										Strength = 10,
+										Mentality = 20,
+										Concentration = 20,
+										Endurance = 15,
+										Resistance = 17,
+										Agility = 19,
+										Accuracy = 17,
+										Luck = 18,
+										Poison = 0,
+										Unconscious = 0,
+										Dead = 0,
+										SP = 0,
+										Experience = 0,
+										Weapon = 0,
+										Shield = 0,
+										Armor = 2,
+										PotentialAC = 0,
+										AttackMagic = 60,
+										PhenoMagic = 30,
+										CureMagic = 30,
+										SpecialMagic = 0,
+										ESPMagic = 0,
+										SummonMagic = 0
+									};
+
+									antaresJr.HP = antaresJr.Endurance * antaresJr.Level * 10;
+									antaresJr.UpdatePotentialExperience();
+									UpdateItem(antaresJr);
+
+									mPlayerList.Add(antaresJr);
+									DisplayPlayerInfo();
+
+									UpdateTileInfo(17, 37, 47);
+									SetBit(38);
+								}
+								else
+								{
+									Dialog(" 벌써 사람이 모두 채워져 있군.  다음 기회를 기다리도록 하지.");
+								}
+							}
+							else
+								ShowNoThanks();
+						}
+						else if (menuMode == MenuMode.JoinCanopus)
+						{
+							if (mMenuFocusID == 0)
+								InvokeAnimation(AnimationType.RequestPardon);
+							else
+								InvokeAnimation(AnimationType.LeaveCanopus);
+						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
 					//				{
@@ -5151,6 +5067,118 @@ namespace MysticUWP
 		{
 			BattlePanel.Visibility = Visibility.Visible;
 			canvas.Visibility = Visibility.Collapsed;
+		}
+
+		bool IsUsableWeapon(Lore player, int weapon)
+		{
+			if (player.ClassType == ClassCategory.Magic)
+				return false;
+			else
+			{
+				if ((player.Class == 1 || player.Class == 2 || player.Class == 3 || player.Class == 6 || player.Class == 7) && 1 <= weapon && weapon <= 7)
+					return true;
+				else if ((player.Class == 1 || player.Class == 2 || player.Class == 4) && 8 <= weapon && weapon <= 14)
+					return true;
+				else if ((player.Class == 1 || player.Class == 2 || player.Class == 4 || player.Class == 6 || player.Class == 7) && 15 <= weapon && weapon <= 21)
+					return true;
+				else if ((player.Class == 1 || player.Class == 4 || player.Class == 6 || player.Class == 7) && 22 <= weapon && weapon <= 28)
+					return true;
+				else
+					return false;
+			}
+		}
+
+		private bool IsUsableShield(Lore player)
+		{
+			if (player.ClassType == ClassCategory.Magic)
+				return false;
+			else
+			{
+				if (player.Class == 1 || player.Class == 2 || player.Class == 3 || player.Class == 7)
+					return true;
+				else
+					return false;
+			}
+		}
+
+		private bool IsUsableArmor(Lore player, int armor)
+		{
+			if (player.ClassType == ClassCategory.Magic && armor == 1)
+				return true;
+			else if (player.ClassType == ClassCategory.Sword && ((1 <= armor && armor <= 10) || armor == 255))
+				return true;
+			else
+				return false;
+		}
+
+		private void UpdateItem(Lore player)
+		{
+			var weaponData = new int[,,] {
+						{
+							{ 15, 15, 15, 15, 15, 25, 15 },
+							{ 30, 30, 25, 25, 25, 25, 30 },
+							{ 35, 40, 35, 35, 35, 35, 40 },
+							{ 45, 48, 50, 40, 40, 40, 40 },
+							{ 50, 55, 60, 50, 50, 50, 55 },
+							{ 60, 70, 70, 60, 60, 60, 65 },
+							{ 70, 70, 80, 70, 70, 70, 70 }
+						},
+						{
+							{ 15, 15, 15, 15, 15, 15, 15 },
+							{ 35, 30, 30, 37, 30, 30, 30 },
+							{ 35, 40, 35, 35, 35, 35, 35 },
+							{ 52, 45, 45, 45, 45, 45, 45 },
+							{ 60, 60, 55, 55, 55, 55, 55 },
+							{ 75, 70, 70, 70, 70, 70, 70 },
+							{ 80, 85, 80, 80, 80, 80, 80 }
+						},
+						{
+							{ 10, 10, 10, 25, 10, 20, 10 },
+							{ 35, 40, 35, 35, 35, 35, 40 },
+							{ 35, 30, 30, 35, 30, 30, 30 },
+							{ 40, 40, 40, 45, 40, 40, 40 },
+							{ 60, 60, 60, 60, 60, 60, 60 },
+							{ 80, 80, 80, 80, 80, 80, 80 },
+							{ 90, 90, 90, 90, 90, 90, 90 }
+						},
+						{
+							{ 10, 10, 10, 15, 10, 15, 10 },
+							{ 10, 10, 10, 10, 10, 20, 10 },
+							{ 20, 20, 20, 27, 20, 20, 20 },
+							{ 35, 35, 35, 40, 35, 38, 35 },
+							{ 45, 45, 45, 55, 45, 45, 45 },
+							{ 55, 55, 55, 65, 55, 55, 55 },
+							{ 70, 70, 70, 85, 70, 70, 70 }
+						}
+					};
+
+			if (IsUsableWeapon(player, player.Weapon))
+			{
+				if (player.Weapon > 0)
+				{
+					int sort = (player.Weapon - 1) / 7;
+					int order = player.Weapon % 7;
+					player.WeaPower = weaponData[sort, order, player.Class - 1];
+				}
+				else
+					player.WeaPower = 5;
+			}
+
+			if (IsUsableShield(player))
+				player.ShiPower = player.Shield;
+			else
+				player.ShiPower = 0;
+
+			if (IsUsableArmor(player, player.Armor))
+			{
+				player.ArmPower = player.Armor;
+				if (player.Armor == 255)
+					player.ArmPower = 20;
+			}
+			else
+				player.ArmPower = 0;
+
+			player.AC = player.PotentialAC + player.ArmPower;
 		}
 
 		private async Task<bool> InvokeSpecialEvent(int prevX, int prevY)
@@ -5215,13 +5243,19 @@ namespace MysticUWP
 						, SpecialEventType.SeeMurderCase);
 
 					}
-					
 				}
 			}
 			else if (mMapName == "Lore") {
-				if (mXAxis == 43 && mYAxis == 9 && mParty.Etc[19] == 0) {
+				if (mXAxis == 43 && mYAxis == 9 && mParty.Etc[19] == 0)
+				{
 					InvokeAnimation(AnimationType.ComeSoldier);
 				}
+				else if (mXAxis == 45 && mYAxis == 9 && !GetBit(35) && !GetBit(50) && mPlayerList.Count < 5)
+				{
+					InvokeAnimation(AnimationType.VisitCanopus);
+				}
+				else if (mYAxis == 94)
+					ShowExitMenu();
 			}
 
 			return triggered;
@@ -5586,6 +5620,19 @@ namespace MysticUWP
 		private void ShowSign(int x, int y)
 		{
 			Dialog(new string[] { "푯말에 쓰여있기로 ...", "", "" });
+
+			if (mMapName == "Lore") {
+				if (x == 50 && y==83)
+				{
+					Dialog(new string[] {
+						$"[color={RGB.White}]          이곳은 로어성입니다.[/color]",
+						$"[color={RGB.White}]          여러분을 환영합니다.[/color]",
+						"",
+						"",
+						$"[color={RGB.LightGreen}]         이곳의 성주 로드안 씀[/color]"
+					});
+				}
+			}
 		}
 
 		protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -10067,6 +10114,59 @@ namespace MysticUWP
 						Task.Delay(700).Wait();
 					}
 				}
+				else if (mAnimationEvent == AnimationType.VisitCanopus) {
+					for (var i = 1; i <= 3; i++) {
+						mAnimationFrame = i;
+						Task.Delay(500).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.RequestPardon)
+				{
+					for (var i = 1; i <= 4; i++) {
+						mAnimationFrame = i;
+						Task.Delay(1500).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.ConfirmPardon) {
+					for (var i = 1; i <= 4; i++)
+					{
+						mAnimationFrame = i;
+						Task.Delay(500).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.ConfirmPardon2) {
+					AnimateTransition();
+				}
+				else if (mAnimationEvent == AnimationType.ConfirmPardon3)
+				{
+					for (var i = 1; i <= 5; i++)
+					{
+						mAnimationFrame = i;
+						Task.Delay(1000).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.JoinCanopus) {
+					for (var i = 1; i <= 3; i++) {
+						mAnimationFrame = i;
+
+						if (i < 3)
+							Task.Delay(1000).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.LeavePrisonSoldier) {
+					for (var i = 1; i <= 4; i++) {
+						mAnimationFrame = i;
+						Task.Delay(1000).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.LeaveCanopus)
+				{
+					for (var i = 1; i <= 3; i++)
+					{
+						mAnimationFrame = i;
+						Task.Delay(1000).Wait();
+					}
+				}
 			});
 
 			await animationTask;
@@ -10249,6 +10349,79 @@ namespace MysticUWP
 
 				mParty.Etc[19] = 2;
 				SetBit(0);
+			}
+			else if (mAnimationEvent == AnimationType.VisitCanopus) {
+				Ask(new string[] {
+					$"[color={RGB.LightBlue}] {mPlayerList[0].Name}.[/color]",
+					$"[color={RGB.LightBlue}] 나도 역시 자네처럼 베스퍼성으로 가고 싶네. 이런 감옥에서 평생을 지내느니 한 번 모험을 해보는게 좋을 것 같아서 말이지." +
+					"  나는 전사로서의 교육도 받았으니 아마 자네 일원 중에서는 가장 전투력이 뛰어날 걸세.[/color]"
+				}, MenuMode.JoinCanopus, new string[] {
+					"역시 카노푸스 자네 뿐이야",
+					"자네 도움까지는 필요 없다네"
+				});
+			}
+			else if (mAnimationEvent == AnimationType.RequestPardon) {
+				Talk(" 그렇다면 카노푸스도 당신과 같은 목적을 가진다는 이유로  사면 시켜 달라는  애기군요. 그럼 로드안 님에게 물어보고 오겠습니다."
+				, SpecialEventType.ConfirmPardon);
+			}
+			else if (mAnimationEvent == AnimationType.ConfirmPardon) {
+				InvokeAnimation(AnimationType.ConfirmPardon2);
+			}
+			else if (mAnimationEvent == AnimationType.ConfirmPardon2) {
+				Talk(" 그로부터 30분이 지났다.", SpecialEventType.ConfirmPardon2);
+				PlusTime(0, 20, 0);
+			}
+			else if (mAnimationEvent == AnimationType.ConfirmPardon3) {
+				Talk(" 카노푸스를 풀어줘도 좋다고  로드안님이 허락하셨습니다. 정말 희안한 일입니다. 예전에는 전혀 없던 일인데 ... 어쨌든 카노푸는 이제 자유의 몸입니다."
+				, SpecialEventType.JoinCanopus);
+			}
+			else if (mAnimationEvent == AnimationType.JoinCanopus) {
+				if (mPlayerList.Count < 5)
+				{
+					var canopus = new Lore()
+					{
+						Name = "카노푸스",
+						Gender = GenderType.Male,
+						Class = 7,
+						ClassType = ClassCategory.Sword,
+						Level = 5,
+						Strength = 19,
+						Mentality = 6,
+						Concentration = 4,
+						Endurance = 18,
+						Resistance = 17,
+						Agility = 20,
+						Accuracy = 17,
+						Luck = 12,
+						Poison = 0,
+						Unconscious = 0,
+						Dead = 0,
+						SP = 0,
+						Experience = 0,
+						Weapon = 0,
+						Shield = 0,
+						Armor = 0,
+						PotentialAC = 0,
+						SwordSkill = 20,
+						AxeSkill = 10,
+						SpearSkill = 5,
+						BowSkill = 0,
+						ShieldSkill = 50,
+						FistSkill = 10
+					};
+
+					canopus.HP = canopus.Endurance * canopus.Level * 10;
+					canopus.UpdatePotentialExperience();
+					UpdateItem(canopus);
+
+					mPlayerList.Add(canopus);
+					DisplayPlayerInfo();
+
+					UpdateTileInfo(40, 9, 44);
+					SetBit(35);
+				}
+
+				InvokeAnimation(AnimationType.LeavePrisonSoldier);
 			}
 			else
 			{
@@ -10457,7 +10630,8 @@ namespace MysticUWP
 			if ((mAnimationEvent == AnimationType.GotoCourt ||
 				mAnimationEvent == AnimationType.GotoJail ||
 				mAnimationEvent == AnimationType.LiveJail || 
-				mAnimationEvent == AnimationType.FollowSoldier2) && mAnimationFrame <= 117)
+				mAnimationEvent == AnimationType.FollowSoldier2 ||
+				mAnimationEvent == AnimationType.ConfirmPardon2) && mAnimationFrame <= 117)
 				AnimateTransition(mAnimationFrame, playerX, playerY);
 		}
 
@@ -10537,7 +10711,7 @@ namespace MysticUWP
 				else if (mAnimationEvent == AnimationType.FollowSoldier && mAnimationFrame > 0)
 				{
 					if (column == playerX + 1 && playerY == row)
-						mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 					else if (column == playerX + 2 && playerY == row && mAnimationFrame <= 2)
 						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 					else if (column == playerX + mAnimationFrame && playerY == row && mAnimationFrame >= 3)
@@ -10548,7 +10722,73 @@ namespace MysticUWP
 				else if (mAnimationEvent == AnimationType.FollowSoldier2 && mAnimationFrame > 0)
 				{
 					if (column == playerX + 1 && playerY == row && mAnimationFrame <= 117)
-						mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.VisitCanopus && mAnimationFrame > 0) {
+					if (column == playerX - (5 - mAnimationFrame) && row == playerY)
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.RequestPardon && mAnimationFrame > 0) {
+					if (column == playerX + 4 && row == playerY + 1)
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else if ((column == playerX + (4 - mAnimationFrame) && row == playerY + 1) || (column == playerX - 2 && row == playerY))
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.ConfirmPardon && mAnimationFrame > 0)
+				{
+					if ((column == playerX + mAnimationFrame && row == playerY + 1) || (column == playerX - 2 && row == playerY))
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else if (column == playerX + 4 && row == playerY + 1)
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.ConfirmPardon2 && mAnimationFrame > 0)
+				{
+					if (column == playerX - 2 && row == playerY)
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else if (column == playerX + 4 && row == playerY + 1)
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.ConfirmPardon3 && mAnimationFrame > 0)
+				{
+					if ((column == playerX + (5 - mAnimationFrame) && row == playerY + 1) || (column == playerX - 2 && row == playerY))
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else if (column == playerX + 4 && row == playerY + 1)
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.JoinCanopus && mAnimationFrame > 0)
+				{
+					if ((column == playerX - (3 - mAnimationFrame) && row == playerY && mAnimationFrame <= 2) || (column == playerX && row == playerY + 1))
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else if (column == playerX + 4 && row == playerY + 1)
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.LeavePrisonSoldier && mAnimationFrame > 0)
+				{
+					if (column == playerX + (mAnimationFrame - 1) && row == playerY + 1)
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else if (column == playerX + 4 && row == playerY + 1)
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.LeaveCanopus && mAnimationFrame > 0)
+				{
+					if (column == playerX - (mAnimationFrame + 1) && row == playerY)
+						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 					else
 						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				}
@@ -10748,7 +10988,10 @@ namespace MysticUWP
 			SendNecromancer,
 			FollowSolider,
 			LordAhnMission,
-			LeaveSoldier
+			LeaveSoldier,
+			ConfirmPardon,
+			ConfirmPardon2,
+			JoinCanopus
 		}
 
 		private enum BattleEvent
@@ -10791,7 +11034,15 @@ namespace MysticUWP
 			ComeSoldier,
 			FollowSoldier,
 			FollowSoldier2,
-			LeaveSoldier
+			LeaveSoldier,
+			VisitCanopus,
+			RequestPardon,
+			ConfirmPardon,
+			ConfirmPardon2,
+			ConfirmPardon3,
+			JoinCanopus,
+			LeavePrisonSoldier,
+			LeaveCanopus
 		}
 
 		private enum SpinnerType
@@ -10889,7 +11140,8 @@ namespace MysticUWP
 			JoinFriend,
 			JoinAlcor,
 			JoinMizar,
-			JoinAntaresJr
+			JoinAntaresJr,
+			JoinCanopus
 		}
 	}
 }
