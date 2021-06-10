@@ -377,7 +377,7 @@ namespace MysticUWP
 							{
 								var oriX = mXAxis;
 								var oriY = mYAxis;
-								MovePlayer(x, y);
+								MovePlayer(x, y, true);
 								if (await InvokeSpecialEvent(oriX, oriY))
 									mTriggeredDownEvent = true;
 							}
@@ -426,7 +426,7 @@ namespace MysticUWP
 							{
 								var oriX = mXAxis;
 								var oriY = mYAxis;
-								MovePlayer(x, y);
+								MovePlayer(x, y, true);
 								if (await InvokeSpecialEvent(oriX, oriY))
 									mTriggeredDownEvent = true;
 							}
@@ -471,7 +471,7 @@ namespace MysticUWP
 							{
 								var oriX = mXAxis;
 								var oriY = mYAxis;
-								MovePlayer(x, y);
+								MovePlayer(x, y, true);
 								if (await InvokeSpecialEvent(oriX, oriY))
 									mTriggeredDownEvent = true;
 							}
@@ -521,7 +521,7 @@ namespace MysticUWP
 							{
 								var oriX = mXAxis;
 								var oriY = mYAxis;
-								MovePlayer(x, y);
+								MovePlayer(x, y, true);
 								if (await InvokeSpecialEvent(oriX, oriY))
 									mTriggeredDownEvent = true;
 
@@ -5219,7 +5219,8 @@ namespace MysticUWP
 				triggered = false;
 			}
 
-			if (mMapName == "Menace") {
+			if (mMapName == "Menace")
+			{
 				if (mXAxis == 13 && mYAxis == 26)
 					FindGold(138, 1_000);
 				else if (mXAxis == 5 && mYAxis == 38)
@@ -5228,24 +5229,30 @@ namespace MysticUWP
 					FindGold(140, 2_000);
 				else if (mXAxis == 43 && mYAxis == 40)
 					FindGold(141, 500);
-				else if (mXAxis == 26 && mYAxis == 5) {
+				else if (mXAxis == 26 && mYAxis == 5)
+				{
 					Talk(new string[] {
 						" 당신은 여기서 밀랍으로 봉인된 작은 상자를 발견하였다. 조심해서 열어보니 예언서 한 권이 그 속에 들어 있었다.",
 						" 당신은 호기심에 그 책을 펼쳤다."
 					}, SpecialEventType.ReadProphesy);
 				}
-				else if (mYAxis == 44) {
+				else if (mYAxis == 44)
+				{
 					if (GetBit(0))
 						ShowExitMenu();
-					else {
+					else
+					{
 						Talk(" 당신이 광산을 나가려 했을때  당신은  당신앞에 벌어져 있는 광경을 보고 섬뜩함을 느꼈다. 조금 전에 당신에게 일당을 주었던 그 광산업자가 창에 찔린 채로 쓰러져 있었다." +
 						"  당신은 그 자에게로 다가갔다.  그는 창으로 심장을 관통 당한채 쓰러져 있었다. 나는 그 창이 낯에 익어서 그 창을 뽑아 쥐었다.  그 창은 바로 내가 사냥용으로 쓰던 나의 창이었다."
 						, SpecialEventType.SeeMurderCase);
 
 					}
 				}
+				else
+					triggered = false;
 			}
-			else if (mMapName == "Lore") {
+			else if (mMapName == "Lore")
+			{
 				if (mXAxis == 43 && mYAxis == 9 && mParty.Etc[19] == 0)
 				{
 					InvokeAnimation(AnimationType.ComeSoldier);
@@ -5256,7 +5263,17 @@ namespace MysticUWP
 				}
 				else if (mYAxis == 94)
 					ShowExitMenu();
+				else
+					triggered = false;
 			}
+			else if (mMapName == "Ground1") {
+				if (mXAxis == 29 && mYAxis == 19 && !GetBit(51)) {
+					mEncounterEnemyList.Clear();
+
+					JoinEnemy(35);
+				}
+			}
+			
 
 			return triggered;
 		}
@@ -5378,7 +5395,7 @@ namespace MysticUWP
 					Dialog($" 거기 {mPlayerList[0].GenderStr}분, 어서 앉으시지요.");
 				else if (moveX == 17 && moveY == 26)
 					Dialog($" 우리 주점의 명물인 코리아 위스키 맛 좀 보시겠습니까?");
-				else if (moveX == 20 && moveY == 37)
+				else if (moveX == 20 && moveY == 32)
 					Dialog($" 과음은 삼가하십시요.");
 				else if (moveX == 17 && moveY == 37)
 				{
@@ -5630,7 +5647,38 @@ namespace MysticUWP
 						"",
 						"",
 						$"[color={RGB.LightGreen}]         이곳의 성주 로드안 씀[/color]"
-					});
+					}, true);
+				}
+				else if (x == 50 && y == 14)
+					Dialog($"[color={RGB.White}]      로어 왕립 죄수 수용소[/color]", true);
+				else if (x == 23 && y == 30) {
+					Dialog(new string[] {
+						$"[color={RGB.White}]             로어 주점[/color]",
+						"",
+						$"[color={RGB.White}]      ( 코리아 위스키 전문점 )[/color]"
+					}, true);
+				}
+				else if (x == 50 && y == 57) {
+					if (GetBit(50)) {
+						Dialog($"[color={RGB.White}]     이제 우리를 위협하던 네 종족은 정의의 심판에 의해 무릎을 꿓고 말았다. 이제부터는 새로운 인류의 역사가 시작 될 것이다.[/color]", true);
+					}
+					else {
+						Dialog($"[color={RGB.White}]   674년 1월 17일. 아프로디테의 베스퍼성이 호전적인  트롤족에 의해  참변을 당했다. " +
+						"이를 계기로  로어성과  그 이외의 성들은 오크족, 트롤족, 코볼트족,  드라코니안족에 대한 무차별 정벌을 선포하는 바이다." +
+						"이로 인해  인간 이외의 다른 종족에 대한 호의를 일체 중지하며 이제는 적대 관계로 그들을 대할 것이다.[/color]", true);
+					}
+				}
+			}
+			else if (mMapName == "Dark") {
+				if ((x == 50 && y == 17) || (x == 51 && y == 17))
+					Dialog($"[color={RGB.White}]      로어 왕립 죄수 수용소[/color]", true);
+				else if (x == 23 && y == 30)
+				{
+					Dialog(new string[] {
+						$"[color={RGB.White}]             로어 주점[/color]",
+						"",
+						$"[color={RGB.White}]( 코리아 위스키가 잘 팔린다는 말 않겠음 )[/color]"
+					}, true);
 				}
 			}
 		}
@@ -5651,7 +5699,7 @@ namespace MysticUWP
 				LoadFile();
 		}
 
-		private void MovePlayer(int moveX, int moveY)
+		private void MovePlayer(int moveX, int moveY, bool eventTile = false)
 		{
 			bool UpdatePlayersState(Lore player)
 			{
@@ -5710,8 +5758,8 @@ namespace MysticUWP
 				if (mParty.Etc[4] > 0)
 					mParty.Etc[4]--;
 
-				//if (!(GetTileInfo(moveX, moveY) == 0 || (mMapHeader.TileType == PositionType.Den && GetTileInfo(moveX, moveY) == 52)) && mRand.Next(mEncounter * 20) == 0)
-				//	EncounterEnemy();
+				if (!eventTile && mRand.Next(mEncounter * 20) == 0)
+					EncounterEnemy();
 
 
 				if (mMapHeader.TileType == PositionType.Ground)
@@ -9080,6 +9128,103 @@ namespace MysticUWP
 			var val = bit % 8;
 
 			return (mParty.Etc[idx] & (1 << val)) > 0;
+		}
+
+		private void EncounterEnemy()
+		{
+			int range;
+			int init;
+			if (mMapName == "Ground2" && !GetBit(3)) {
+				range = 3;
+				init = 17;
+			}
+			else if (mMapName == "Ground3" && !GetBit(4))
+			{
+				range = 4;
+				init = 24;
+			}
+			else if (mMapName == "Ground4" && !GetBit(5))
+			{
+				range = 3;
+				init = 34;
+			}
+			else if (mMapName == "Ground5" && !GetBit(6))
+			{
+				range = 2;
+				init = 47;
+			}
+			else if (mMapName == "UnderGrd")
+			{
+				range = 4;
+				init = 5;
+			}
+			else if (mMapName == "TrolTown" && !GetBit(4))
+			{
+				range = 2;
+				init = 30;
+			}
+			else if (mMapName == "OrcTown" && !GetBit(3))
+			{
+				range = 4;
+				init = 17;
+			}
+			else if (mMapName == "Vesper" && !GetBit(4))
+			{
+				range = 3;
+				init = 25;
+			}
+			else if (mMapName == "Kobold" && !GetBit(5))
+			{
+				range = 3;
+				init = 34;
+			}
+			else if (mMapName == "DracTown" && !GetBit(6))
+			{
+				range = 2;
+				init = 47;
+			}
+			else {
+				range = 0;
+				init = 0;
+			}
+
+			if (range == 0)
+				return;
+
+			mTriggeredDownEvent = true;
+
+			var enemyNumber = mRand.Next(mMaxEnemy) + 1;
+			if (enemyNumber > mMaxEnemy)
+				enemyNumber = mMaxEnemy;
+
+			mEncounterEnemyList.Clear();
+			for (var i = 0; i < enemyNumber; i++)
+			{
+				var enemyID = mRand.Next(range) + init;
+
+				mEncounterEnemyList.Add(new BattleEnemyData(enemyID, mEnemyDataList[enemyID]));
+			}
+
+			DisplayEnemy();
+			HideMap();
+
+			var avgAgility = 0;
+			mEncounterEnemyList.ForEach(delegate (BattleEnemyData enemy)
+			{
+				avgAgility += enemy.Agility;
+			});
+
+			avgAgility /= mEncounterEnemyList.Count;
+
+			AppendText(new string[] {
+				$"[color={RGB.LightMagenta}]적이 출현했다!!![/color]", "",
+				$"[color={RGB.LightCyan}]적의 평균 민첩성 : {avgAgility}[/color]"
+			});
+
+			ShowMenu(MenuMode.BattleStart, new string[] {
+				"적과 교전한다",
+				"도망간다"
+			});
 		}
 
 
