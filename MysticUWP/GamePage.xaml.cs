@@ -126,6 +126,9 @@ namespace MysticUWP
 		private Lore mItemUsePlayer;
 		private readonly List<int> mUsableItemIDList = new List<int>();
 
+		private int mUseCrystalID = -1;
+
+
 		private int mTeleportationDirection = 0;
 
 		private Lore mMagicPlayer = null;
@@ -818,7 +821,15 @@ namespace MysticUWP
 							AppendText(new string[] { endMessage, "" });
 						}
 
-						
+						if (battleEvent == BattleEvent.Pollux) {
+							Ask($"[color={RGB.LightMagenta}] 윽!! 나의 패배를 인정하겠다." +
+							$"  나는 원래 암살자로 일하던[/color] [color={RGB.LightMagenta}]폴록스[/color][color={RGB.LightMagenta}]라고한다." +
+							" 수련을 목적으로 당신과 동행하고 싶다. 당신은 어떤가?[/color]",
+							MenuMode.JoinPollux, new string[] {
+								"좋소, 허락하겠소",
+								"그렇게는 않되오"
+							});
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1004,6 +1015,16 @@ namespace MysticUWP
 								else
 									AppendText("");
 							}
+						}
+						else if (specialEvent == SpecialEventType.BackToBattleMode)
+						{
+							if (BattlePanel.Visibility == Visibility.Collapsed)
+								DisplayEnemy();
+							BattleMode();
+						}
+						else if (specialEvent == SpecialEventType.NextToBattleMode)
+						{
+							AddBattleCommand(true);
 						}
 						else if (specialEvent == SpecialEventType.HearAncientEvil)
 						{
@@ -1848,7 +1869,7 @@ namespace MysticUWP
 					else if (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadB)
 					{
 						// 닫을 수 없는 메뉴
-						if (mMenuMode == MenuMode.BattleStart || mMenuMode == MenuMode.BattleCommand)
+						if (mMenuMode == MenuMode.BattleStart || mMenuMode == MenuMode.BattleCommand || mMenuMode == MenuMode.MeetPollux)
 							return;
 
 						AppendText("");
@@ -1867,7 +1888,9 @@ namespace MysticUWP
 							menuMode == MenuMode.CastSpecial ||
 							menuMode == MenuMode.ChooseBattleCureSpell ||
 							menuMode == MenuMode.CastESP ||
-							menuMode == MenuMode.CastSummon)
+							menuMode == MenuMode.CastSummon ||
+							menuMode == MenuMode.ChooseItemType ||
+							menuMode == MenuMode.ChooseCrystal)
 							{
 								BattleMode();
 							}
@@ -1877,22 +1900,73 @@ namespace MysticUWP
 							}
 							else if (menuMode == MenuMode.EnemySelectMode)
 							{
-								mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.Transparent);
+								if (mUseCrystalID == 2 || mUseCrystalID == 3) {
+									var enemy = mEncounterEnemyList[mEnemyFocusID];
+									if (enemy.Name == "로드 안") {
+										Talk($" {mPlayerList[mBattlePlayerID].NameSubjectJosa} 로드안을 향해 다크 크리스탈과 에보니 크리스탈을 동시에 사용하였다." +
+										"크리스탈에서 뿜어져 나온  검은 기운은  금새 로드안에게 침투해 들어갔고 그는 순식간에 백여년을 늙어 버렸다", SpecialEventType.NextToBattleMode);
 
-								switch (mBattleCommandID)
-								{
-									case 0:
-										BattleMode();
-										break;
-									case 1:
-										ShowCastOneMagicMenu();
-										break;
-									case 3:
-										ShowCastSpecialMenu();
-										break;
-									case 5:
-										BattleMode();
-										break;
+										enemy.Strength /= 2;
+										enemy.Mentality /= 2;
+										enemy.Endurance /= 2;
+										enemy.Resistance[0] /= 2;
+										enemy.Resistance[1] /= 2;
+										enemy.Agility /= 2;
+										enemy.Accuracy[0] /= 2;
+										enemy.Accuracy[1] /= 2;
+										enemy.AC /= 2;
+										enemy.Level /= 2;
+
+										if (enemy.HP > enemy.Endurance * enemy.Level * 10)
+										{
+											enemy.HP = enemy.Endurance * enemy.Level * 10;
+											DisplayEnemy();
+										}
+
+
+										mParty.Crystal[2]--;
+										mParty.Crystal[3]--;
+									}
+									else {
+										Talk(" 이 크리스탈은  선의 힘을 사용하는 적에게만 반응한다.", SpecialEventType.NextToBattleMode);
+									}
+
+									mUseCrystalID = -1;
+								}
+								else if (mUseCrystalID == 4) {
+									mUseCrystalID = -1;
+
+									var enemy = mEncounterEnemyList[mEnemyFocusID];
+									if (enemy.HP > 1) {
+										Talk(" 당신이  영혼의 크리스탈을  적에게 사용하자 적의 영혼은 크리스탈에 의해 저주를 받아  황폐화 되어졌다.", SpecialEventType.NextToBattleMode);
+										enemy.AuxHP = (enemy.AuxHP + 1) / 2;
+										enemy.HP /= 2;
+
+										DisplayEnemy();
+										mParty.Crystal[4]--;
+									}
+									else {
+										Talk(" 하지만 크리스탈은 전혀 반응을 보이지 않았다.", SpecialEventType.NextToBattleMode);
+									}
+								}
+								else {
+									mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.Transparent);
+
+									switch (mBattleCommandID)
+									{
+										case 0:
+											BattleMode();
+											break;
+										case 1:
+											ShowCastOneMagicMenu();
+											break;
+										case 3:
+											ShowCastSpecialMenu();
+											break;
+										case 5:
+											BattleMode();
+											break;
+									}
 								}
 							}
 							else if (menuMode == MenuMode.ApplyBattleCureSpell || menuMode == MenuMode.ApplyBattleCureAllSpell)
@@ -2521,7 +2595,7 @@ namespace MysticUWP
 								}
 							}
 
-							if (menuMode == MenuMode.ChooseCureSpell)
+							if (meuMode == MenuMode.ChooseCureSpell)
 								ShowCureSpellMenu(mMagicPlayer, mMenuFocusID, MenuMode.ApplyCureMagic, MenuMode.ApplyCureAllMagic);
 							else
 								ShowCureSpellMenu(mPlayerList[mBattlePlayerID], mMenuFocusID, MenuMode.ApplyBattleCureSpell, MenuMode.ApplyBattleCureAllSpell);
@@ -4032,7 +4106,7 @@ namespace MysticUWP
 							else
 							{
 								ClearDialog();
-								
+
 								mXAxis = mPrevX;
 								mYAxis = mPrevY;
 							}
@@ -4260,7 +4334,23 @@ namespace MysticUWP
 							}
 							else if (mMenuFocusID == 7)
 							{
-								UseItem(mPlayerList[mBattlePlayerID], true);
+								var hasCrystal = false;
+								for (var i = 0; i < 7; i++) {
+									if (mParty.Crystal[i] > 0)
+									{
+										hasCrystal = true;
+										break;
+									}
+								}
+
+								if (hasCrystal) {
+									ShowMenu(MenuMode.ChooseItemType, new string[] {
+										"약초나 약물을 사용한다",
+										"크리스탈을 사용한다"
+									});
+								}
+								else
+									UseItem(mPlayerList[mBattlePlayerID], true);
 							}
 							else if (mMenuFocusID == 8)
 							{
@@ -4429,6 +4519,102 @@ namespace MysticUWP
 							CureAllSpell(mMagicPlayer, mMenuFocusID, mCureResult);
 
 							ShowCureResult(true);
+						}
+						else if (menuMode == MenuMode.ChooseItemType) {
+							if (mMenuFocusID == 0)
+								UseItem(mPlayerList[mBattlePlayerID], true);
+							else
+							{
+								mItemUsePlayer = mPlayerList[mBattlePlayerID];
+								mUsableItemIDList.Clear();
+								var crystalNameList = new List<string>();
+								for (var i = 0; i < 7; i++) {
+									if (mParty.Crystal[i] > 0)
+									{
+										crystalNameList.Add(Common.GetMagicName(7, i + 1));
+										mUsableItemIDList.Add(i);
+									}
+								}
+
+								Ask("당신이 사용할 크리스탈을 고르시오.", MenuMode.ChooseCrystal, crystalNameList.ToArray());
+							}
+						}
+						else if (menuMode == MenuMode.ChooseCrystal) {
+							var crystalID = mUsableItemIDList[mMenuFocusID];
+
+							if (crystalID == 0) {
+								mBattleCommandID = 1;
+								mBattleToolID = 11;
+								SelectEnemy();
+
+								mParty.Crystal[crystalID]--;
+
+								mUseCrystalID = -1;
+							}
+							else if (crystalID == 1) {
+								mBattleCommandID = 2;
+								mBattleToolID = 11;
+								mEnemyFocusID = -1;
+
+								mParty.Crystal[crystalID]--;
+
+								mUseCrystalID = -1;
+
+								AddBattleCommand();
+							}
+							else if (crystalID == 2 || crystalID == 3) {
+								if (mParty.Crystal[2] > 0 && mParty.Crystal[3] > 0) {
+									mUseCrystalID = crystalID;
+									SelectEnemy();
+								}
+								else {
+									Talk(" 크리스탈은 전혀 반응하지 않았다.", SpecialEventType.NextToBattleMode);
+									mUseCrystalID = -1;
+								}
+							}
+							else if (crystalID == 4) {
+								mUseCrystalID = crystalID;
+								SelectEnemy();
+							}
+							else if (crystalID == 5) {
+								mBattleCommandID = 6;
+								mBattleToolID = 11;
+
+								mParty.Crystal[5]--;
+
+								AddBattleCommand();
+							}
+							else if (crystalID == 6) {
+								foreach (var player in mPlayerList) {
+									if (player.Dead == 0) {
+										player.Unconscious = 0;
+										player.HP = player.Endurance * player.Level * 10;
+									}
+									else {
+										player.Dead = 0;
+										player.Unconscious = 0;
+										player.HP = 1;
+									}
+								}
+
+								if (mAssistPlayer != null) {
+									if (mAssistPlayer.Dead == 0)
+									{
+										mAssistPlayer.Unconscious = 0;
+										mAssistPlayer.HP = mAssistPlayer.Endurance * mAssistPlayer.Level * 10;
+									}
+									else
+									{
+										mAssistPlayer.Dead = 0;
+										mAssistPlayer.Unconscious = 0;
+										mAssistPlayer.HP = 1;
+									}
+
+									Talk(" 에너지 크리스탈은 강한 에너지를  우리 대원들의 몸속으로  방출하였고  그 에너지를 취한 대원들은 모두 원래의 기운을 되찾았다.", SpecialEventType.NextToBattleMode);
+
+									mParty.Crystal[6]--;
+								}
+							}
 						}
 						else if (menuMode == MenuMode.BattleLose)
 						{
@@ -5024,6 +5210,73 @@ namespace MysticUWP
 							else
 								InvokeAnimation(AnimationType.LeaveCanopus);
 						}
+						else if (menuMode == MenuMode.MeetPollux) {
+							if (mMenuFocusID == 0)
+							{
+								mParty.Gold = 0;
+								Dialog(" 당신은 강도에게 모든 돈을 빼았겼다.");
+
+								mEncounterEnemyList.Clear();
+								ShowMap();
+							}
+							else {
+								mBattleEvent = BattleEvent.Pollux;
+								StartBattle(false);
+							}
+						}
+						else if (menuMode == MenuMode.JoinPollux) {
+							if (mMenuFocusID == 0)
+							{
+								if (mPlayerList.Count < 5) {
+									var pollux = new Lore()
+									{
+										Name = "폴록스",
+										Gender = GenderType.Female,
+										Class = 6,
+										ClassType = ClassCategory.Sword,
+										Level = 5,
+										Strength = 15,
+										Mentality = 19,
+										Concentration = 20,
+										Endurance = 11,
+										Resistance = 18,
+										Agility = 20,
+										Accuracy = 17,
+										Luck = 10,
+										Poison = 0,
+										Unconscious = 0,
+										Dead = 0,
+										SP = 0,
+										Experience = 0,
+										Weapon = 18,
+										Shield = 0,
+										Armor = 1,
+										PotentialAC = 2,
+										SwordSkill = 10,
+										AxeSkill = 0,
+										SpearSkill = 35,
+										BowSkill = 10,
+										ShieldSkill = 0,
+										FistSkill = 20
+									};
+
+									pollux.HP = pollux.Endurance * pollux.Level * 10;
+									pollux.UpdatePotentialExperience();
+									UpdateItem(pollux);
+
+									mPlayerList.Add(pollux);
+									DisplayPlayerInfo();
+
+									SetBit(45);
+								}
+								else
+								{
+									Dialog(" 벌써 사람이 모두 채워져 있군.  다음 기회를 기다리지.");
+								}
+							}
+							else
+								ShowNoThanks();
+						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
 					//				{
@@ -5270,7 +5523,28 @@ namespace MysticUWP
 				if (mXAxis == 29 && mYAxis == 19 && !GetBit(51)) {
 					mEncounterEnemyList.Clear();
 
-					JoinEnemy(35);
+					var enemy = JoinEnemy(35);
+					enemy.Name = "폴록스";
+
+					for (var i = 0; i < 6; i++) {
+						var others = JoinEnemy(33);
+						others.Name = "강도";
+					}
+
+					DisplayEnemy();
+					HideMap();
+
+					Ask(new string[] {
+						" 당신이 길을 가던 도중에 갑자기 강도가 나타났다.  그리고 제일 앞에 있는 여자 강도가 말을 꺼냈다.",
+						"",
+						$"[color={RGB.LightMagenta}] 이런 곳에 겁도 없이 돌아다니다니, 하하하.[/color]",
+						$"[color={RGB.LightMagenta}] 우리 7 명의 능력을 당해내지 못할 것 같으면 순순히 가진 돈을 다 내놓아라.[/color]"
+					}, MenuMode.MeetPollux, new string[] {
+						"가진 돈을 모두 준다",
+						"선제 공격을 가한다"
+					});
+
+					SetBit(51);
 				}
 			}
 			
@@ -6058,7 +6332,7 @@ namespace MysticUWP
 					"일행을 치료",
 					"적에게 초능력 사용",
 					"소환 마법 사용",
-					"약초를 사용",
+					"약초나 크리스탈을 사용",
 					mBattlePlayerID == 0 ? "일행에게 무조건 공격 할 것을 지시" : "도망을 시도함"
 				});
 			}
@@ -10028,7 +10302,7 @@ namespace MysticUWP
 				mMapTiles = await SpriteSheet.LoadAsync(device, new Uri("ms-appx:///Assets/lore_tile.png"), new Vector2(52, 52), Vector2.Zero);
 				mCharacterTiles = await SpriteSheet.LoadAsync(device, new Uri("ms-appx:///Assets/lore_sprite.png"), new Vector2(52, 52), Vector2.Zero);
 
-				//await LoadEnemyData();
+				await LoadEnemyData();
 
 			}
 			catch (Exception e)
@@ -10054,6 +10328,12 @@ namespace MysticUWP
 		private void UpdateTileInfo(int x, int y, int tile)
 		{
 			mMapHeader.Layer[x + mMapHeader.Width * y] = (byte)((mMapHeader.Layer[x + mMapHeader.Width * y] & 0x80) | tile);
+		}
+
+		private async Task LoadEnemyData()
+		{
+			var enemyFileFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/EnemyData.json"));
+			mEnemyDataList = JsonConvert.DeserializeObject<List<EnemyData>>(await FileIO.ReadTextAsync(enemyFileFile));
 		}
 
 		private async Task<bool> LoadFile(int id = 0)
@@ -11091,6 +11371,7 @@ namespace MysticUWP
 			ChangeJobForSword,
 			ChangeJobForMagic,
 			BackToBattleMode,
+			NextToBattleMode,
 			BattleUseItem,
 			CantTrainMagic,
 			WizardEye,
@@ -11142,6 +11423,7 @@ namespace MysticUWP
 		private enum BattleEvent
 		{
 			None,
+			Pollux,
 		}
 
 		private enum BattleTurn
@@ -11286,7 +11568,11 @@ namespace MysticUWP
 			JoinAlcor,
 			JoinMizar,
 			JoinAntaresJr,
-			JoinCanopus
+			JoinCanopus,
+			MeetPollux,
+			JoinPollux,
+			ChooseItemType,
+			ChooseCrystal
 		}
 	}
 }

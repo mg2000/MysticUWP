@@ -175,7 +175,7 @@
     <Content Include="Assets\UNDERGRD.M" />
     <Content Include="Assets\VALIANT.M" />
     <Content Include="Assets\VESPER.M" />
-    <None Include="Assets\EnemyData.json" />
+    <Content Include="Assets\EnemyData.json" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\WizardEyeTile.png" />
     <Content Include="Properties\Default.rd.xml" />

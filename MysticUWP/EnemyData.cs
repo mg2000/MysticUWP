@@ -32,7 +32,7 @@ namespace MysticUWP
 			set;
 		}
 
-		public int Resistance
+		public int[] Resistance
 		{
 			get;
 			set;

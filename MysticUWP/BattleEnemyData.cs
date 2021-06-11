@@ -17,11 +17,7 @@ namespace MysticUWP
 			Endurance = enemy.Endurance;
 			Resistance = enemy.Resistance;
 			Agility = enemy.Agility;
-
-			Accuracy = new int[enemy.Accuracy.Length];
-			for (var i = 0; i < Accuracy.Length; i++)
-				Accuracy[i] = enemy.Accuracy[i];
-
+			Accuracy = enemy.Accuracy;
 			AC = enemy.AC;
 			Special = enemy.Special;
 			CastLevel = enemy.CastLevel;
@@ -29,6 +25,7 @@ namespace MysticUWP
 			Level = enemy.Level;
 
 			HP = Endurance * Level * 10;
+			AuxHP = 0;
 			Posion = false;
 			Unconscious = false;
 			Dead = false;
@@ -64,7 +61,7 @@ namespace MysticUWP
 			set;
 		}
 
-		public int Resistance
+		public int[] Resistance
 		{
 			get;
 			set;
@@ -114,6 +111,11 @@ namespace MysticUWP
 
 		public int HP
 		{
+			get;
+			set;
+		}
+
+		public int AuxHP {
 			get;
 			set;
 		}
