@@ -2595,7 +2595,7 @@ namespace MysticUWP
 								}
 							}
 
-							if (meuMode == MenuMode.ChooseCureSpell)
+							if (menuMode == MenuMode.ChooseCureSpell)
 								ShowCureSpellMenu(mMagicPlayer, mMenuFocusID, MenuMode.ApplyCureMagic, MenuMode.ApplyCureAllMagic);
 							else
 								ShowCureSpellMenu(mPlayerList[mBattlePlayerID], mMenuFocusID, MenuMode.ApplyBattleCureSpell, MenuMode.ApplyBattleCureAllSpell);
@@ -9928,6 +9928,8 @@ namespace MysticUWP
 				return GetColor(RGB.Black);
 			else if (enemy.HP == 0 || enemy.Unconscious)
 				return GetColor(RGB.DarkGray);
+			else if ((enemy.SpecialCastLevel & 0x80) > 0)
+				return GetColor(RGB.LightGreen);
 			else if (1 <= enemy.HP && enemy.HP <= 199)
 				return GetColor(RGB.LightRed);
 			else if (200 <= enemy.HP && enemy.HP <= 499)
