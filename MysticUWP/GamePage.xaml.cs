@@ -6702,38 +6702,44 @@ namespace MysticUWP
 						return;
 					}
 
-					int power;
-					switch ((player.Weapon + 6) / 7)
-					{
-						case 0:
-							power = player.FistSkill;
-							break;
-						case 1:
-							power = player.SwordSkill;
-							break;
-						case 2:
-							power = player.AxeSkill;
-							break;
-						case 3:
-							power = player.SpearSkill;
-							break;
-						case 4:
-							power = player.BowSkill;
-							break;
-						default:
-							power = player.Level * 5;
-							break;
-					}
-
+					
 					int attackPoint;
-					if ((player.ClassType == ClassCategory.Sword) && (player.Class == 5 || player.Class == 6))
-						attackPoint = player.Strength * power * 5;
+					if (player == mAssistPlayer)
+						attackPoint = (int)Math.Round((double)player.Strength * player.WeaPower * player.Level / 2);
 					else
-						attackPoint = (int)(Math.Round((double)player.Strength * player.WeaPower * power / 10));
+					{
+						int power;
+						switch ((player.Weapon + 6) / 7)
+						{
+							case 0:
+								power = player.FistSkill;
+								break;
+							case 1:
+								power = player.SwordSkill;
+								break;
+							case 2:
+								power = player.AxeSkill;
+								break;
+							case 3:
+								power = player.SpearSkill;
+								break;
+							case 4:
+								power = player.BowSkill;
+								break;
+							default:
+								power = player.Level * 5;
+								break;
+						}
+
+						if ((player.ClassType == ClassCategory.Sword) && (player.Class == 5 || player.Class == 6))
+							attackPoint = player.Strength * power * 5;
+						else
+							attackPoint = (int)Math.Round((double)player.Strength * player.WeaPower * power / 10);
+					}
 
 					attackPoint -= attackPoint * mRand.Next(50) / 100;
 
-					if (mRand.Next(100) < enemy.Resistance)
+					if (mRand.Next(100) < enemy.Resistance[0])
 					{
 						battleResult.Add($"적은 {player.GenderPronoun}의 공격을 저지했다");
 						return;
@@ -6760,7 +6766,7 @@ namespace MysticUWP
 					}
 					else
 					{
-						battleResult.Add($"적은 [color={RGB.White}]{attackPoint.ToString("#,#0")}[/color]만큼의 피해를 입었다");
+						battleResult.Add($"적은 [color={RGB.White}]{attackPoint:#,#0}[/color]만큼의 피해를 입었다");
 					}
 				}
 
@@ -6770,9 +6776,14 @@ namespace MysticUWP
 					if (enemy == null)
 						return;
 
-					GetBattleStatus(enemy);
-
 					var player = battleCommand.Player;
+
+					if (battleCommand.Tool < 11)
+						GetBattleStatus(enemy);
+					else if (battleCommand.Method == 1)
+						battleResult.Add($"[color={RGB.White}]{player.NameSubjectJosa} 화염의 크리스탈을 사용했고, 거기서 생성된 화염폭풍은 {enemy.Name}에게 명중했다.[/color]");
+					else
+						battleResult.Add($"[color={RGB.White}]{player.NameSubjectJosa} 크리스탈로 생성시킨 한파의 회오리는 {enemy.NameJosa} 강타했다.[/color]");
 
 					if (enemy.Unconscious)
 					{
@@ -6785,30 +6796,39 @@ namespace MysticUWP
 						return;
 					}
 
-					var magicPoint = (int)Math.Round((double)battleCommand.Player.AttackMagic * battleCommand.Tool * battleCommand.Tool / 10);
-					if (battleCommand.Player.SP < magicPoint)
+					int magicPoint;
+
+					if (battleCommand.Tool < 11)
 					{
-						battleResult.Add($"마법 지수가 부족했다");
-						return;
-					}
+						var needSP = (int)Math.Round((double)battleCommand.Player.AttackMagic * battleCommand.Tool * battleCommand.Tool / 10);
+						if (battleCommand.Player.SP < needSP)
+						{
+							battleResult.Add($"마법 지수가 부족했다");
+							return;
+						}
 
 #if DEBUG
-					battleCommand.Player.SP -= 1;
+						battleCommand.Player.SP -= 1;
 #else
-					battleCommand.Player.SP -= magicPoint;
+						battleCommand.Player.SP -= needSP;
 #endif
 
-					DisplaySP();
+						DisplaySP();
 
-					if (mRand.Next(20) >= player.Accuracy)
-					{
-						battleResult.Add($"그러나, {enemy.NameJosa} 빗나갔다");
-						return;
+						if (mRand.Next(20) >= player.Accuracy)
+						{
+							battleResult.Add($"그러나, {enemy.NameJosa} 빗나갔다");
+							return;
+						}
+
+						magicPoint = battleCommand.Tool * battleCommand.Tool * player.AttackMagic * 3;
 					}
+					else if (battleCommand.Method == 1)
+						magicPoint = 32_500;
+					else
+						magicPoint = 20_000;
 
-					magicPoint = battleCommand.Tool * battleCommand.Tool * player.AttackMagic * 3;
-
-					if (mRand.Next(100) < enemy.Resistance)
+					if (mRand.Next(100) < enemy.Resistance[2])
 					{
 						battleResult.Add($"{enemy.NameSubjectJosa} {battleCommand.Player.GenderPronoun}의 마법을 저지했다");
 						return;
@@ -6834,7 +6854,7 @@ namespace MysticUWP
 					}
 					else
 					{
-						battleResult.Add($"{enemy.NameSubjectJosa} [color={RGB.White}]{magicPoint.ToString("#,#0")}[/color]만큼의 피해를 입었다");
+						battleResult.Add($"{enemy.NameSubjectJosa} [color={RGB.White}]{magicPoint:#,#0}[/color]만큼의 피해를 입었다");
 					}
 				}
 
@@ -6865,19 +6885,14 @@ namespace MysticUWP
 						player.SP -= 15;
 						DisplaySP();
 
-						if (enemy.ENumber != 5 &&
-							enemy.ENumber != 9 &&
-							enemy.ENumber != 19 &&
-							enemy.ENumber != 23 &&
-							enemy.ENumber != 26 &&
-							enemy.ENumber != 28 &&
-							enemy.ENumber != 32 &&
-							enemy.ENumber != 34 &&
-							enemy.ENumber != 39 &&
+						if (!(5 <= enemy.ENumber && enemy.ENumber <= 8) &&
+							!(10 <= enemy.ENumber && enemy.ENumber <= 15) && 
+							enemy.ENumber != 17 &&
+							enemy.ENumber != 18 &&
+							enemy.ENumber != 24 &&
+							enemy.ENumber != 25 &&
 							enemy.ENumber != 46 &&
-							enemy.ENumber != 52 &&
-							enemy.ENumber != 61 &&
-							enemy.ENumber != 69)
+							enemy.ENumber != 63)
 						{
 							battleResult.Add($"독심술은 전혀 통하지 않았다");
 							return;
@@ -6979,12 +6994,18 @@ namespace MysticUWP
 						player.SP -= 100;
 						DisplaySP();
 
-						if (mRand.Next(40) < enemy.Resistance)
+						if (mRand.Next(40) < enemy.Resistance[1])
 						{
-							if (enemy.Resistance < 5)
-								enemy.Resistance = 0;
+							if (enemy.Resistance[0] < 5)
+								enemy.Resistance[0] = 0;
 							else
-								enemy.Resistance -= 5;
+								enemy.Resistance[0] -= 5;
+
+							if (enemy.Resistance[1] < 5)
+								enemy.Resistance[1] = 0;
+							else
+								enemy.Resistance[1] -= 5;
+
 							return;
 						}
 
@@ -7000,6 +7021,7 @@ namespace MysticUWP
 
 						enemy.Dead = true;
 						battleResult.Add($"[color={RGB.LightGreen}]{enemy.NameSubjectJosa} 겁을 먹고는 도망가 버렸다[/color]");
+						PlusExperience(enemy);
 					}
 					else if (battleCommand.Tool == 3)
 					{
@@ -7037,7 +7059,7 @@ namespace MysticUWP
 							}
 						}
 
-						if (mRand.Next(40) < enemy.Resistance)
+						if (mRand.Next(40) < enemy.Resistance[1])
 						{
 							if (enemy.Agility < 5)
 								enemy.Agility = 0;
@@ -7076,8 +7098,8 @@ namespace MysticUWP
 
 						if (enemy.Posion)
 						{
-							if (enemy.HP > 500)
-								enemy.HP -= 50;
+							if (enemy.HP > 5_000)
+								enemy.HP -= 5_000;
 							else
 							{
 								enemy.HP = 0;
@@ -7113,25 +7135,31 @@ namespace MysticUWP
 						player.SP -= 1_000;
 						DisplaySP();
 
-						if (mRand.Next(40) < enemy.Resistance)
+						if (mRand.Next(40) < enemy.Resistance[1])
 						{
-							if (enemy.Resistance < 20)
-								enemy.Resistance = 0;
+							if (enemy.Resistance[0] < 20)
+								enemy.Resistance[0] = 0;
 							else
-								enemy.Resistance -= 20;
+								enemy.Resistance[0] -= 20;
+
+							if (enemy.Resistance[1] < 20)
+								enemy.Resistance[1] = 0;
+							else
+								enemy.Resistance[1] -= 20;
+
 							return;
 						}
 
 						if (mRand.Next(80) > player.Concentration)
 						{
-							if (enemy.HP < 500)
+							if (enemy.HP < 5_000)
 							{
 								enemy.HP = 0;
 								enemy.Unconscious = true;
 								PlusExperience(enemy);
 							}
 							else
-								enemy.HP -= 500;
+								enemy.HP -= 5_000;
 
 							return;
 						}
@@ -7193,7 +7221,7 @@ namespace MysticUWP
 						battleCommand.Player.SP -= SKILL_POINT;
 						DisplaySP();
 
-						if (mRand.Next(100) < enemy.Resistance)
+						if (mRand.Next(100) < enemy.Resistance[1])
 						{
 							battleResult.Add($"기술 무력화 공격은 저지 당했다");
 							return;
@@ -7228,7 +7256,7 @@ namespace MysticUWP
 						battleCommand.Player.SP -= DEFENCE_POINT;
 						DisplaySP();
 
-						if (mRand.Next(100) < enemy.Resistance)
+						if (mRand.Next(100) < enemy.Resistance[0])
 						{
 							battleResult.Add($"방어 무력화 공격은 저지 당했다");
 							return;
@@ -7248,14 +7276,18 @@ namespace MysticUWP
 						}
 
 						battleResult.Add($"[color={RGB.Red}]{enemy.Name}의 방어 능력이 저하되었다[/color]");
-						if ((enemy.Resistance < 31 || mRand.Next(2) == 0) && enemy.AC > 0)
+						if ((enemy.Resistance[0] < 31 || mRand.Next(2) == 0) && enemy.AC > 0)
 							enemy.AC--;
+
+						if (enemy.Resistance[0] > 10)
+							enemy.Resistance[0] -= 10;
 						else
-						{
-							enemy.Resistance -= 10;
-							if (enemy.Resistance > 0)
-								enemy.Resistance = 0;
-						}
+							enemy.Resistance[0] = 0;
+
+						if (enemy.Resistance[1] > 10)
+							enemy.Resistance[1] -= 10;
+						else
+							enemy.Resistance[1] = 0;
 					}
 
 					void RemoveAbility()
@@ -7277,7 +7309,7 @@ namespace MysticUWP
 						battleCommand.Player.SP -= ABILITY_POINT;
 						DisplaySP();
 
-						if (mRand.Next(200) < enemy.Resistance)
+						if (mRand.Next(200) < enemy.Resistance[1])
 						{
 							battleResult.Add($"능력 저하 공격은 저지 당했다");
 							return;
@@ -7294,9 +7326,15 @@ namespace MysticUWP
 						if (enemy.Level > 0)
 							enemy.Level--;
 
-						enemy.Resistance -= 10;
-						if (enemy.Resistance < 0)
-							enemy.Resistance = 0;
+						if (enemy.Resistance[0] > 10)
+							enemy.Resistance[0] -= 10;
+						else
+							enemy.Resistance[0] = 0;
+
+						if (enemy.Resistance[1] > 10)
+							enemy.Resistance[1] -= 10;
+						else
+							enemy.Resistance[1] = 0;
 					}
 
 					void RemoveMagic()
@@ -7318,7 +7356,7 @@ namespace MysticUWP
 						battleCommand.Player.SP -= MAGIC_POINT;
 						DisplaySP();
 
-						if (mRand.Next(100) < enemy.Resistance)
+						if (mRand.Next(100) < enemy.Resistance[1])
 						{
 							battleResult.Add($"마법 불능 공격은 저지 당했다");
 							return;
@@ -7359,7 +7397,7 @@ namespace MysticUWP
 						battleCommand.Player.SP -= SUPERMAN_POINT;
 						DisplaySP();
 
-						if (mRand.Next(100) < enemy.Resistance)
+						if (mRand.Next(100) < enemy.Resistance[1])
 						{
 							battleResult.Add($"탈 초인화 공격은 저지 당했다");
 							return;
@@ -7378,7 +7416,15 @@ namespace MysticUWP
 							battleResult.Add($"[color={RGB.Red}]{enemy.Name}의 초자연적 능력은 사라졌다[/color]");
 
 						if (enemy.SpecialCastLevel > 0)
-							enemy.SpecialCastLevel--;
+						{
+							var levelPoint = 0;
+							while ((enemy.SpecialCastLevel & (1 << levelPoint)) > 0 || levelPoint == 8) {
+								levelPoint++;
+							}
+
+							if (levelPoint < 8)
+								enemy.SpecialCastLevel ^= 1 << levelPoint;
+						}
 					}
 
 					switch (battleCommand.Tool)
@@ -7789,122 +7835,7 @@ namespace MysticUWP
 								mAssistPlayer.Accuracy = 12 + GetBonusPoint(5);
 								mAssistPlayer.Weapon = 33;
 								mAssistPlayer.WeaPower = battleCommand.Player.SummonMagic * 3;
-								mAssistPlayer.PotentialAC = 2;
-								mAssistPlayer.AC = 3;
-								break;
-							case 1:
-								mAssistPlayer.Name = "캐리온 크롤러";
-								mAssistPlayer.Endurance = 20 + GetBonusPoint(5);
-								mAssistPlayer.Resistance = 14 + GetBonusPoint(5);
-								mAssistPlayer.Accuracy = 13 + GetBonusPoint(5);
-								mAssistPlayer.Weapon = 34;
-								mAssistPlayer.WeaPower = battleCommand.Player.SummonMagic;
 								mAssistPlayer.PotentialAC = 3;
-								mAssistPlayer.AC = 3;
-								break;
-							case 2:
-								mAssistPlayer.Name = "켄타우루스";
-								mAssistPlayer.Endurance = 17 + GetBonusPoint(5);
-								mAssistPlayer.Resistance = 12 + GetBonusPoint(5);
-								mAssistPlayer.Accuracy = 18 + GetBonusPoint(5);
-								mAssistPlayer.Weapon = 35;
-								mAssistPlayer.WeaPower = (int)Math.Round(battleCommand.Player.SummonMagic * 1.5);
-								mAssistPlayer.PotentialAC = 2;
-								mAssistPlayer.AC = 2;
-								break;
-							case 3:
-								mAssistPlayer.Name = "데모고르곤";
-								mAssistPlayer.Endurance = 18 + GetBonusPoint(5);
-								mAssistPlayer.Resistance = 5 + GetBonusPoint(5);
-								mAssistPlayer.Accuracy = 17 + GetBonusPoint(3);
-								mAssistPlayer.Weapon = 36;
-								mAssistPlayer.WeaPower = battleCommand.Player.SummonMagic * 4;
-								mAssistPlayer.PotentialAC = 4;
-								mAssistPlayer.AC = 4;
-								break;
-							case 4:
-								mAssistPlayer.Name = "듈라한";
-								mAssistPlayer.Endurance = 10 + GetBonusPoint(5);
-								mAssistPlayer.Resistance = 20;
-								mAssistPlayer.Accuracy = 17;
-								mAssistPlayer.Weapon = 16;
-								mAssistPlayer.WeaPower = battleCommand.Player.SummonMagic;
-								mAssistPlayer.PotentialAC = 3;
-								mAssistPlayer.AC = 3;
-								break;
-							case 5:
-								mAssistPlayer.Name = "에틴";
-								mAssistPlayer.Endurance = 10 + GetBonusPoint(5);
-								mAssistPlayer.Resistance = 10;
-								mAssistPlayer.Accuracy = 10 + GetBonusPoint(9);
-								mAssistPlayer.Weapon = 8;
-								mAssistPlayer.WeaPower = (int)Math.Round(battleCommand.Player.SummonMagic * 0.8);
-								mAssistPlayer.PotentialAC = 1;
-								mAssistPlayer.AC = 1;
-								break;
-							case 6:
-								mAssistPlayer.Name = "헬하운드";
-								mAssistPlayer.Endurance = 14 + GetBonusPoint(5);
-								mAssistPlayer.Resistance = 9 + GetBonusPoint(5);
-								mAssistPlayer.Accuracy = 11 + GetBonusPoint(5);
-								mAssistPlayer.Weapon = 33;
-								mAssistPlayer.WeaPower = battleCommand.Player.SummonMagic * 3;
-								mAssistPlayer.PotentialAC = 2;
-								mAssistPlayer.AC = 2;
-								break;
-							case 7:
-								mAssistPlayer.Name = "미노타우루스";
-								mAssistPlayer.Endurance = 13 + GetBonusPoint(5);
-								mAssistPlayer.Resistance = 11 + GetBonusPoint(5);
-								mAssistPlayer.Accuracy = 14 + GetBonusPoint(5);
-								mAssistPlayer.Weapon = 9;
-								mAssistPlayer.WeaPower = battleCommand.Player.SummonMagic * 3;
-								mAssistPlayer.PotentialAC = 2;
-								mAssistPlayer.AC = 2;
-								break;
-						}
-
-						mAssistPlayer.HP = mAssistPlayer.Endurance * mAssistPlayer.Level * 10;
-					}
-					else if (battleCommand.Tool == 6)
-					{
-						mAssistPlayer = new Lore()
-						{
-							Gender = GenderType.Male,
-							Class = 0,
-							ClassType = ClassCategory.Unknown,
-							Level = battleCommand.Player.SummonMagic / 5,
-							Strength = 10 + GetBonusPoint(5),
-							Mentality = 10 + GetBonusPoint(5),
-							Concentration = 10 + GetBonusPoint(5),
-							Agility = 0,
-							Luck = 10 + GetBonusPoint(5),
-							Poison = 0,
-							Unconscious = 0,
-							Dead = 0,
-							SP = 0,
-							Experience = 0,
-							PotentialExperience = 0,
-							Shield = 0,
-							ShiPower = 0,
-							Armor = 0,
-							SwordSkill = 0,
-							AxeSkill = 0,
-							SpearSkill = 0,
-							BowSkill = 0,
-							FistSkill = 0
-						};
-
-						switch (mRand.Next(8))
-						{
-							case 0:
-								mAssistPlayer.Name = "밴더스내치";
-								mAssistPlayer.Endurance = 15 + GetBonusPoint(5);
-								mAssistPlayer.Resistance = 8 + GetBonusPoint(5);
-								mAssistPlayer.Accuracy = 12 + GetBonusPoint(5);
-								mAssistPlayer.Weapon = 33;
-								mAssistPlayer.WeaPower = battleCommand.Player.SummonMagic * 3;
-								mAssistPlayer.PotentialAC = 2;
 								mAssistPlayer.AC = 3;
 								break;
 							case 1:
@@ -8158,9 +8089,10 @@ namespace MysticUWP
 							Endurance = 30 + GetBonusPoint(10),
 							Resistance = 10 + GetBonusPoint(10),
 							Accuracy = 15 + GetBonusPoint(5),
-							WeaPower = battleCommand.Player.SummonMagic * mRand.Next(5) + 1,
+							WeaPower = (int)Math.Round((double)battleCommand.Player.SummonMagic * (mRand.Next(5) + 1)),
 							PotentialAC = 3,
 							AC = 3,
+							Gender = GenderType.Neutral,
 							Class = 0,
 							ClassType = ClassCategory.Dragon,
 							Level = battleCommand.Player.SummonMagic / 5,
@@ -8267,33 +8199,6 @@ namespace MysticUWP
 							FistSkill = 0
 						};
 
-						mAssistPlayer = new Lore()
-						{
-							Gender = GenderType.Neutral,
-							Class = 0,
-							ClassType = ClassCategory.Golem,
-							Level = battleCommand.Player.SummonMagic / 5,
-							Strength = 10 + GetBonusPoint(5),
-							Mentality = 10 + GetBonusPoint(5),
-							Concentration = 10 + GetBonusPoint(5),
-							Agility = 0,
-							Luck = 10 + GetBonusPoint(5),
-							Poison = 0,
-							Unconscious = 0,
-							Dead = 0,
-							SP = 0,
-							Experience = 0,
-							PotentialExperience = 0,
-							Shield = 0,
-							ShiPower = 0,
-							Armor = 0,
-							SwordSkill = 0,
-							AxeSkill = 0,
-							SpearSkill = 0,
-							BowSkill = 0,
-							FistSkill = 0
-						};
-
 						switch (mRand.Next(2))
 						{
 							case 0:
@@ -8318,28 +8223,69 @@ namespace MysticUWP
 								mAssistPlayer.PotentialAC = 4;
 								mAssistPlayer.AC = 4;
 								break;
-							case 2:
-								mAssistPlayer.Name = "아이언 고렘";
-								mAssistPlayer.Endurance = 20 + GetBonusPoint(5);
-								mAssistPlayer.Resistance = 5 + GetBonusPoint(5);
-								mAssistPlayer.Accuracy = 10 + GetBonusPoint(2);
-								mAssistPlayer.Weapon = 42;
-								mAssistPlayer.WeaPower = battleCommand.Player.SummonMagic * 4;
-								mAssistPlayer.PotentialAC = 5;
-								mAssistPlayer.AC = 5;
+						}
+
+						mAssistPlayer.HP = mAssistPlayer.Endurance * mAssistPlayer.Level * 10;
+					}
+					else if (battleCommand.Tool == 10) {
+						mAssistPlayer = new Lore()
+						{
+							Gender = GenderType.Neutral,
+							Class = 0,
+							Level = 30,
+							Poison = 0,
+							Unconscious = 0,
+							Dead = 0,
+							SP = 0,
+							Experience = 0,
+							PotentialExperience = 0,
+							Shield = 0,
+							ShiPower = 0,
+							Armor = 0,
+							SwordSkill = 0,
+							AxeSkill = 0,
+							SpearSkill = 0,
+							BowSkill = 0,
+							FistSkill = 0
+						};
+
+						switch (mRand.Next(3))
+						{
+							case 0:
+								mAssistPlayer.Name = "크리스탈 드래곤";
+								mAssistPlayer.ClassType = ClassCategory.Dragon;
+								mAssistPlayer.Strength = 25;
+								mAssistPlayer.Mentality = 20;
+								mAssistPlayer.Concentration = 20;
+								mAssistPlayer.Endurance = 30;
+								mAssistPlayer.Resistance = 20;
+								mAssistPlayer.Agility = 0;
+								mAssistPlayer.Accuracy = 20;
+								mAssistPlayer.Luck = 20;
+								mAssistPlayer.Weapon = 49;
+								mAssistPlayer.WeaPower = 255;
+								mAssistPlayer.PotentialAC = 2;
 								break;
-							case 3:
-								mAssistPlayer.Name = "스톤 고렘";
-								mAssistPlayer.Endurance = 25 + GetBonusPoint(5);
-								mAssistPlayer.Resistance = 10 + GetBonusPoint(5);
-								mAssistPlayer.Accuracy = 13 + GetBonusPoint(3);
+							case 1:
+							case 2:
+								mAssistPlayer.Name = "크리스탈 고렘";
+								mAssistPlayer.ClassType = ClassCategory.Golem;
+								mAssistPlayer.Strength = 20;
+								mAssistPlayer.Mentality = 0;
+								mAssistPlayer.Concentration = 0;
+								mAssistPlayer.Endurance = 40;
+								mAssistPlayer.Resistance = 25;
+								mAssistPlayer.Agility = 0;
+								mAssistPlayer.Accuracy = 13;
+								mAssistPlayer.Luck = 0;
 								mAssistPlayer.Weapon = 0;
-								mAssistPlayer.WeaPower = battleCommand.Player.SummonMagic * 2;
-								mAssistPlayer.PotentialAC = 4;
-								mAssistPlayer.AC = 4;
+								mAssistPlayer.WeaPower = 150;
+								mAssistPlayer.PotentialAC = 5;
+								
 								break;
 						}
 
+						mAssistPlayer.AC = mAssistPlayer.PotentialAC;
 						mAssistPlayer.HP = mAssistPlayer.Endurance * mAssistPlayer.Level * 10;
 					}
 
@@ -8402,15 +8348,195 @@ namespace MysticUWP
 				{
 					var battleResult = new List<string>();
 
-					var liveEnemyCount = 0;
-					foreach (var otherEnemy in mEncounterEnemyList)
-					{
-						if (!otherEnemy.Dead)
-							liveEnemyCount++;
-					}
-
+					bool noMoreAttack = false;
 					if (enemy.SpecialCastLevel > 0 && enemy.ENumber > 0)
 					{
+						if ((enemy.SpecialCastLevel & 0x80) > 0)
+						{
+							if (mEncounterEnemyList.Count < 8) {
+								foreach (var otherEnemy in mEncounterEnemyList) {
+									if (otherEnemy != enemy) {
+										otherEnemy.Name = enemy.Name;
+										otherEnemy.ENumber = -1;
+										otherEnemy.HP = 1;
+										otherEnemy.AuxHP = 0;
+									}
+								}
+
+								while (mEncounterEnemyList.Count < 8) {
+									var otherEnemy = JoinEnemy(0);
+
+									otherEnemy.ENumber = -1;
+									otherEnemy.Name = enemy.Name;
+									otherEnemy.ENumber = -1;
+									otherEnemy.HP = 1;
+									otherEnemy.AuxHP = 0;
+								}
+							}
+
+							var moveID = mRand.Next(8);
+
+							if (mEncounterEnemyList[moveID] != enemy) {
+								mEncounterEnemyList[moveID] = enemy;
+							}
+							
+							for (var i = 0; i < mEncounterEnemyList.Count; i++) {
+								if (moveID != i) {
+									mEncounterEnemyList[i].ENumber = -1;
+									mEncounterEnemyList[i].HP = 1;
+									mEncounterEnemyList[i].Posion = false;
+									mEncounterEnemyList[i].Unconscious = false;
+									mEncounterEnemyList[i].Dead = false;
+									mEncounterEnemyList[i].Resistance[0] = 0;
+									mEncounterEnemyList[i].Resistance[1] = 0;
+									mEncounterEnemyList[i].AC = 0;
+									mEncounterEnemyList[i].Level = 0;
+								}
+							}
+
+							DisplayEnemy();
+						}
+
+						var specialAttackType = 0;
+						for (var i = 0; i < 6; i++) {
+							if ((enemy.SpecialCastLevel & (1 << i)) > 0)
+								specialAttackType++;
+						}
+
+						if (specialAttackType > 0) {
+							var method = 0;
+							specialAttackType = mRand.Next(specialAttackType) + 1;
+
+							var liveEnemyCount = 0;
+							foreach (var otherEnemy in mEncounterEnemyList)
+							{
+								if (!otherEnemy.Dead)
+									liveEnemyCount++;
+							}
+
+							var i = 0;
+							do
+							{
+								if ((enemy.SpecialCastLevel & (1 << method)) > 0)
+									i++;
+								method++;
+							} while (i == specialAttackType);
+
+							if (method == 0) {
+								if (mAssistPlayer != null && mAssistPlayer.Name[0] != '크' && mAssistPlayer.Name[1] != '대' && liveEnemyCount < 8 && (mRand.Next(5) == 0))
+								{
+									var turnEnemy = TurnMind(mAssistPlayer);
+									mAssistPlayer = null;
+
+									DisplayPlayerInfo();
+									DisplayEnemy();
+
+									battleResult.Add($"[color={RGB.LightMagenta}]{enemy.NameSubjectJosa} {turnEnemy.NameJosa} 자기편으로 끌어들였다[/color]");
+								}
+							}
+							else if (method == 1) {
+								var avgAC = 0;
+								var avgCount = 0;
+
+								foreach (var player in mPlayerList)
+								{
+									if (player.IsAvailable)
+									{
+										avgAC += player.AC;
+										avgCount++;
+									}
+								}
+
+								if (mAssistPlayer != null && mAssistPlayer.IsAvailable)
+								{
+									avgAC += mAssistPlayer.AC;
+									avgCount++;
+								}
+
+								avgAC /= avgCount;
+
+								if (avgAC > 4 && mRand.Next(5) == 0)
+								{
+									void BreakArmor(Lore player)
+									{
+										battleResult.Add($"[color={RGB.LightMagenta}]{enemy.NameSubjectJosa} {player.Name}의 갑옷파괴를 시도했다[/color]");
+										if (player.Luck > mRand.Next(21))
+											battleResult.Add($"그러나, {enemy.NameSubjectJosa} 성공하지 못했다");
+										else
+										{
+											battleResult.Add($"[color={RGB.Magenta}]{player.Name}의 갑옷은 파괴되었다[/color]");
+
+											if (player.AC > 0)
+												player.AC--;
+										}
+									}
+
+									foreach (var player in mPlayerList)
+									{
+										BreakArmor(player);
+									}
+
+									if (mAssistPlayer != null)
+										BreakArmor(mAssistPlayer);
+
+									DisplayPlayerInfo();
+								}
+							}
+							else if (method == 2) {
+								if (liveEnemyCount < (mRand.Next(3) + 2))
+								{
+									var enemyNum = 0;
+									if (enemy.ENumber == 28)
+										enemyNum = mRand.Next(5);
+									else if (enemy.ENumber == 41)
+										enemyNum = 5 + mRand.Next(5);
+									else if (enemy.ENumber == 44)
+										enemyNum = 38 + mRand.Next(5);
+									else if (enemy.ENumber == 51)
+										enemyNum = 10 + mRand.Next(5);
+									else if (enemy.ENumber == 58)
+										enemyNum = 49;
+									else if (72 <= enemy.ENumber && enemy.ENumber <= 73)
+										enemyNum = 70;
+									else
+										enemyNum = mRand.Next(15);
+
+									var newEnemy = JoinEnemy(enemyNum);
+									DisplayEnemy();
+									battleResult.Add($"[color={RGB.LightMagenta}]{enemy.NameSubjectJosa} {newEnemy.NameJosa} 생성시켰다[/color]");
+								}
+							}
+							else if (3 <= method && method <= 5) {
+								var livePlayerCount = 0;
+								foreach (var player in mPlayerList) {
+									if (player.IsAvailable)
+										livePlayerCount++;
+								}
+
+								if (mAssistPlayer != null && mAssistPlayer.IsAvailable)
+									livePlayerCount++;
+
+								if (livePlayerCount >= (mRand.Next(3) + 5)) {
+									void SubSpecialCastAttack(Lore player) {
+										if (method == 3)
+										{
+											if (player.IsAvailable) {
+												if (mRand.Next(40) > player.Luck) {
+													player.Poison++;
+													if (player.Poison == 0)
+														player.Poison = 255;
+
+													battleResult.Add($"[color={RGB.LightMagenta}]{player.NameSubjectJosa} {enemy.Name}에 의해 독에 감염 되었다.[/color]");
+												}
+											}
+										}
+									}									
+								}
+									
+							}
+						}
+
+
 						if (liveEnemyCount < (mRand.Next(3) + 2) && mRand.Next(3) == 0)
 						{
 							var newEnemy = JoinEnemy(enemy.ENumber + mRand.Next(4) - 20);
