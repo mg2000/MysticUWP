@@ -244,8 +244,9 @@ namespace MysticUWP
 			mHealthTextList.Add(new HealthTextBlock(HealthPlayerName6, HealthPoison6, HealthUnconscious6, HealthDead6));
 
 			mEnterTypeMap["Lore"] = "로어 성";
-			mEnterTypeMap["LastDtch"] = "로어 성";
+			mEnterTypeMap["LastDtch"] = "라스트디치 성";
 			mEnterTypeMap["Menace"] = "메너스";
+			mEnterTypeMap["GaiaGate"] = "가이아게이트";
 
 			gamePageKeyDownEvent = async (sender, args) =>
 			{
@@ -311,6 +312,11 @@ namespace MysticUWP
 										Dialog(" 당신이 메너스로 들어가려 했지만  이미 이곳은 폐광이 된데다가 입구마저 함몰되어 도저히 들어갈 수가 없었다.");
 									else
 										ShowEnterMenu("Menace");
+								}
+							}
+							else if (mMapName == "LastDtch") {
+								if ((x == 37 && y == 9) || (x == 38 && y == 9)) {
+									ShowEnterMenu("GaiaGate");
 								}
 							}
 							
@@ -4618,6 +4624,36 @@ namespace MysticUWP
 										await RefreshGame();
 
 										break;
+									case "GaiaGate":
+										if (!GetBit(50)) {
+											var startX = mMapHeader.EnterX;
+											var startY = mMapHeader.EnterY;
+
+											mMapName = mMapHeader.EnterMap;
+
+											await RefreshGame();
+
+											mXAxis = startX;
+											mYAxis = startY;
+
+											if (GetBit(39))
+												UpdateTileInfo(16, 23, 27);
+
+											if (GetBit(41))
+												UpdateTileInfo(55, 39, 27);
+										}
+										else {
+											var startX = mMapHeader.EnterX;
+											var startY = mMapHeader.EnterY;
+
+											mMapName = "Light";
+
+											await RefreshGame();
+
+											mXAxis = startX - 1;
+											mYAxis = startY - 1;
+										}
+										break;
 								}
 							}
 							else
@@ -5667,6 +5703,10 @@ namespace MysticUWP
 					SetBit(51);
 				}
 			}
+			else if (mMapName == "LastDtch") {
+				if (mYAxis == 69)
+					ShowExitMenu();
+			}
 			
 
 			return triggered;
@@ -5997,7 +6037,7 @@ namespace MysticUWP
 						}, SpecialEventType.RequestSuppressVariantPeoples);
 
 						mParty.Gold += 100_000;
-						
+
 						foreach (var player in mPlayerList) {
 							player.Experience += 2_500_000;
 						}
@@ -6091,6 +6131,55 @@ namespace MysticUWP
 					else
 						Dialog(" 당신은 역시 로드안이 지목한 용사답소.  정말 훌륭한 일을 해내었소.");
 				}
+				else if (moveX == 59 && moveY == 41) {
+					Dialog(" 내가 전에  어떤 모험가를 통해서 얼핏 들었는데 이 세계에는 모두 여섯개의 테라가 있다고 들었습니다.");
+				}
+				else if (moveX == 60 && moveY == 45)
+				{
+					Dialog(" 정말  로드안은 선의 상징입니다.  이번에도 사건이 터지자 마자 악을 무찌르기 위해서 노력을 다 했으니까 말입니다.");
+				}
+				else if (moveX == 55 && moveY == 58) {
+					Dialog(new string[] {
+						" 전갈의 심장을 상징하는 이름을 가진 안타레스라는 자의 마법 능력은 정말 대단했습니다.",
+						" 한때, 가이아 테라성의 수석 위저드로서  지상 최대의 공격 마법을 구사하더군요.  약 몇 년 전에 이곳에 머물렀던 적이 있습니다."
+					});
+				}
+				else if (moveX == 35 && moveY == 18) {
+					Dialog(" 이 세상에서 로드안만큼 칭송받는 인물도 드물 겁니다. 그는 항상 선의 선봉에 서서 주민들을 악으로부터 지켜내고 있으니까요.");
+				}
+				else if (moveX == 35 && moveY == 20) {
+					Dialog(" '테라'라고 하는 말은 라틴어로 대륙이란 뜻이지요.");
+				}
+				else if (moveX == 40 && moveY == 19) {
+					Dialog(" 이 성안에 있는 게이트는  가이아 테라의 배리언트 피플즈라는 성으로 통해 있습니다.");
+				}
+				else if (moveX == 40 && moveY == 17) {
+					Dialog(" 라스트 디치성과 배리언트 피플즈성은  생김새가 똑같습니다.");
+				}
+				else if (moveX == 40 && moveY == 21) {
+					Dialog(" 으윽! 요즘에도 음악 제어하기 힘든  파스칼 언어로 게임을 만드는 무식한 사람이 있다니.");
+				}
+				else if ((moveX == 36 && moveY == 40) || (moveX == 39 && moveY == 40)) {
+					Dialog("... ...");
+				}
+			}
+			else if (mMapName == "LastDtch")
+			{
+				if ((moveX == 53 && moveY == 26) || (moveX == 57 && moveY == 25) || (moveX == 60 && moveY == 20))
+					ShowGroceryMenu();
+				else if ((moveX == 53 && moveY == 56) || (moveX == 53 && moveY == 58))
+					ShowWeaponShopMenu();
+				else if ((moveX == 23 && moveY == 58) || (moveX == 19 && moveY == 59) || (moveX == 18 && moveY == 55))
+					ShowHospitalMenu();
+				else if (moveX == 20 && moveY == 54)
+					ShowItemStoreMenu();
+				else if ((moveX == 19 && moveY == 20) || (moveX == 21 && moveY == 22))
+					ShowClassTrainingMenu();
+				else if (moveX == 14 && moveY == 18)
+					ShowExpStoreMenu();
+				else if (moveX == 16 && moveY == 23) {
+					//Ask($" 나의 이름은 메듀사의 머리를 뜻하는 [color={RGB.LightCyan}]알골[/color]이라고하오." " 나는 이름처럼, 보기만해도 상대를")
+				}
 			}
 		}
 
@@ -6139,6 +6228,39 @@ namespace MysticUWP
 						"",
 						$"[color={RGB.White}]( 코리아 위스키가 잘 팔린다는 말 않겠음 )[/color]"
 					}, true);
+				}
+			}
+			else if (mMapName == "LastDtch") {
+				if (x == 38 && y == 7)
+					Dialog($"[color={RGB.White}] 이곳은 가이아 테라로 통하는 게이트 입니다.[/color]", true);
+				else if (x == 38 && y == 67)
+				{
+					Dialog(new string[] {
+						"",
+						$"[color={RGB.White}] 선을 위해서라면 어떤 위험이나 어려움에도 굴하지 않는 사람들이 있는 곳, 라스트 디치.[/color]",
+						"",
+						$"           여러분을 환영합니다.",
+						"",
+						"",
+						$"[color={RGB.LightGreen}]            이곳의 성주로부터[/color]"
+					}, true);
+				}
+			}
+			else if (mMapName == "Valiant" || mMapName == "Light") {
+				if (x == 38 && y == 7)
+					Dialog($"[color={RGB.White}}] 이곳은 로어 대륙으로 통하는 게이트 입니다.[/color]", true);
+				else if (x == 38 && y == 67)
+				{
+					Dialog(new string[] {
+						"",
+						$"[color={RGB.White}]   여기는 가이아 테라의 배리언트 피플즈[/color]"
+						$"[color={RGB.White}]  불의에 대해 가장 강력한 저항을 하는 곳[/color]",
+						"",
+						$"[color={RGB.White}]           여러분을 환영합니다.[/color]",
+						"",
+						"",
+						$"[color={RGB.LightGreen}]            이곳의 성주로부터[/color]"
+					})
 				}
 			}
 		}
