@@ -795,6 +795,46 @@ namespace MysticUWP
 								"그렇게는 않되오"
 							});
 						}
+						else if (battleEvent == BattleEvent.Orc1) {
+							UpdateTileInfo(9, 38, 34);
+							SetBit(57);
+						}
+						else if (battleEvent == BattleEvent.Orc2)
+						{
+							UpdateTileInfo(8, 18, 34);
+							SetBit(58);
+						}
+						else if (battleEvent == BattleEvent.Orc3)
+						{
+							UpdateTileInfo(12, 11, 34);
+							SetBit(59);
+						}
+						else if (battleEvent == BattleEvent.Orc4)
+						{
+							UpdateTileInfo(20, 8, 34);
+							SetBit(60);
+						}
+						else if (battleEvent == BattleEvent.Orc5)
+						{
+							UpdateTileInfo(42, 11, 34);
+							SetBit(61);
+						}
+						else if (battleEvent == BattleEvent.Orc6)
+						{
+							UpdateTileInfo(43, 29, 34);
+							SetBit(62);
+						}
+						else if (battleEvent == BattleEvent.Orc7)
+						{
+							UpdateTileInfo(34, 28, 34);
+							SetBit(63);
+						}
+						else if (battleEvent == BattleEvent.Orc8)
+						{
+							UpdateTileInfo(40, 38, 34);
+							SetBit(64);
+						}
+
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1238,14 +1278,50 @@ namespace MysticUWP
 						}
 						else if (specialEvent == SpecialEventType.LearnOrcWriting)
 						{
-							UpdateView();
+							InvokeAnimation(AnimationType.CompleteLearnOrcWriting);
+						}
+						else if (specialEvent == SpecialEventType.AskKillOrc1 ||
+						specialEvent == SpecialEventType.AskKillOrc2 ||
+						specialEvent == SpecialEventType.AskKillOrc3 ||
+						specialEvent == SpecialEventType.AskKillOrc4 ||
+						specialEvent == SpecialEventType.AskKillOrc5 ||
+						specialEvent == SpecialEventType.AskKillOrc6 ||
+						specialEvent == SpecialEventType.AskKillOrc7 ||
+						specialEvent == SpecialEventType.AskKillOrc8) {
+							var menuMode = MenuMode.None;
 
-							Dialog(new string[] {
-								" 당신은 이제 오크족의 글을 읽을 수가 있소. 만약 당신이 오크족의 말도 배우고 싶다면  이 대륙의 남동쪽 섬으로 가시오.",
-								" 그리고, 다른 세 종족의 말과 글을 배울 수 있는 길이 반드시 있을거요."
+							switch (specialEvent)
+							{
+								case SpecialEventType.AskKillOrc1:
+									menuMode = MenuMode.KillOrc1;
+									break;
+								case SpecialEventType.AskKillOrc2:
+									menuMode = MenuMode.KillOrc2;
+									break;
+								case SpecialEventType.AskKillOrc3:
+									menuMode = MenuMode.KillOrc3;
+									break;
+								case SpecialEventType.AskKillOrc4:
+									menuMode = MenuMode.KillOrc4;
+									break;
+								case SpecialEventType.AskKillOrc5:
+									menuMode = MenuMode.KillOrc5;
+									break;
+								case SpecialEventType.AskKillOrc6:
+									menuMode = MenuMode.KillOrc6;
+									break;
+								case SpecialEventType.AskKillOrc7:
+									menuMode = MenuMode.KillOrc7;
+									break;
+								case SpecialEventType.AskKillOrc8:
+									menuMode = MenuMode.KillOrc8;
+									break;
+							}
+
+							Ask(" 당신 앞에 있는 오크족을  당신은  어떻게 할 것인가를 선택하시오.", menuMode, new string[] {
+								"죽여 버린다",
+								"그냥 살려 준다"
 							});
-
-							SetBit(8);
 						}
 					}
 
@@ -4716,10 +4792,10 @@ namespace MysticUWP
 
 										await RefreshGame();
 
-										if (GetBit(39))
+										if (GetBit(40))
 											UpdateTileInfo(16, 23, 27);
 
-										if (GetBit(41))
+										if (GetBit(42))
 											UpdateTileInfo(55, 39, 27);
 
 										break;
@@ -4728,10 +4804,10 @@ namespace MysticUWP
 
 										await RefreshGame();
 
-										if (GetBit(42))
+										if (GetBit(43))
 											UpdateTileInfo(24, 8, 44);
 
-										if (GetBit(43))
+										if (GetBit(44))
 											UpdateTileInfo(10, 35, 44);
 
 										break;
@@ -4740,46 +4816,46 @@ namespace MysticUWP
 
 										await RefreshGame();
 
-										if (GetBit(56))
+										if (GetBit(57))
 											UpdateTileInfo(9, 38, 34);
 
-										if (GetBit(57))
+										if (GetBit(58))
 											UpdateTileInfo(8, 18, 34);
 
-										if (GetBit(58))
+										if (GetBit(59))
 											UpdateTileInfo(12, 11, 34);
 
-										if (GetBit(59))
+										if (GetBit(60))
 											UpdateTileInfo(20, 8, 34);
 
-										if (GetBit(60))
+										if (GetBit(61))
 											UpdateTileInfo(42, 11, 34);
 
-										if (GetBit(61))
+										if (GetBit(62))
 											UpdateTileInfo(43, 29, 34);
 
-										if (GetBit(62))
+										if (GetBit(63))
 											UpdateTileInfo(34, 28, 34);
 
-										if (GetBit(63))
+										if (GetBit(64))
 											UpdateTileInfo(40, 38, 34);
 
-										if (GetBit(52))
+										if (GetBit(53))
 										{
 											UpdateTileInfo(24, 41, 43);
 											UpdateTileInfo(24, 42, 43);
 										}
 
-										if (GetBit(53))
+										if (GetBit(54))
 										{
 											UpdateTileInfo(23, 19, 43);
 											UpdateTileInfo(25, 19, 43);
 										}
 
-										if (GetBit(54))
+										if (GetBit(55))
 											UpdateTileInfo(22, 17, 43);
 
-										if (GetBit(55))
+										if (GetBit(56))
 										{
 											UpdateTileInfo(24, 16, 43);
 											UpdateTileInfo(25, 16, 43);
@@ -5776,8 +5852,8 @@ namespace MysticUWP
 									mPlayerList.Add(capella);
 									DisplayPlayerInfo();
 
-									SetBit(43);
-									UpdateTileInfo(24, 8, 44);
+									SetBit(44);
+									UpdateTileInfo(10, 35, 44);
 								}
 								else
 								{
@@ -5792,7 +5868,7 @@ namespace MysticUWP
 							{
 								if (mParty.Gold >= 2_000)
 								{
-									mParty.Food -= 50;
+									mParty.Gold -= 2_000;
 
 									mParty.Day += 7;
 									if (mParty.Day > 360)
@@ -5805,13 +5881,50 @@ namespace MysticUWP
 									mParty.Min = 0;
 									PlusTime(0, 0, 1);
 
-									Talk(" 일주일이 경과했다.", SpecialEventType.LearnOrcWriting);
+									InvokeAnimation(AnimationType.LearnOrcWriting);
 								}
 								else
 									Dialog(" 하지만 당신에게는 충분한 금이 없군요.");
 							}
 							else
 								ClearDialog();
+						}
+						else if (menuMode == MenuMode.KillOrc1) {
+							switch (menuMode) {
+								case MenuMode.KillOrc1:
+									mBattleEvent = BattleEvent.Orc1;
+									break;
+								case MenuMode.KillOrc2:
+									mBattleEvent = BattleEvent.Orc2;
+									break;
+								case MenuMode.KillOrc3:
+									mBattleEvent = BattleEvent.Orc3;
+									break;
+								case MenuMode.KillOrc4:
+									mBattleEvent = BattleEvent.Orc4;
+									break;
+								case MenuMode.KillOrc5:
+									mBattleEvent = BattleEvent.Orc5;
+									break;
+								case MenuMode.KillOrc6:
+									mBattleEvent = BattleEvent.Orc6;
+									break;
+								case MenuMode.KillOrc7:
+									mBattleEvent = BattleEvent.Orc7;
+									break;
+								case MenuMode.KillOrc8:
+									mBattleEvent = BattleEvent.Orc8;
+									break;
+							}
+
+
+							mEncounterEnemyList.Clear();
+							JoinEnemy(17);
+
+							DisplayEnemy();
+							HideMap();
+
+							StartBattle(true);
 						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
@@ -5838,7 +5951,7 @@ namespace MysticUWP
 				else if (args.VirtualKey == VirtualKey.R || args.VirtualKey == VirtualKey.GamepadLeftShoulder)
 				{
 					// 휴식 단축키
-					//Rest();
+					Rest();
 				}
 			};
 
@@ -6058,14 +6171,17 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Ground1") {
-				if (mXAxis == 29 && mYAxis == 19 && !GetBit(51)) {
+			else if (mMapName == "Ground1")
+			{
+				if (mXAxis == 29 && mYAxis == 19 && !GetBit(51))
+				{
 					mEncounterEnemyList.Clear();
 
 					var enemy = JoinEnemy(35);
 					enemy.Name = "폴록스";
 
-					for (var i = 0; i < 6; i++) {
+					for (var i = 0; i < 6; i++)
+					{
 						var others = JoinEnemy(33);
 						others.Name = "강도";
 					}
@@ -6085,14 +6201,74 @@ namespace MysticUWP
 
 					SetBit(51);
 				}
+				else
+					triggered = false;
 			}
-			else if (mMapName == "LastDtch") {
+			else if (mMapName == "LastDtch")
+			{
 				if (mYAxis == 69)
 					ShowExitMenu();
+				else
+					triggered = false;
 			}
-			else if (mMapName == "Valiant") {
+			else if (mMapName == "Valiant")
+			{
 				if (mYAxis == 69)
 					ShowExitMenu();
+				else
+					triggered = false;
+			}
+			else if (mMapName == "Gaea")
+			{
+				if (mXAxis == 17 && mYAxis == 26)
+					FindGold(412, 5_000);
+				else if (mXAxis == 15 && mYAxis == 22)
+					FindGold(143, 10_000);
+				else if (mYAxis == 14 && mYAxis == 24)
+					FindGold(144, (mRand.Next(9) + 1) * 1_000);
+				else if (mYAxis == 11 && mYAxis == 25)
+					FindGold(145, (mRand.Next(9) + 1) * 1_000);
+				else if (mYAxis == 9 && mYAxis == 23 && !GetBit(146))
+				{
+					if (mParty.Etc[21] < 3)
+						FindGold(146, (mRand.Next(9) + 1) * 1_000);
+					else
+					{
+						Dialog($"당신은 [color={RGB.LightCyan}]화염의 크리스탈[/color]을 발견했다.");
+						mParty.Crystal[0]++;
+					}
+
+					SetBit(146);
+				}
+				else if (mXAxis == 22 && mYAxis == 24 && mParty.Etc[20] == 3)
+				{
+					mXAxis = 19;
+				}
+				else if (mYAxis == 20 && mYAxis == 24 && mParty.Etc[20] == 3)
+				{
+					mYAxis = 23;
+				}
+				else if (mYAxis == 9 && (!GetBit(3) || !GetBit(4)))
+				{
+					mYAxis++;
+
+					Dialog($"[color={RGB.LightMagenta}]원인을 알 수 없는 힘이 당신을 거부했다.[/color]");
+				}
+				else if (mYAxis == 5)
+				{
+					if (!GetBit(3) || !GetBit(4))
+					{
+						mYAxis++;
+						Dialog("게이트는 전혀 작동하지 않았다.");
+					}
+					else
+					{
+
+					}
+				}
+				else if (mYAxis == 44) {
+					ShowExitMenu();
+				}
 			}
 			
 
@@ -6700,7 +6876,7 @@ namespace MysticUWP
 				else if (moveX == 37 && moveY == 13) {
 					Dialog(" 오크족에서 제대로 마법을 행하는 자는  오크킹의 왼팔격인 이키메이지뿐입니다.");
 				}
-				else if ((moveX == 39 || moveY == 23) || (moveX == 39 || moveY == 26)) {
+				else if ((moveX == 39 && moveY == 23) || (moveX == 39 && moveY == 26)) {
 					Dialog(" 오크들은  정말 추하고 더럽고 비위생적인 종족입니다.");
 				}
 				else if (moveX == 36 && moveY == 23) {
@@ -6736,9 +6912,63 @@ namespace MysticUWP
 						});
 					}
 				}
-
 			}
-			
+			else if (mMapName == "OrcTown") {
+				if (moveX == 9 && moveY == 38) {
+					if (GetBit(7))
+						Talk(" 제발 살려 주십시요.  저는 여태껏 남에게 해 한 번 안입히고 살아왔습니다.", SpecialEventType.AskKillOrc1);
+					else
+						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 애원하는듯 했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc1);
+				}
+				else if (moveX == 8 && moveY == 18) {
+					if (GetBit(7))
+						Talk(" 우리는  당신네 인간들에게  아무런 나쁜짓도 안했는데 왜 당신들은 우리를 못 살게 구는 겁니까 ?", SpecialEventType.AskKillOrc2);
+					else
+						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 하소연하는듯 했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc2);
+				}
+				else if (moveX == 12 && moveY == 11)
+				{
+					if (GetBit(7))
+						Talk(" 나는 이곳에서 50년 가까이 농사만 지으며 살아왔소.  이곳 밖으로 나가본 적도 거의 없고, 더우기 인간에게 밑보일 짓도 하지 않았소." +
+						" 그런데 왜 당신들은 우리 마을을 짓밟고 우리 동족을 죽이려하오?", SpecialEventType.AskKillOrc3);
+					else
+						Talk(" 당신 앞에 있는 늙은 오크가 당신에게 무어라 질책하는듯 하였으나 도무지 말을 알아들을 수가 없었다.", SpecialEventType.AskKillOrc3);
+				}
+				else if (moveX == 20 && moveY == 8)
+				{
+					if (GetBit(7))
+						Talk(" 분명 오크족 중에서도 나쁜자가 있어서  지나가는 여행자들을 위협하기도 했던게 사실이오. 하지만  대부분은 선량한 오크들이란걸 알아두시오.", SpecialEventType.AskKillOrc4);
+					else
+						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 하소연하는듯 했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc4);
+				}
+				else if (moveX == 42 && moveY == 11)
+				{
+					if (GetBit(7))
+						Talk(" 당신네들이  이렇게 우리들을  못살게 군다면 오크킹님이 가만 있지 않을 것입니다.", SpecialEventType.AskKillOrc5);
+					else
+						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 적개심을 보이며 이야기했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc5);
+				}
+				else if (moveX == 43 && moveY == 29)
+				{
+					if (GetBit(7))
+						Talk(" 우리들은 에인션트 이블님을 정신적인 지도자로 생각하고 있습니다.", SpecialEventType.AskKillOrc6);
+					else
+						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 차분하게 이야기했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc6);
+				}
+				else if (moveX == 34 && moveY == 28)
+				{
+					if (GetBit(7))
+						Talk(" 로드안은 이 세계의 적입니다.  그리고  그를 따르는 당신도 적입니다.", SpecialEventType.AskKillOrc7);
+					else
+						Talk(" 당신앞에 있는 오크 청년은  당장이라도 달려들듯이 당신에게 무어라 소리쳐댔다.", SpecialEventType.AskKillOrc7);
+				}
+				else if (moveX == 40 && moveY == 38) {
+					if (GetBit(7))
+						Talk(" 우리 부족의 아키메이지는 코볼트족의 왕에게서 마법을 배웠습니다.  그라면 충분히 당신을 내 쫒을 겁니다.", SpecialEventType.AskKillOrc8);
+					else
+						Talk(" 당신앞에 있는 오크 청년은  당장이라도 달려들듯이 당신에게 무어라 소리쳐댔다.", SpecialEventType.AskKillOrc8);
+				}
+			}		
 		}
 
 		private void ShowSign(int x, int y)
@@ -6813,6 +7043,27 @@ namespace MysticUWP
 						"",
 						$"[color={RGB.White}]   여기는 가이아 테라의 배리언트 피플즈[/color]",
 						$"[color={RGB.White}]  불의에 대해 가장 강력한 저항을 하는 곳[/color]",
+						"",
+						$"[color={RGB.White}]           여러분을 환영합니다.[/color]",
+						"",
+						"",
+						$"[color={RGB.LightGreen}]            이곳의 성주로부터[/color]"
+					}, true);
+				}
+			}
+			else if (mMapName == "Gaea") {
+				if (x == 23 && y == 25) {
+					Dialog(new string[] {
+						"",
+						$"[color={RGB.White}]        가이아 테라성의 보물창고[/color]",
+						$"[color={RGB.White}]            훔쳐가면 죽어 ~~~[/color]"
+					}, true);
+				}
+				else if (x == 28 && y == 25) {
+					Dialog(new string[] {
+						"",
+						$"[color={RGB.White}]   가이아 테라성에 오신 것을 환영합니다[/color]",
+						$"[color={RGB.White}]    이곳은 쓰레기 종량제 시범 성입니다[/color]",
 						"",
 						$"[color={RGB.White}]           여러분을 환영합니다.[/color]",
 						"",
@@ -11571,6 +11822,20 @@ namespace MysticUWP
 						Task.Delay(1000).Wait();
 					}
 				}
+				else if (mAnimationEvent == AnimationType.LearnOrcWriting) {
+					for (var i = 1; i <= 10; i++) {
+						mAnimationFrame = i;
+						Task.Delay(100).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting)
+				{
+					for (var i = 1; i <= 10; i++)
+					{
+						mAnimationFrame = i;
+						Task.Delay(100).Wait();
+					}
+				}
 			});
 
 			await animationTask;
@@ -11827,6 +12092,22 @@ namespace MysticUWP
 
 				InvokeAnimation(AnimationType.LeavePrisonSoldier);
 			}
+			else if (mAnimationEvent == AnimationType.LearnOrcWriting) {
+				Talk(" 일주일이 경과했다.", SpecialEventType.LearnOrcWriting);
+			}
+			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				UpdateView();
+
+				Dialog(new string[] {
+								" 당신은 이제 오크족의 글을 읽을 수가 있소. 만약 당신이 오크족의 말도 배우고 싶다면  이 대륙의 남동쪽 섬으로 가시오.",
+								" 그리고, 다른 세 종족의 말과 글을 배울 수 있는 길이 반드시 있을거요."
+							});
+
+				SetBit(8);
+			}
 			else
 			{
 				mAnimationEvent = AnimationType.None;
@@ -11987,9 +12268,13 @@ namespace MysticUWP
 				if (mCharacterTiles != null && mFace >= 0)
 				{
 					if (mAnimationEvent != AnimationType.GotoCourt2 && mAnimationEvent != AnimationType.FollowSoldier && mAnimationEvent != AnimationType.FollowSoldier2) {
-						if (mAnimationEvent == AnimationType.FadeOut)
+						if (mAnimationEvent == AnimationType.LearnOrcWriting)
 						{
 							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1));
+						}
+						else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting)
+						{
+							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1));
 						}
 						else
 							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
@@ -12065,20 +12350,31 @@ namespace MysticUWP
 				darkness = true;
 
 			if ((layer[index] & 0x80) > 0)
-				tint = Vector4.One;
+			{
+				if (mAnimationEvent == AnimationType.LearnOrcWriting)
+					tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
+				else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting)
+					tint = new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1);
+				else
+					tint = Vector4.One;
+			}
 			else if (mMoonLight || !darkness)
 			{
 				if (darkness)
 				{
-					if (mAnimationEvent == AnimationType.FadeOut && mAnimationFrame > 4)
+					if (mAnimationEvent == AnimationType.LearnOrcWriting && mAnimationFrame > 4)
 						tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
+					else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting && mAnimationFrame < 6)
+						tint = new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1);
 					else
 						tint = new Vector4(0.1f, 0.1f, 0.6f, 1);
 				}
 				else
 				{
-					if (mAnimationEvent == AnimationType.FadeOut)
+					if (mAnimationEvent == AnimationType.LearnOrcWriting)
 						tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
+					else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting)
+						tint = new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1);
 					else
 						tint = Vector4.One;
 				}
@@ -12089,8 +12385,10 @@ namespace MysticUWP
 					tint = new Vector4(0.0f, 0.0f, 0.0f, 1);
 				else
 				{
-					if (mAnimationEvent == AnimationType.FadeOut)
+					if (mAnimationEvent == AnimationType.LearnOrcWriting)
 						tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
+					else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting)
+						tint = new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1);
 					else
 						tint = Vector4.One;
 				}
@@ -12420,12 +12718,28 @@ namespace MysticUWP
 			LearnTrollWriting,
 			SendValiantToUranos,
 			LearnOrcWriting,
+			AskKillOrc1,
+			AskKillOrc2,
+			AskKillOrc3,
+			AskKillOrc4,
+			AskKillOrc5,
+			AskKillOrc6,
+			AskKillOrc7,
+			AskKillOrc8
 		}
 
 		private enum BattleEvent
 		{
 			None,
 			Pollux,
+			Orc1,
+			Orc2,
+			Orc3,
+			Orc4,
+			Orc5,
+			Orc6,
+			Orc7,
+			Orc8
 		}
 
 		private enum BattleTurn
@@ -12472,7 +12786,8 @@ namespace MysticUWP
 			JoinCanopus,
 			LeavePrisonSoldier,
 			LeaveCanopus,
-			FadeOut
+			LearnOrcWriting,
+			CompleteLearnOrcWriting
 		}
 
 		private enum SpinnerType
@@ -12583,7 +12898,15 @@ namespace MysticUWP
 			JoinProxima,
 			JoinDenebola,
 			JoinCapella,
-			LearnOrcWriting
+			LearnOrcWriting,
+			KillOrc1,
+			KillOrc2,
+			KillOrc3,
+			KillOrc4,
+			KillOrc5,
+			KillOrc6,
+			KillOrc7,
+			KillOrc8
 		}
 	}
 }
