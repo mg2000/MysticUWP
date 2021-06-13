@@ -1205,26 +1205,33 @@ namespace MysticUWP
 							Dialog(" 로드안은 말을 마치자  당신을 향해  백색의 가루를 뿌리며 주문을 외우기 시작했다.");
 							InvokeAnimation(AnimationType.TransformProtagonist2);
 						}
-						else if (specialEvent == SpecialEventType.FollowSolider) {
+						else if (specialEvent == SpecialEventType.FollowSolider)
+						{
 							InvokeAnimation(AnimationType.FollowSoldier);
 						}
-						else if (specialEvent == SpecialEventType.LordAhnMission) {
+						else if (specialEvent == SpecialEventType.LordAhnMission)
+						{
 							Talk($"[color={RGB.LightGreen}] 당신이  살인 죄로 잡혀오기 전까지는  주위 사람들에게 매우 인정받은 용감한 사람이었다는 것을 알고 있소." +
 							"  내가 지금 부탁하는  몇가지를 들어 준다면 당신에게 그 댓가로 자유로운 삶을 보장하겠소.[/color]", SpecialEventType.LeaveSoldier);
 						}
-						else if (specialEvent == SpecialEventType.LeaveSoldier) {
+						else if (specialEvent == SpecialEventType.LeaveSoldier)
+						{
 							InvokeAnimation(AnimationType.LeaveSoldier);
 						}
-						else if (specialEvent == SpecialEventType.ConfirmPardon) {
+						else if (specialEvent == SpecialEventType.ConfirmPardon)
+						{
 							InvokeAnimation(AnimationType.ConfirmPardon);
 						}
-						else if (specialEvent == SpecialEventType.ConfirmPardon2) {
+						else if (specialEvent == SpecialEventType.ConfirmPardon2)
+						{
 							InvokeAnimation(AnimationType.ConfirmPardon3);
 						}
-						else if (specialEvent == SpecialEventType.JoinCanopus) {
+						else if (specialEvent == SpecialEventType.JoinCanopus)
+						{
 							InvokeAnimation(AnimationType.JoinCanopus);
 						}
-						else if (specialEvent == SpecialEventType.LearnTrollWriting) {
+						else if (specialEvent == SpecialEventType.LearnTrollWriting)
+						{
 							UpdateView();
 
 							Dialog(" 이제 당신은  트롤의 글을  읽고 쓸 수 있게 되었다.");
@@ -1240,6 +1247,7 @@ namespace MysticUWP
 
 							SetBit(8);
 						}
+					}
 
 
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -5793,7 +5801,7 @@ namespace MysticUWP
 										mParty.Day = mParty.Day % 360 + 1;
 									}
 
-									mParty.Hour == 11;
+									mParty.Hour = 11;
 									mParty.Min = 0;
 									PlusTime(0, 0, 1);
 
@@ -11978,8 +11986,14 @@ namespace MysticUWP
 
 				if (mCharacterTiles != null && mFace >= 0)
 				{
-					if (mAnimationEvent != AnimationType.GotoCourt2 && mAnimationEvent != AnimationType.FollowSoldier && mAnimationEvent != AnimationType.FollowSoldier2)
-						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
+					if (mAnimationEvent != AnimationType.GotoCourt2 && mAnimationEvent != AnimationType.FollowSoldier && mAnimationEvent != AnimationType.FollowSoldier2) {
+						if (mAnimationEvent == AnimationType.FadeOut)
+						{
+							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1));
+						}
+						else
+							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
+					}
 
 					if (mAnimationEvent == AnimationType.CaptureProtagonist && mAnimationFrame > 0)
 					{
@@ -12055,16 +12069,31 @@ namespace MysticUWP
 			else if (mMoonLight || !darkness)
 			{
 				if (darkness)
-					tint = new Vector4(0.1f, 0.1f, 0.6f, 1);
+				{
+					if (mAnimationEvent == AnimationType.FadeOut && mAnimationFrame > 4)
+						tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
+					else
+						tint = new Vector4(0.1f, 0.1f, 0.6f, 1);
+				}
 				else
-					tint = Vector4.One;
+				{
+					if (mAnimationEvent == AnimationType.FadeOut)
+						tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
+					else
+						tint = Vector4.One;
+				}
 			}
 			else
 			{
 				if (darkness)
 					tint = new Vector4(0.0f, 0.0f, 0.0f, 1);
 				else
-					tint = Vector4.One;
+				{
+					if (mAnimationEvent == AnimationType.FadeOut)
+						tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
+					else
+						tint = Vector4.One;
+				}
 			}
 
 			if (mMapTiles != null)
@@ -12442,7 +12471,8 @@ namespace MysticUWP
 			ConfirmPardon3,
 			JoinCanopus,
 			LeavePrisonSoldier,
-			LeaveCanopus
+			LeaveCanopus,
+			FadeOut
 		}
 
 		private enum SpinnerType
