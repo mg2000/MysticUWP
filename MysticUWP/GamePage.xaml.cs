@@ -5407,12 +5407,12 @@ namespace MysticUWP
 										Shield = 0,
 										Armor = 1,
 										PotentialAC = 0,
-										SwordSkill = 10,
-										AxeSkill = 40,
-										SpearSkill = 10,
-										BowSkill = 10,
-										ShieldSkill = 10,
-										FistSkill = 10
+										AttackMagic = 10,
+										PhenoMagic = 40,
+										CureMagic = 10,
+										SpecialMagic = 10,
+										ESPMagic = 10,
+										SummonMagic = 10
 									};
 
 									vega.HP = vega.Endurance * vega.Level * 10;
@@ -5424,6 +5424,116 @@ namespace MysticUWP
 
 									SetBit(41);
 									UpdateTileInfo(33, 29, 47);
+								}
+								else
+								{
+									Dialog(" 벌써 사람이 모두 채워져 있군요.  다음 기회를 기다리지요.");
+								}
+							}
+							else
+								ShowNoThanks();
+						}
+						else if (menuMode == MenuMode.JoinAlgol)
+						{
+							if (mMenuFocusID == 0)
+							{
+								if (mPlayerList.Count < 5)
+								{
+									var algol = new Lore()
+									{
+										Name = "알골",
+										Gender = GenderType.Male,
+										Class = 3,
+										ClassType = ClassCategory.Magic,
+										Level = 3,
+										Strength = 10,
+										Mentality = 17,
+										Concentration = 15,
+										Endurance = 8,
+										Resistance = 12,
+										Agility = 11,
+										Accuracy = 14,
+										Luck = 20,
+										Poison = 0,
+										Unconscious = 0,
+										Dead = 0,
+										SP = 0,
+										Experience = 0,
+										Weapon = 0,
+										Shield = 0,
+										Armor = 1,
+										PotentialAC = 0,
+										AttackMagic = 10,
+										PhenoMagic = 20,
+										CureMagic = 20,
+										SpecialMagic = 0,
+										ESPMagic = 0,
+										SummonMagic = 35
+									};
+
+									algol.HP = algol.Endurance * algol.Level * 10;
+									algol.UpdatePotentialExperience();
+									UpdateItem(algol);
+
+									mPlayerList.Add(algol);
+									DisplayPlayerInfo();
+
+									SetBit(40);
+									UpdateTileInfo(16, 23, 27);
+								}
+								else
+								{
+									Dialog(" 벌써 사람이 모두 채워져 있군요.  다음 기회를 기다리지요.");
+								}
+							}
+							else
+								ShowNoThanks();
+						}
+						else if (menuMode == MenuMode.JoinProxima) {
+							if (mMenuFocusID == 0)
+							{
+								if (mPlayerList.Count < 5)
+								{
+									var proxima = new Lore()
+									{
+										Name = "프록시마",
+										Gender = GenderType.Male,
+										Class = 4,
+										ClassType = ClassCategory.Sword,
+										Level = 4,
+										Strength = 15,
+										Mentality = 5,
+										Concentration = 6,
+										Endurance = 16,
+										Resistance = 11,
+										Agility = 16,
+										Accuracy = 19,
+										Luck = 10,
+										Poison = 0,
+										Unconscious = 0,
+										Dead = 0,
+										SP = 0,
+										Experience = 0,
+										Weapon = 26,
+										Shield = 0,
+										Armor = 2,
+										PotentialAC = 1,
+										SwordSkill = 0,
+										AxeSkill = 0,
+										SpearSkill = 10,
+										ShieldSkill = 0,
+										FistSkill = 10
+									};
+
+									proxima.HP = proxima.Endurance * proxima.Level * 10;
+									proxima.UpdatePotentialExperience();
+									UpdateItem(proxima);
+
+									mPlayerList.Add(proxima);
+									DisplayPlayerInfo();
+
+									SetBit(42);
+									UpdateTileInfo(55, 39, 27);
 								}
 								else
 								{
@@ -6178,9 +6288,75 @@ namespace MysticUWP
 				else if (moveX == 14 && moveY == 18)
 					ShowExpStoreMenu();
 				else if (moveX == 16 && moveY == 23) {
-					//Ask($" 나의 이름은 메듀사의 머리를 뜻하는 [color={RGB.LightCyan}]알골[/color]이라고하오." " 나는 이름처럼, 보기만해도 상대를")
+					Ask(new string[] {
+					$" 나의 이름은 메듀사의 머리를 뜻하는 [color={RGB.LightCyan}]알골[/color]이라고하오." +
+					" 나는 이름처럼, 보기만해도 상대를 제압할 수 있는 용맹을 지녔소.  나는 소환계통의 마법을 이 곳에서 수 년을 연마했다오.",
+					" 이제는  나의 능력을 실전에 이용할 때가 되었소. 나는 꼭 당신의 원정을 도와주고 싶소."
+					}, MenuMode.JoinAlgol, new string[] {
+					"당신같이 용맹을 지닌자라면 좋소",
+					"않됐지만 저는 지금 바쁘군요"
+					});
+				}
+				else if (moveX == 55 && moveY == 39) {
+					Ask($" 나는 켄타우루스의 정기를 받은 사냥꾼으로, [color={RGB.LightCyan}]프록시마','라고하오.  이름에서 알수 있듯이 나의 수호성은 알파 센타우리라오." +
+					" 사냥을 나온 중에  당신이 이 곳에 있다는 소리를 듣고 당신의 일행에 참가 하려고 왔던거요.  나를 받아 들이겠소?", MenuMode.JoinProxima, new string[] {
+					"좋소, 승락하지요",
+					"글세요, 곤란한데요"
+					});
+				}
+				else if (moveX == 37 && moveY == 16) {
+					if (!GetBit(5) || GetBit(6)) {
+						Dialog(" 나의 성 배리언트 피플즈에 오신 것을 대단이 환영하오." +
+						"  우리 성의 이름에서  알 수 있듯이 이 곳의 사람들은  진정한 용기에서 오는 참다운 용기를 아주 높이 평가하고 있소." +
+						" 당신같이 용기있는 자들이라면  이 성 어느 곳에서도 환영을 받을 것이오.");
+					}
+					else {
+						Talk(" 당신의 위용은 모두 전해 들었소.  인류를 위협하는 세 종족을 없에고  마지막 남은 우라누스 테라의 드라코니안족을 벌하러 간다고 들었소." +
+						"  나에게는 우라누스 게이트를 여는 마법이 있소. 그럼 당신을 우라누스 테라로 보내 드리리다.", SpecialEventType.SendValiantToUranos);
+					}
+				}
+				else if (moveX == 44 && moveY == 44) {
+					Dialog("가이아 테라는 대지신을 상징하는 대륙입니다.");
+				}
+				else if (moveX == 31 && moveY == 60) {
+					Dialog(" 오크족은 미개한 집단이지만 개중에는 머리가 약간 뛰어나서  마법 능력이 있는 자도 있다고 하더군요.");
+				}
+				else if (moveX == 49 && moveY == 55) {
+					Dialog(" 오크족의 마을은 대륙의 남동쪽에 있습니다. 그들의 무기는 시원챦은 것들뿐이라  우리에게 위협이 되지는 않습니다.");
+				}
+				else if (moveX == 43 && moveY == 30) {
+					if (!GetBit(5) || GetBit(6))
+						Dialog(" 이 대륙에는 모두 4 개의 대륙으로 가는 게이트가 있습니다. 그 중, 2 개의 게이트가 이 성 안에 있습니다.");
+					else
+						Dialog(" 지금 당신은 우라누스 게이트를 찾고 있는 것 같은데,  그렇다면 저희 성주님을 만나 보십시요.");
+				}
+				else if (moveX == 35 && moveY == 18) {
+					Dialog(" 고대 최강의 마법사였던  레드 안타레스의 아들이 시공간을 넘어  이 세계 어딘가에서 살고 있다고 들었습니다.");
+				}
+				else if (moveX == 40 && moveY == 20) {
+					Dialog(" 세상에는  크리스탈에  여러가지 힘을 봉인한 물질이 있습니다.  가장 강력한 영혼의 크리스탈은  모든 적을 한꺼번에 유체이탈 시켜 버린다더군요." +
+					" 그것뿐만 아니라 화염의 크리스탈과 한파의 크리스탈 같은 공격용 크리스탈,  소환의 크리스탈 같은 소환용 크리스탈도 있고, 치료용과  그 이외의 용도로 쓰이는 것도 있다고 들었습니다.");
+				}
+				else if (moveX == 40 && moveY == 18) {
+					if (!GetBit(4))
+					{
+						Dialog(" 제 생각에는 당신이 지금하려고 하는 일이 옳지 않다고 봅니다.  비록 트롤족이 야만스럽고 호전적이라는 하지만  아무런 이유없이 베스퍼성을 침공하려 했겠습니까?" +
+						"  당신은 지금 원인은 모른채  결과만을 가지고  분개하고 있다는 생각을 안하십니까? 좀 더 깊이 알아보고 햏동하는 것이 진정한 용기라고 봅니다.");
+					}
+					else
+						Dialog(" 당신이 트롤족을 멸한 것은  후세에 오점으로 남을 것입니다.");
+				}
+				else if (moveX == 35 && moveY == 20) {
+					if (!GetBit(5))
+					{
+						Dialog(" 이쉬도 테라에는  아직 인류의 문명이 뻗치지 못했습니다. 거기에는 코볼트족이 지배하고 있기 때문에 아무도 접근하지 못했던 것입니다." +
+						"가기만하면 번번히 쫒겨 나오곤 하니까요.");
+					}
+					else
+						Dialog(" 당신 덕분에  이제는 이쉬도 테라에도 인간의 문명을 뻗칠수 있게 되었습니다.");
 				}
 			}
+			
 		}
 
 		private void ShowSign(int x, int y)
@@ -11831,6 +12007,7 @@ namespace MysticUWP
 			ConfirmPardon2,
 			JoinCanopus,
 			LearnTrollWriting,
+			SendValiantToUranos
 		}
 
 		private enum BattleEvent
@@ -11988,7 +12165,9 @@ namespace MysticUWP
 			ChooseCrystal,
 			LearnTrollWriting,
 			JoinAltair,
-			JoinVega
+			JoinVega,
+			JoinAlgol,
+			JoinProxima
 		}
 	}
 }
