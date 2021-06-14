@@ -154,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\DARK.M" />
+    <Content Include="Assets\decorate.png" />
     <Content Include="Assets\DOME.M" />
     <Content Include="Assets\GAEA.M" />
     <Content Include="Assets\GROUND1.M" />
