@@ -180,6 +180,15 @@ namespace MysticUWP
 		{
 			this.InitializeComponent();
 
+			mWizardEyeTimer.Interval = TimeSpan.FromMilliseconds(100);
+			mWizardEyeTimer.Tick += (sender, e) =>
+			{
+				if (mWizardEyePosBlink)
+					mWizardEyePosBlink = false;
+				else
+					mWizardEyePosBlink = true;
+			};
+
 			mPlayerNameList.Add(PlayerName0);
 			mPlayerNameList.Add(PlayerName1);
 			mPlayerNameList.Add(PlayerName2);
@@ -252,6 +261,7 @@ namespace MysticUWP
 			mEnterTypeMap["Valiant"] = "배리언트 피플즈성";
 			mEnterTypeMap["Gaea"] = "가이아 테라성";
 			mEnterTypeMap["OrcTown"] = "오크 마을";
+			mEnterTypeMap["Vesper"] = "베스퍼성";
 
 			gamePageKeyDownEvent = async (sender, args) =>
 			{
@@ -336,6 +346,10 @@ namespace MysticUWP
 									ShowEnterMenu("Gaea");
 								else if (x == 81 && y == 46)
 									ShowEnterMenu("OrcTown");
+							}
+							else if (mMapName == "Ground3") {
+								if (x == 68 && y == 28)
+									ShowEnterMenu("Vesper");
 							}
 							
 						}
@@ -493,8 +507,6 @@ namespace MysticUWP
 								MovePlayer(x, y, true);
 								if (await InvokeSpecialEvent(oriX, oriY))
 									mTriggeredDownEvent = true;
-
-								mTriggeredDownEvent = true;
 							}
 							else if ((1 <= GetTileInfo(x, y) && GetTileInfo(x, y) <= 39) || GetTileInfo(x, y) == 51)
 							{
@@ -502,7 +514,10 @@ namespace MysticUWP
 							}
 							else if (GetTileInfo(x, y) == 53)
 							{
-								ShowSign(x, y);
+								if (mMapName == "OrcTown" || mMapName == "Vesper" || mMapName == "TrolTown" || mMapName == "Tomb")
+									TalkMode(x, y);
+								else
+									ShowSign(x, y);
 								mTriggeredDownEvent = true;
 							}
 							else if (GetTileInfo(x, y) == 48)
@@ -835,7 +850,71 @@ namespace MysticUWP
 							UpdateTileInfo(40, 38, 34);
 							SetBit(64);
 						}
+						else if (battleEvent == BattleEvent.OrcTownEnterance) {
+							UpdateTileInfo(24, 41, 43);
+							UpdateTileInfo(24, 42, 43);
 
+							SetBit(53);
+						}
+						else if (battleEvent == BattleEvent.OrcTempleEnterance) {
+							UpdateTileInfo(23, 19, 43);
+							UpdateTileInfo(25, 19, 43);
+
+							SetBit(54);
+						}
+						else if (battleEvent == BattleEvent.OrcArchiMage) {
+							UpdateTileInfo(22, 17, 43);
+							SetBit(55);
+						}
+						else if (battleEvent == BattleEvent.OrcKing) {
+							UpdateTileInfo(24, 16, 43);
+							UpdateTileInfo(25, 16, 43);
+
+							SetBit(56);
+							SetBit(3);
+
+							for (var i = 53; i <= 64; i++)
+								SetBit(i);
+
+							mParty.Etc[20] = 2;
+
+							foreach (var player in mPlayerList)
+								player.Experience += 15_000;
+
+							if (mAssistPlayer != null)
+								mAssistPlayer.Experience += 15_000;
+
+							Dialog(new string[] {
+								$"[color={RGB.Yellow}] 당신은 오크족의 보스인 오크킹을 물리쳤다.[/color]",
+								$"[color={RGB.LightCyan}][[ 경험치 + 15000 ][/color]"
+							});
+						}
+						else if (battleEvent == BattleEvent.Troll) {
+							Dialog(new string[] {
+							" 당신이 적들을 물리치자 동굴속에서 날렵하게 생긴 트롤이 걸어 나왔다.",
+							""
+							});
+
+							if (GetBit(9))
+							{
+								Talk($"[color={RGB.LightMagenta}] 음... 나의 부하들을 물리치다니 제법 실력이 있는 것같군.  하지만  네가 이 동굴에 들어온 것은 정말 큰 불운이란걸 명심해라." +
+								" 바로 베스퍼 점령대의 대장인 트롤 암살자님이  바로 나이니까.[/color]", SpecialEventType.BattleTrollAssassin);
+							}
+							else
+								Talk(" 그리고는 도저히 알아들을수 없는 말을 몇 마디 지껄이더니 당신에게 달려 들었다.", SpecialEventType.BattleTrollAssassin);
+						}
+						else if (battleEvent == BattleEvent.TrollAssassin) {
+							Dialog(new string[] {
+								$"[color={RGB.Yellow}] 당신은 트롤 암살자를 처치했다.[/color]",
+								$"[color={RGB.LightCyan}][ 다크 크리스탈 + 1][/color]"
+							});
+
+							mParty.Crystal[2]++;
+							UpdateTileInfo(29, 18, 43);
+
+							SetBit(65);
+							SetBit(1);
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -851,7 +930,16 @@ namespace MysticUWP
 						while (!mPlayerList[mBattlePlayerID].IsAvailable && mBattlePlayerID < mPlayerList.Count)
 							mBattlePlayerID++;
 
-						
+						if (battleEvent == BattleEvent.OrcKing)
+						{
+							mXAxis = 24;
+							mYAxis = 20;
+						}
+						else if (battleEvent == BattleEvent.Troll)
+						{
+							mXAxis = mMapHeader.StartX;
+							mYAxis = mMapHeader.StartY;
+						}
 
 						mEncounterEnemyList.Clear();
 						ShowMap();
@@ -1288,7 +1376,8 @@ namespace MysticUWP
 						specialEvent == SpecialEventType.AskKillOrc5 ||
 						specialEvent == SpecialEventType.AskKillOrc6 ||
 						specialEvent == SpecialEventType.AskKillOrc7 ||
-						specialEvent == SpecialEventType.AskKillOrc8) {
+						specialEvent == SpecialEventType.AskKillOrc8)
+						{
 							var menuMode = MenuMode.None;
 
 							switch (specialEvent)
@@ -1324,13 +1413,15 @@ namespace MysticUWP
 								"그냥 살려 준다"
 							});
 						}
-						else if (specialEvent == SpecialEventType.MeetTraveler) {
+						else if (specialEvent == SpecialEventType.MeetTraveler)
+						{
 							Dialog(" 저는 지금 아프로디테 테라에서 오는 길입니다. 거기서 우연히 트롤족의 계보를 보았는데 그 종족은 왕권 세습제이며 왕권 중심으로 사회가 구성되어 있습니다." +
 							" 트롤족의 왕은 그리 강하지 않지만 그의 부하들 중에는 꽤 강한자가 있습니다.");
 
 							SetBit(51);
 						}
-						else if (specialEvent == SpecialEventType.LordAhnCall) {
+						else if (specialEvent == SpecialEventType.LordAhnCall)
+						{
 							Talk(new string[] {
 								$"[color={RGB.LightGreen}] 드디어 이곳까지 왔군요. 내가 한 가지 부탁을 더 해도 되겠소?  이미 베스퍼성은 쑥밭이 되어서  사실상 원정은  더 이상 필요치 않게 되었소." +
 								" 그래서 부탁하건데 우리의 원흉인 트롤족을  완전히 멸해 주시오.  그들의 마을은 베스퍼성 북동쪽 산악지역에 있소. 당신의 승리를 기원하리라.[/color]",
@@ -1345,8 +1436,61 @@ namespace MysticUWP
 
 							SetBit(203);
 						}
-						else if (specialEvent == SpecialEventType.MoveGround3) {
+						else if (specialEvent == SpecialEventType.MoveGround3)
+						{
 							await MoveGround3();
+						}
+						else if (specialEvent == SpecialEventType.BattleOrcTempleEnterance)
+						{
+							mBattleEvent = BattleEvent.OrcTempleEnterance;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleOrcArchiMage)
+						{
+							mBattleEvent = BattleEvent.OrcArchiMage;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleOrcKing)
+						{
+							mBattleEvent = BattleEvent.OrcKing;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleTroll)
+						{
+							mBattleEvent = BattleEvent.Troll;
+
+							if (mXAxis == 29 && mYAxis == 18)
+							{
+								mEncounterEnemyList.Clear();
+								JoinEnemy(27);
+								for (var i = 0; i < 6; i++)
+									JoinEnemy(26);
+
+								DisplayEnemy();
+								HideMap();
+
+								StartBattle(false);
+							}
+						}
+						else if (specialEvent == SpecialEventType.BattleTrollAssassin)
+						{
+							mBattleEvent = BattleEvent.TrollAssassin;
+
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 2; i++)
+								JoinEnemy(27);
+
+							for (var i = 0; i < 4; i++)
+								JoinEnemy(26);
+
+							JoinEnemy(29);
+							JoinEnemy(28);
+
+							DisplayEnemy();
+							HideMap();
+
+							StartBattle(false);
 						}
 					}
 
@@ -2166,6 +2310,11 @@ namespace MysticUWP
 
 						void ShowWizardEye()
 						{
+							if (mMapHeader.Handicap && (mMapHeader.HandicapBit & (1 << 5)) > 0) {
+								Dialog($"[color={RGB.LightMagenta}] 당신의 머리속에는 아무런 형상도 떠오르지 않았다.[/color]");
+								return;
+							}
+
 							var xInit = 0;
 							var yInit = 0;
 							var width = 0;
@@ -2291,23 +2440,18 @@ namespace MysticUWP
 										}
 										else if (mMapHeader.TileType == PositionType.Ground)
 										{
-											if (1 <= tileInfo && tileInfo <= 20)
+											if (2 <= tileInfo && tileInfo <= 20)
 												mWizardEye.Data[offset] = WHITE;
 											else if (tileInfo == 22)
 												mWizardEye.Data[offset] = LIGHTCYAN;
-											else if (tileInfo == 48)
+											else if (tileInfo == 1 || tileInfo == 48)
 												mWizardEye.Data[offset] = LIGHTBLUE;
 											else if (tileInfo == 23 || tileInfo == 49)
 												mWizardEye.Data[offset] = CYAN;
 											else if (tileInfo == 50)
 												mWizardEye.Data[offset] = LIGHTRED;
 											else if (tileInfo == 0)
-											{
-												//if (mMapName == 4)
-												//	mWizardEye.Data[offset] = WHITE;
-												//else
 													mWizardEye.Data[offset] = BLACK;
-											}
 											else if (24 <= tileInfo && tileInfo <= 47)
 												mWizardEye.Data[offset] = BLACK;
 											else
@@ -2329,12 +2473,7 @@ namespace MysticUWP
 											else if (tileInfo == 50)
 												mWizardEye.Data[offset] = LIGHTRED;
 											else if (tileInfo == 52)
-											{
-												//if (mMapName == 2)
-												//	mWizardEye.Data[offset] = LIGHTBLUE;
-												//else
-													mWizardEye.Data[offset] = BLACK;
-											}
+												mWizardEye.Data[offset] = BLACK;
 											else if (tileInfo == 0 || (41 <= tileInfo && tileInfo <= 47))
 												mWizardEye.Data[offset] = BLACK;
 											else
@@ -4185,10 +4324,31 @@ namespace MysticUWP
 						{
 							if (mMenuFocusID == 0)
 							{
-								mXAxis = mMapHeader.ExitX;
-								mYAxis = mMapHeader.ExitY;
+								if (mMapName == "Vesper")
+								{
+									if (mXAxis == 4)
+										mXAxis = mMapHeader.ExitX - 1;
+									else if (mXAxis == 70)
+										mXAxis = mMapHeader.ExitX + 1;
+									else
+										mXAxis = mMapHeader.ExitX;
 
-								mMapName = mMapHeader.ExitMap;
+									if (mYAxis == 5)
+										mYAxis = mMapHeader.ExitY - 1;
+									else if (mYAxis == 49)
+										mYAxis = mMapHeader.ExitY + 1;
+									else
+										mYAxis = mMapHeader.ExitY;
+
+									mMapName = "Ground3";
+								}
+								else
+								{
+									mXAxis = mMapHeader.ExitX;
+									mYAxis = mMapHeader.ExitY;
+
+									mMapName = mMapHeader.ExitMap;
+								}
 
 								await RefreshGame();
 							}
@@ -4886,6 +5046,62 @@ namespace MysticUWP
 											UpdateTileInfo(25, 16, 43);
 										}
 										break;
+									case "Vesper":
+									{
+										var startX = 0;
+										var startY = 0;
+
+										if (mXAxis < 68)
+										{
+											startX = 5;
+											startY = 37;
+										}
+										else if (mXAxis > 68)
+										{
+											startX = 69;
+											startY = 37;
+										}
+										else if (28 < mYAxis)
+										{
+											startX = 37;
+											startY = 6;
+										}
+										else if (mYAxis > 28)
+										{
+											startX = 37;
+											startY = 68;
+										}
+
+										mMapName = mTryEnterMap;
+
+										await RefreshGame();
+
+										mXAxis = startX;
+										mYAxis = startY;
+
+										if (GetBit(65))
+											UpdateTileInfo(29, 18, 43);
+
+										if (GetBit(66))
+											UpdateTileInfo(49, 18, 43);
+
+										if (GetBit(67))
+											UpdateTileInfo(63, 25, 43);
+
+										if (GetBit(68))
+											UpdateTileInfo(60, 32, 43);
+
+										if (GetBit(69))
+											UpdateTileInfo(39, 39, 43);
+
+										if (GetBit(70))
+											UpdateTileInfo(21, 39, 43);
+
+										if (GetBit(71))
+											UpdateTileInfo(19, 25, 43);
+
+										break;
+									}
 								}
 							}
 							else
@@ -5914,7 +6130,14 @@ namespace MysticUWP
 							else
 								ClearDialog();
 						}
-						else if (menuMode == MenuMode.KillOrc1) {
+						else if (menuMode == MenuMode.KillOrc1 ||
+						menuMode == MenuMode.KillOrc2 ||
+						menuMode == MenuMode.KillOrc3 ||
+						menuMode == MenuMode.KillOrc4 ||
+						menuMode == MenuMode.KillOrc5 ||
+						menuMode == MenuMode.KillOrc6 ||
+						menuMode == MenuMode.KillOrc7 ||
+						menuMode == MenuMode.KillOrc8) {
 							switch (menuMode) {
 								case MenuMode.KillOrc1:
 									mBattleEvent = BattleEvent.Orc1;
@@ -5950,6 +6173,21 @@ namespace MysticUWP
 							HideMap();
 
 							StartBattle(true);
+						}
+						else if (menuMode == MenuMode.GuardOrcTown) {
+							if (mMenuFocusID == 0)
+								ClearDialog();
+							else {
+								mEncounterEnemyList.Clear();
+								for (var i = 0; i < 7; i++)
+									JoinEnemy(18);
+
+								DisplayEnemy();
+								HideMap();
+
+								mBattleEvent = BattleEvent.OrcTownEnterance;
+								StartBattle(true);
+							}
 						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
@@ -6246,14 +6484,14 @@ namespace MysticUWP
 			else if (mMapName == "Gaea")
 			{
 				if (mXAxis == 17 && mYAxis == 26)
-					FindGold(412, 5_000);
+					FindGold(142, 5_000);
 				else if (mXAxis == 15 && mYAxis == 22)
 					FindGold(143, 10_000);
-				else if (mYAxis == 14 && mYAxis == 24)
+				else if (mXAxis == 14 && mYAxis == 24)
 					FindGold(144, (mRand.Next(9) + 1) * 1_000);
-				else if (mYAxis == 11 && mYAxis == 25)
+				else if (mXAxis == 11 && mYAxis == 25)
 					FindGold(145, (mRand.Next(9) + 1) * 1_000);
-				else if (mYAxis == 9 && mYAxis == 23 && !GetBit(146))
+				else if (mXAxis == 9 && mYAxis == 23 && !GetBit(146))
 				{
 					if (mParty.Etc[21] < 3)
 						FindGold(146, (mRand.Next(9) + 1) * 1_000);
@@ -6261,22 +6499,23 @@ namespace MysticUWP
 					{
 						Dialog($"당신은 [color={RGB.LightCyan}]화염의 크리스탈[/color]을 발견했다.");
 						mParty.Crystal[0]++;
+						SetBit(146);
 					}
-
-					SetBit(146);
 				}
 				else if (mXAxis == 22 && mYAxis == 24 && mParty.Etc[20] == 3)
 				{
 					mXAxis = 19;
+					triggered = false;
 				}
-				else if (mYAxis == 20 && mYAxis == 24 && mParty.Etc[20] == 3)
+				else if (mXAxis == 20 && mYAxis == 24 && mParty.Etc[20] == 3)
 				{
-					mYAxis = 23;
+					mXAxis = 23;
+					triggered = false;
 				}
 				else if (mYAxis == 9 && (!GetBit(3) || !GetBit(4)))
 				{
 					mYAxis++;
-
+					
 					Dialog($"[color={RGB.LightMagenta}]원인을 알 수 없는 힘이 당신을 거부했다.[/color]");
 				}
 				else if (mYAxis == 5)
@@ -6325,21 +6564,95 @@ namespace MysticUWP
 							await MoveGround3();
 					}
 				}
+				else
+					triggered = false;
 			}
-			
+			else if (mMapName == "OrcTown") {
+				if (mYAxis == 18 && !GetBit(55)) {
+					for (var i = 0; i < 3; i++)
+						JoinEnemy(18);
+					for (var i = 0; i < 4; i++)
+						JoinEnemy(19);
+					JoinEnemy(21);
 
+					Dialog(" 당신 앞에는  어느새인가 매직유저들이 길을 막고 서 있었다.");
+
+					if (GetBit(7)) {
+						Talk(new string[] {
+							" 그 중에서 마법사 차림을 제대로 한 오크 하나가 당신에게 말을했다.",
+							"",
+							$"[color={RGB.LightMagenta}] 나는 오크킹님을 위해 죽고 사는 아키메이지라고 한다. 나를 쓰러뜨리기 전에는 오크킹님을 만날 수가 없다.[/color]"
+						}, SpecialEventType.BattleOrcArchiMage, true);
+					}
+					else {
+						mSpecialEvent = SpecialEventType.BattleOrcArchiMage;
+					}
+				}
+				else if (23 <= mXAxis && mXAxis <= 26 && 15 <= mYAxis && mYAxis <= 17 && !GetBit(56)) {
+					for (var i = 0; i < 2; i++)
+						JoinEnemy(20);
+					JoinEnemy(22);
+					for (var i = 0; i < 2; i++)
+						JoinEnemy(19);
+					JoinEnemy(23);
+
+					Dialog(" 당신이 오크킹에게 접근하자  모든 전투사들이 오크킹 주위를 막아섰다.");
+
+					if (GetBit(7))
+					{
+						Talk(new string[] {
+							" 그러자 오크킹이 당신에게 말했다.",
+							"",
+							$"[color={RGB.LightMagenta}] 당신이  왜 나를  죽이려 하는지 모르겠지만 결과는 뻔한 일이다.[/color]",
+							$"[color={RGB.LightMagenta}] 자! 한바탕 붙어보자!![/color]"
+						}, SpecialEventType.BattleOrcKing, true);
+					}
+					else
+					{
+						mSpecialEvent = SpecialEventType.BattleOrcKing;
+					}
+				}
+				else if (mYAxis == 44) {
+					ShowExitMenu();
+				}
+				else
+					triggered = false;
+			}
+			else if (mMapName == "Ground3") {
+				if (mXAxis == 12 && mYAxis == 10) {
+					mMapName = "Ground2";
+
+					await RefreshGame();
+
+					mXAxis = 43;
+					mYAxis = 7;
+
+					Dialog(" 당신이 이 곳에 서자  새로운 풍경이 나타나기 시작했다.");
+
+					InvokeAnimation(AnimationType.MoveGround2);
+				}
+				else
+					triggered = false;
+			}
+			else if (mMapName == "Vesper") {
+				if (mXAxis == 4 || mXAxis == 70 || mYAxis == 5 || mYAxis == 69)
+					ShowExitMenu();
+				else
+					triggered = false;
+			}
+	
 			return triggered;
 		}
 
 		private async Task MoveGround3() {
-			Dialog(" 당신이 이 곳에 서자  새로운 풍경이 나타나기 시작했다.");
-
 			mMapName = "Ground3";
 
 			await RefreshGame();
 
 			mXAxis = 12;
 			mYAxis = 11;
+
+			Dialog(" 당신이 이 곳에 서자  새로운 풍경이 나타나기 시작했다.");
 
 			InvokeAnimation(AnimationType.MoveGround3);
 		}
@@ -6709,6 +7022,15 @@ namespace MysticUWP
 						InvokeAnimation(AnimationType.PassCrystal);
 					}
 				}
+				else if (mMapName == "Vesper") {
+					if (GetTileInfo(moveX, moveY) == 53) {
+						if (GetBit(9))
+							Talk($"[color={RGB.LightMagenta}] 아직도 남은 인간이 있었다니... 너도 나에게 죽어줘야겠다.[/color]", SpecialEventType.BattleTroll);
+						else
+							Talk(" 당신 앞의 트롤이 무어라 말했지만 알아 들을 수가 없었다.", SpecialEventType.BattleTroll);
+					}
+					
+				}
 			}
 			else if (mMapName == "LastDtch") {
 				if ((moveX == 56 && moveY == 16) || (moveX == 53 && moveY == 19) || (moveX == 57 && moveY == 21))
@@ -7037,6 +7359,36 @@ namespace MysticUWP
 					else
 						Talk(" 당신앞에 있는 오크 청년은  당장이라도 달려들듯이 당신에게 무어라 소리쳐댔다.", SpecialEventType.AskKillOrc8);
 				}
+				else if ((moveX == 24 && moveY == 41) || (moveX == 24 && moveY == 42)) {
+					Ask(new string[] {
+						" 마을의 문 앞을 지키고 있는 오크가 당신에게 인간의 말로 이렇게 말했다.",
+						"",
+						"",
+						$"[color={RGB.LightMagenta}] 인간은 오크 마을에 들어 올 수 없소.[/color]",
+						$"[color={RGB.LightMagenta}] 썩 물러나시오 !![/color]"
+					}, MenuMode.GuardOrcTown, new string[] {
+						"알았소, 나가면 될거 아니오",
+						"당신들을 쓰러뜨리고 지나가야겠소"
+					});
+				}
+				else if ((moveX == 23 && moveY == 19) || (moveX == 25 && moveY == 19)) {
+					mEncounterEnemyList.Clear();
+
+					for (var i = 0; i < 3; i++)
+						JoinEnemy(18);
+
+					JoinEnemy(19);
+					for (var i = 0; i < 2; i++)
+						JoinEnemy(20);
+
+					DisplayEnemy();
+					HideMap();
+
+					if (GetBit(7))
+						Talk($"[color={RGB.LightMagenta}] 인간은 절대 이곳으로 들여 보내지 않겠다. 자! 덤벼라.[/color]", SpecialEventType.BattleOrcTempleEnterance);
+					else
+						Talk("무장을 제법 갖춘 2명의 오크 전사와 다른 전투사들이 당신을 공격하기 시작했다.", SpecialEventType.BattleOrcTempleEnterance);
+				}
 			}		
 		}
 
@@ -7140,6 +7492,13 @@ namespace MysticUWP
 						$"[color={RGB.LightGreen}]            이곳의 성주로부터[/color]"
 					});
 				}
+			}
+			else if (mMapName == "Ground3") {
+				Dialog(new string[] {
+					"",
+					"",
+					$"[color={RGB.White}]   이 광산은 아직 개발 중이라 위험하므로 출입을 금지함[/color]"
+				});
 			}
 		}
 
@@ -11915,14 +12274,16 @@ namespace MysticUWP
 						Task.Delay(100).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.LearnOrcSpeaking) {
-					AnimateFadeInOut();
-				}
 				else if (mAnimationEvent == AnimationType.LearnOrcSpeaking)
+				{
+					Task.Delay(2_000).Wait();
+				}
+				else if (mAnimationEvent == AnimationType.LearnOrcSpeaking2)
 				{
 					AnimateTransition();
 				}
-				else if (mAnimationEvent == AnimationType.MoveGround3) {
+				else if (mAnimationEvent == AnimationType.MoveGround2 || 
+				mAnimationEvent == AnimationType.MoveGround3) {
 					AnimateFadeInOut();
 				}
 			});
@@ -12391,6 +12752,7 @@ namespace MysticUWP
 			if (mAnimationEvent == AnimationType.LearnOrcWriting)
 				fadeOut = true;
 			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting ||
+				mAnimationEvent == AnimationType.MoveGround2 ||
 				mAnimationEvent == AnimationType.MoveGround3)
 				fadeIn = true;
 
@@ -12466,7 +12828,7 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.LiveJail || 
 				mAnimationEvent == AnimationType.FollowSoldier2 ||
 				mAnimationEvent == AnimationType.ConfirmPardon2 ||
-				mAnimationEvent == AnimationType.LearnOrcSpeaking) && mAnimationFrame <= 117)
+				mAnimationEvent == AnimationType.LearnOrcSpeaking2) && mAnimationFrame <= 117)
 				AnimateTransition(mAnimationFrame, playerX, playerY);
 		}
 
@@ -12495,6 +12857,7 @@ namespace MysticUWP
 			if (mAnimationEvent == AnimationType.LearnOrcWriting)
 				fadeOut = true;
 			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting ||
+				mAnimationEvent == AnimationType.MoveGround2 ||
 				mAnimationEvent == AnimationType.MoveGround3)
 				fadeIn = true;
 
@@ -12566,8 +12929,18 @@ namespace MysticUWP
 				var tileIdx = GetTileInfo(layer, index);
 				var oriTileIdx = tileIdx;
 
-				if (mMapName == "OrcTown" && tileIdx == 53)
+				if (mMapName == "OrcTown" && (tileIdx == 53 || tileIdx == 54 || tileIdx == 34))
 					tileIdx = 43;
+				else if (mMapName == "Vesper")
+				{
+					if (tileIdx == 53)
+					{
+
+					}
+					else if (tileIdx == 54)
+						tileIdx == 44;
+				}
+					
 
 				if (mSpecialEvent == SpecialEventType.Penetration)
 				{
@@ -12675,9 +13048,29 @@ namespace MysticUWP
 					mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				}
 
-				if (mMapName == "OrcTown" && oriTileIdx == 53)
-					mDecorateTiles.Draw(sb, 0, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
-			}
+				if (mMapName == "OrcTown")
+				{
+					switch (oriTileIdx)
+					{
+						case 53:
+							mDecorateTiles.Draw(sb, 0, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+							break;
+						case 54:
+							mDecorateTiles.Draw(sb, 1, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+							break;
+						case 34:
+							mDecorateTiles.Draw(sb, 2, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+							break;
+					}
+				}
+				if (mMapName == "OrcTown")
+				{
+					switch (oriTileIdx)
+					{
+						case 54:
+							mDecorateTiles.Draw(sb, 2, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+							break;
+					}
 		}
 
 		private void MapCanvas_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
@@ -12888,7 +13281,12 @@ namespace MysticUWP
 			AskKillOrc8,
 			MeetTraveler,
 			LordAhnCall,
-			MoveGround3
+			MoveGround3,
+			BattleOrcTempleEnterance,
+			BattleOrcArchiMage,
+			BattleOrcKing,
+			BattleTroll,
+			BattleTrollAssassin
 		}
 
 		private enum BattleEvent
@@ -12902,7 +13300,13 @@ namespace MysticUWP
 			Orc5,
 			Orc6,
 			Orc7,
-			Orc8
+			Orc8,
+			OrcTownEnterance,
+			OrcTempleEnterance,
+			OrcArchiMage,
+			OrcKing,
+			Troll,
+			TrollAssassin,
 		}
 
 		private enum BattleTurn
@@ -12953,6 +13357,7 @@ namespace MysticUWP
 			CompleteLearnOrcWriting,
 			LearnOrcSpeaking,
 			LearnOrcSpeaking2,
+			MoveGround2,
 			MoveGround3
 		}
 
@@ -13072,7 +13477,8 @@ namespace MysticUWP
 			KillOrc5,
 			KillOrc6,
 			KillOrc7,
-			KillOrc8
+			KillOrc8,
+			GuardOrcTown
 		}
 	}
 }

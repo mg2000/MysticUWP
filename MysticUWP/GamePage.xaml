@@ -292,7 +292,7 @@
 					<TextBlock x:Name="GameMenuText9" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴10</TextBlock>
 				</StackPanel>
 
-				<TextBlock Grid.Row="2" x:Name="ContinueText" FontSize="25" Margin="30,0,30,30" Foreground="#e7a224" Visibility="Collapsed">아무키나 누르십시오 ...</TextBlock>
+				<TextBlock Grid.Row="2" x:Name="ContinueText" FontSize="25" Margin="30,0,30,30" Foreground="Yellow" Visibility="Collapsed">아무키나 누르십시오 ...</TextBlock>
 			</Grid>
 			<Grid Grid.Row="1" Grid.Column="0">
 				<canvas:CanvasAnimatedControl Grid.Row="0" Grid.Column="0" x:Name="MapCanvas" ClearColor="#515151" Canvas.Left="0" Canvas.Top="0" Width="100" Height="100" CreateResources="MapCanvas_CreateResources" Draw="MapCanvas_Draw" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
