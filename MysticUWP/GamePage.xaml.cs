@@ -12910,7 +12910,8 @@ namespace MysticUWP
 			{
 				var mapIdx = 56;
 
-				switch (mMapHeader.TileType) {
+				switch (mMapHeader.TileType)
+				{
 					case PositionType.Town:
 						mapIdx = 0;
 						break;
@@ -12938,9 +12939,9 @@ namespace MysticUWP
 
 					}
 					else if (tileIdx == 54)
-						tileIdx == 44;
+						tileIdx = 44;
 				}
-					
+
 
 				if (mSpecialEvent == SpecialEventType.Penetration)
 				{
@@ -13071,6 +13072,8 @@ namespace MysticUWP
 							mDecorateTiles.Draw(sb, 2, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
 							break;
 					}
+				}
+			}
 		}
 
 		private void MapCanvas_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
