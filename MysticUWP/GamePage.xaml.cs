@@ -993,6 +993,45 @@ namespace MysticUWP
 							UpdateTileInfo(19, 25, 43);
 							SetBit(71);
 						}
+						else if (battleEvent == BattleEvent.TrollKing) {
+							Dialog(new string[] {
+								" 당신은 경호대원들을 물리치고는 뒤에서 벌벌 떨고 있는 트롤킹에게 검을 겨누었다." +
+								" 그는 겁에 질린채 주저 않았고 당신은 그를 단숨에 베어버렸다.",
+								"",
+								$"[color={RGB.Yellow}] 이제 당신은 전과자 신분이라기보다는 영웅으로써 로어성에 귀환 할 수 있게 되었다.[/color]"
+							});
+
+							mParty.Etc[19] = 4;
+							SetBit(4);
+							SetBit(72);
+
+							UpdateTileInfo(24, 7, 44);
+							UpdateTileInfo(25, 7, 44);
+						}
+						else if (battleEvent == BattleEvent.Troll1) {
+							SetBit(73);
+							UpdateTileInfo(16, 18, 44);
+						}
+						else if (battleEvent == BattleEvent.Troll2) {
+							SetBit(74);
+							UpdateTileInfo(33, 18, 44);
+						}
+						else if (battleEvent == BattleEvent.Troll3) {
+							SetBit(75);
+							UpdateTileInfo(12, 31, 44);
+							UpdateTileInfo(12, 32, 44);
+						}
+						else if (battleEvent == BattleEvent.Troll4) {
+							SetBit(76);
+							UpdateTileInfo(37, 31, 44);
+							UpdateTileInfo(37, 32, 44);
+						}
+						else if (battleEvent == BattleEvent.Troll5) {
+							SetBit(77);
+							UpdateTileInfo(23, 66, 44);
+							UpdateTileInfo(24, 66, 44);
+							UpdateTileInfo(25, 66, 44);
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1694,6 +1733,42 @@ namespace MysticUWP
 							mBattleEvent = BattleEvent.TrollKing;
 
 							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleTroll1) {
+							mBattleEvent = BattleEvent.Troll1;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleTroll2)
+						{
+							mBattleEvent = BattleEvent.Troll2;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleTroll5)
+						{
+							mBattleEvent = BattleEvent.Troll5;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.KillPhysicist) {
+							Lore murderPlayer = mPlayerList.Count > 5 ? mPlayerList[mPlayerList.Count - 1] : null;
+							if (murderPlayer != null) {
+								Talk(new string[] {
+									$" 그때 당신 옆에 있던 {murderPlayer.NameSubjectBJosa} 검을 들어 그를 내리쳤다.",
+									" 순간적으로 일어난 일이라 아무도 손을 쓸 수가 없었다. 그리고 일행들에게 말했다.",
+									"",
+									$"[color={RGB.LightGreen}] 쳇, 이런 겁장이가 지어내는 말을  믿고 있다니... 자네들 어서가게. 이런데서 시간을 낭비해 버리면 우리만 불리해진다네.[/color]"
+								}, SpecialEventType.KillPhysicist2);
+
+								UpdateTileInfo(5, 30, 44);
+								SetBit(78);
+							}
+						}
+						else if (specialEvent == SpecialEventType.KillPhysicist2) {
+							Dialog(new string[] {
+								" 당신은 그래도 아쉬운 마음에 한 마디를 던졌다.",
+								"",
+								$"[color={RGB.LightBlue}] 이건 자네가 좀 심했네.  그의 말이 황당하기는 했지만  거짓인것 같지는 않았다고  생각하네." +
+								" 이왕 들은건데 그 장소까지 알았으면 좋았을걸...[/color]"
+							});
 						}
 					}
 
@@ -6421,6 +6496,17 @@ namespace MysticUWP
 								BattleTrollKing();
 							}
 						}
+						else if (menuMode == MenuMode.PhysicistTeaching) {
+							Talk(" 오, 정말 감사하오. 나는 드라코니안족에게서 물리학을 배우고 이곳에 왔던 참이라오.  나는 차원에 관한 여러가지 연구를 했었소." +
+							"  그러던 중에  나는 로어 세계에서도 다른 차원으로 가는 길이 있다는걸 알아냈소." +
+							" 그곳의 중력은 무슨 이유에서인지 상당히 밀도가 높게 압축되어 있었고" +
+							" 태양의 인력이 반대로 작용하는 자정무렵에는 그 지역의 공간이 일그러져  다른 세계로의 문이 열리는 것을  목격했소." +
+							"  그 공간의 창을 통해 내가 본것은  허허 벌판이나 죽어가는 행성의  최후의 모습같은 것들도  있었지만 때때로  생명체가 사는 별들과 연결 되는 것도 확인했소." +
+							"  거대한 파충류가  사는 곳도 있고, 규질의 몸뚱이를 가지고 질소를 마시며 생활하는 생물도 보았소." +
+							" 그중에서도 내가 가장 관심있게 본 것은, 우리와 같이 C,H,O,N 으로 구성된 피부를 가지고  산화작용으로 ATP를 합성하는 생물이 사는 곳이었소." +
+							" 그들은 마법도 사용할 줄 모르고 생활하고 있지만  대단한 살상무기를 많이 보유하고 있었소.  또한 '뉴욕'이란 도시를 보았을때 정말 그들의 과학력과 건축기술에 탄복하고 말았소." +
+							" 당신도 내 말을 믿을수 있겠소?", SpecialEventType.KillPhysicist);
+						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
 					//				{
@@ -7666,6 +7752,115 @@ namespace MysticUWP
 							});
 						}
 					}
+					else if (moveX == 16 && moveY == 18) {
+						mEncounterEnemyList.Clear();
+
+						for (var i = 0; i < 3; i++) {
+							var enemy = JoinEnemy(19);
+							enemy.Name = "트롤매직유저";
+							enemy.Level = 6;
+						}
+
+						for (var i = 0; i < 3; i++)
+							JoinEnemy(27);
+
+						JoinEnemy(33);
+
+						DisplayEnemy();
+						HideMap();
+
+						if (GetBit(9)) {
+							Talk($"[color={RGB.LightMagenta}] 감히 트롤의 보물을 탈취하려고  이곳에 오다니! 나는 이 보물창고의 경비대장으로써  목숨을 걸고 보물을 지킬테다.[/color]", SpecialEventType.BattleTroll1);
+						}
+						else {
+							mBattleEvent = BattleEvent.Troll1;
+							StartBattle(false);
+						}
+					}
+					else if (moveX == 33 && moveY == 18) {
+						for (var i = 0; i < 4; i++)
+							JoinEnemy(30);
+
+						for (var i = 0; i < 2; i++)
+							JoinEnemy(31);
+
+						JoinEnemy(32);
+
+						DisplayEnemy();
+						HideMap();
+
+						if (GetBit(9)) {
+							Talk($"[color={RGB.LightMagenta}] 바로 너희들이 우리 동굴에 잡혀 있는 인간들을 구하러온 자들인가?" +
+							" 하지만 나의 파괴 마법앞에서는 너희들의 배짱도 산산히 부셔져 버릴 것이다.[/color]", SpecialEventType.BattleTroll2);
+						}
+						else {
+							mBattleEvent = BattleEvent.Troll2;
+							StartBattle(false);
+						}
+					}
+					else if (moveX == 33 && moveY == 18)
+					{
+						for (var i = 0; i < 4; i++)
+							JoinEnemy(30);
+
+						for (var i = 0; i < 4; i++)
+							JoinEnemy(27);
+
+						DisplayEnemy();
+						HideMap();
+
+
+						mBattleEvent = BattleEvent.Troll3;
+						StartBattle(false);
+					}
+					else if((moveX == 37 && moveY == 31) || (moveX == 37 && moveY == 32))
+					{
+						for (var i = 0; i < 2; i++)
+							JoinEnemy(25);
+
+						for (var i = 0; i < 3; i++)
+							JoinEnemy(30);
+
+						for (var i = 0; i < 3; i++)
+							JoinEnemy(27);
+
+						DisplayEnemy();
+						HideMap();
+
+						mBattleEvent = BattleEvent.Troll4;
+						StartBattle(false);
+					}
+					else if ((moveX == 23 && moveY == 66) || (moveX == 24 && moveY == 66) || (moveX == 25 && moveY == 66))
+					{
+						for (var i = 0; i < 8; i++)
+						{
+							var enemy = JoinEnemy(25);
+							enemy.Name = "트롤매직유저";
+							enemy.Level = 5;
+						}
+
+						DisplayEnemy();
+						HideMap();
+
+						if (GetBit(9))
+						{
+							Talk($"[color={RGB.LightMagenta}] 너희들을 절대 이 안으로 들여 보낼수 없다!![/color]", SpecialEventType.BattleTroll5);
+						}
+						else
+						{
+							mBattleEvent = BattleEvent.Troll5;
+							StartBattle(false);
+						}
+					}
+					else if (moveX == 5 && moveY == 30) {
+						if (GetBit(9)) {
+							Ask(" 날 제발 살려 주시오.  나는 이곳의 물리학자인데  당신에게 중요한 발견하나를 알려줄테니 제발 목숨만은 살려주시오.",
+							MenuMode.PhysicistTeaching, new string[] {
+								"좋소, 한번 들어봅시다",
+								"날 속이려고 드는군, 자 죽어랏!"
+							});
+						}
+					}
 				}
 			}
 		}
@@ -7729,7 +7924,7 @@ namespace MysticUWP
 						$"           여러분을 환영합니다.",
 						"",
 						"",
-						$"[color={RGB.LightGreen}]            이곳의 성주로부터[/color]"
+						$"[color={RGB.LightMagenta}]            이곳의 성주로부터[/color]"
 					}, true);
 				}
 			}
@@ -7746,7 +7941,7 @@ namespace MysticUWP
 						$"[color={RGB.White}]           여러분을 환영합니다.[/color]",
 						"",
 						"",
-						$"[color={RGB.LightGreen}]            이곳의 성주로부터[/color]"
+						$"[color={RGB.LightMagenta}]            이곳의 성주로부터[/color]"
 					}, true);
 				}
 			}
@@ -7767,7 +7962,7 @@ namespace MysticUWP
 						$"[color={RGB.White}]           여러분을 환영합니다.[/color]",
 						"",
 						"",
-						$"[color={RGB.LightGreen}]            이곳의 성주로부터[/color]"
+						$"[color={RGB.LightMagenta}]            이곳의 성주로부터[/color]"
 					});
 				}
 			}
@@ -13625,7 +13820,12 @@ namespace MysticUWP
 			BattleVesperTroll7,
 			ReadVesperMemo,
 			NoMoreMemo,
-			BattleTrollKing
+			BattleTrollKing,
+			BattleTroll1,
+			BattleTroll2,
+			BattleTroll5,
+			KillPhysicist,
+			KillPhysicist2
 		}
 
 		private enum BattleEvent
@@ -13652,7 +13852,12 @@ namespace MysticUWP
 			VesperTroll6,
 			VesperTroll7,
 			TrollAssassin,
-			TrollKing
+			TrollKing,
+			Troll1,
+			Troll2,
+			Troll3,
+			Troll4,
+			Troll5
 		}
 
 		private enum BattleTurn
@@ -13828,7 +14033,8 @@ namespace MysticUWP
 			KillOrc8,
 			GuardOrcTown,
 			NegotiateTrollKing,
-			TrollKingSuggestion
+			TrollKingSuggestion,
+			PhysicistTeaching
 		}
 	}
 }
