@@ -1675,9 +1675,25 @@ namespace MysticUWP
 								"",
 								$"[color={RGB.White}] 트롤족에 의한 베스퍼성의 괴멸은 예견되었던거나 다름없었다." +
 								"  우리는 인간이기에  인간의 편을 들수밖에 없었고  또한 우리의 견해와 입장으로써 이 사실을 다른 대륙으로 알렸다." +
-								" 하지만 그것은 잘못되었다는 것을  이내 알았다. 아마 내가 죽고 난 상황에서의 이곳은  인류와 트롤 모두가 자신들의 정의에 따라  서로를 저주하며 대립하고 있을 것이다." + 
-								" 어떻게 보면 서"
-							});
+								" 하지만 그것은 잘못되었다는 것을  이내 알았다. 아마 내가 죽고 난 상황에서의 이곳은  인류와 트롤 모두가 자신들의 정의에 따라  서로를 저주하며 대립하고 있을 것이다." +
+								" 어떻게 보면 서로의 이익을 찾기위해  명분을 세우고  침략을 정당화 시킨다고 할 수 있다. 우리는 인간이기에 우리쪽의 잘못은 감추려고한다." +
+								"  항상 다른 종족의 잘못을 들추어내며 우리를 더욱 값지게 해왔던게 사실이다. 이번의 경우도 그렇다." +
+								" 책임이 있다면  사실상 이번일은  인간의 책임이 더 크다.  자초지종을 말하자면  다음과 같다. 원래  아프로디테 테라는  트롤족의 땅이었다." +
+								" 하지만 인간의 영역을 더욱 확보하려는 야심에서 명분을 세우고  그들의 땅을 침범하여 성을 구축한 곳이 바로 이곳 베스퍼성이었다." + 
+								" 그리고 그 일을 총지휘한 자는 바로 ............."
+							}, SpecialEventType.NoMoreMemo);
+						}
+						else if (specialEvent == SpecialEventType.NoMoreMemo) {
+							Talk(" 당신이 여기까지 읽어내려 갔을때 그 종이 쪽지는 산화하여 공중으로 흩어져 버렸다." +
+							"  당신은  지금 이 쪽지에서 말하려고 했던 자로부터 천리안으로 감시를 당하고 있다는 사실을 순간 깨닭았다." +
+							"  당신이 알지 못하는 제 3의 인물이 있다는 확신이 강해짐에 따라 더욱 더 긴장 할 수 밖에 없었다.  하지만 더 이상의 변화는 일어나지 않았다.", SpecialEventType.None);
+
+							SetBit(15);
+						}
+						else if (specialEvent == SpecialEventType.BattleTrollKing) {
+							mBattleEvent = BattleEvent.TrollKing;
+
+							StartBattle(false);
 						}
 					}
 
@@ -6376,6 +6392,35 @@ namespace MysticUWP
 								StartBattle(true);
 							}
 						}
+						else if (menuMode == MenuMode.NegotiateTrollKing) {
+							if (mMenuFocusID == 0) {
+								Ask($"[color={RGB.LightMagenta}] 당신이 무슨 목적으로  나의 방까지 쳐들어와서 나를 죽이려 하는지 모르겠지만" +
+								"  어쨌든 당신이 여기서 물러나 준다면 지금 이 상자 안에 있는 금의 절반을 당신에게 주겠다. 이 정도면 충분한가?[/color]"
+								, MenuMode.TrollKingSuggestion, new string[] {
+									"좋소, 이걸 받고 물러 나지요",
+									"그 상자 안의 금을 모두 주시오"
+								});
+							}
+							else {
+								BattleTrollKing();						
+							}
+						}
+						else if (menuMode == MenuMode.TrollKingSuggestion) {
+							if (mMenuFocusID == 0) {
+								mMapName = mMapHeader.ExitMap;
+								mXAxis = mMapHeader.ExitX;
+								mYAxis = mMapHeader.ExitY;
+
+								await RefreshGame();
+
+								Dialog(" 당신은 트롤킹에게 금을 받고는  동굴 밖으로 나왔다.");
+
+								SetBit(16);
+							}
+							else {
+								BattleTrollKing();
+							}
+						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
 					//				{
@@ -7608,6 +7653,19 @@ namespace MysticUWP
 				}
 				else {
 					Dialog(" 당신 앞에는 형체도 알아보기 힘들 정도로 처참히 살해된 인간의 시체가 있었다.");
+				}
+			}
+			else if (mMapName == "TrolTown") {
+				if (GetTileInfo(moveX, moveY) == 54) {
+					if ((moveX == 24 && moveY == 7) || (moveX == 25 && moveY == 7)) {
+						if (!GetBit(16) && GetBit(9)) {
+							Ask($"[color={RGB.LightMagenta}] 아니! 이곳까지 이방인이 쳐들어 오다니.... 나는 이곳의 왕인  트롤킹이라고 하는데  우리 협상으로 해결하는게 어떻겠는가?[/color]"
+							, MenuMode.NegotiateTrollKing, new string[] {
+								"그럼 조건부터 들어보겠소",
+								"협상은 필요없소"
+							});
+						}
+					}
 				}
 			}
 		}
@@ -12949,6 +13007,30 @@ namespace MysticUWP
 			ShowSpinner(SpinnerType.RestTimeRange, rangeItems.ToArray(), 0);
 		}
 
+		void BattleTrollKing()
+		{
+			Dialog(" 순간 사납게 생긴 두 명의 트롤 전사와  마법사 복장의 한 명이 나타났다.");
+			if (GetBit(9)) {
+				Dialog(new string[] {
+					"",
+					" 우리는 트롤킹님의 신변 보호를 맡고 있는 트롤의 광전사들과 위저드이다. 우리들은 목숨을 걸고 당신들로부터 우리의 왕을 지킬 것이다."
+				});
+			}
+
+			for (var i = 0; i < 4; i++)
+				JoinEnemy(31);
+
+			for (var i = 0; i < 2; i++)
+				JoinEnemy(32);
+
+			JoinEnemy(33);
+
+			DisplayEnemy();
+			HideMap();
+
+			mSpecialEvent = SpecialEventType.BattleTrollKing;
+		}
+
 		private void canvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
 		{
 			void AnimateTransition(int frame, int x, int y)
@@ -13541,7 +13623,9 @@ namespace MysticUWP
 			BattleVesperTroll5,
 			BattleVesperTroll6,
 			BattleVesperTroll7,
-			ReadVesperMemo
+			ReadVesperMemo,
+			NoMoreMemo,
+			BattleTrollKing
 		}
 
 		private enum BattleEvent
@@ -13568,6 +13652,7 @@ namespace MysticUWP
 			VesperTroll6,
 			VesperTroll7,
 			TrollAssassin,
+			TrollKing
 		}
 
 		private enum BattleTurn
@@ -13741,7 +13826,9 @@ namespace MysticUWP
 			KillOrc6,
 			KillOrc7,
 			KillOrc8,
-			GuardOrcTown
+			GuardOrcTown,
+			NegotiateTrollKing,
+			TrollKingSuggestion
 		}
 	}
 }
