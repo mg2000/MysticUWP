@@ -802,7 +802,8 @@ namespace MysticUWP
 							AppendText(new string[] { endMessage, "" });
 						}
 
-						if (battleEvent == BattleEvent.Pollux) {
+						if (battleEvent == BattleEvent.Pollux)
+						{
 							Ask($"[color={RGB.LightMagenta}] 윽!! 나의 패배를 인정하겠다." +
 							$"  나는 원래 암살자로 일하던[/color] [color={RGB.LightMagenta}]폴록스[/color][color={RGB.LightMagenta}]라고한다." +
 							" 수련을 목적으로 당신과 동행하고 싶다. 당신은 어떤가?[/color]",
@@ -811,7 +812,8 @@ namespace MysticUWP
 								"그렇게는 않되오"
 							});
 						}
-						else if (battleEvent == BattleEvent.Orc1) {
+						else if (battleEvent == BattleEvent.Orc1)
+						{
 							UpdateTileInfo(9, 38, 34);
 							SetBit(57);
 						}
@@ -850,23 +852,27 @@ namespace MysticUWP
 							UpdateTileInfo(40, 38, 34);
 							SetBit(64);
 						}
-						else if (battleEvent == BattleEvent.OrcTownEnterance) {
+						else if (battleEvent == BattleEvent.OrcTownEnterance)
+						{
 							UpdateTileInfo(24, 41, 43);
 							UpdateTileInfo(24, 42, 43);
 
 							SetBit(53);
 						}
-						else if (battleEvent == BattleEvent.OrcTempleEnterance) {
+						else if (battleEvent == BattleEvent.OrcTempleEnterance)
+						{
 							UpdateTileInfo(23, 19, 43);
 							UpdateTileInfo(25, 19, 43);
 
 							SetBit(54);
 						}
-						else if (battleEvent == BattleEvent.OrcArchiMage) {
+						else if (battleEvent == BattleEvent.OrcArchiMage)
+						{
 							UpdateTileInfo(22, 17, 43);
 							SetBit(55);
 						}
-						else if (battleEvent == BattleEvent.OrcKing) {
+						else if (battleEvent == BattleEvent.OrcKing)
+						{
 							UpdateTileInfo(24, 16, 43);
 							UpdateTileInfo(25, 16, 43);
 
@@ -889,7 +895,8 @@ namespace MysticUWP
 								$"[color={RGB.LightCyan}][[ 경험치 + 15000 ][/color]"
 							});
 						}
-						else if (battleEvent == BattleEvent.Troll) {
+						else if (battleEvent == BattleEvent.VesperTroll1)
+						{
 							Dialog(new string[] {
 							" 당신이 적들을 물리치자 동굴속에서 날렵하게 생긴 트롤이 걸어 나왔다.",
 							""
@@ -903,10 +910,11 @@ namespace MysticUWP
 							else
 								Talk(" 그리고는 도저히 알아들을수 없는 말을 몇 마디 지껄이더니 당신에게 달려 들었다.", SpecialEventType.BattleTrollAssassin);
 						}
-						else if (battleEvent == BattleEvent.TrollAssassin) {
+						else if (battleEvent == BattleEvent.TrollAssassin)
+						{
 							Dialog(new string[] {
 								$"[color={RGB.Yellow}] 당신은 트롤 암살자를 처치했다.[/color]",
-								$"[color={RGB.LightCyan}][ 다크 크리스탈 + 1][/color]"
+								$"[color={RGB.LightCyan}][[ 다크 크리스탈 + 1][/color]"
 							});
 
 							mParty.Crystal[2]++;
@@ -914,6 +922,76 @@ namespace MysticUWP
 
 							SetBit(65);
 							SetBit(1);
+						}
+						else if (battleEvent == BattleEvent.VesperTroll2)
+						{
+							Dialog($"[color={RGB.LightCyan}] [[ 민첩성 + 1 ][/color]", true);
+
+							foreach (var player in mPlayerList)
+							{
+								if (player.Agility < 20)
+									player.Agility++;
+							}
+
+							if (mAssistPlayer != null)
+								mAssistPlayer.Agility++;
+
+							UpdateTileInfo(49, 18, 43);
+							SetBit(66);
+						}
+						else if (battleEvent == BattleEvent.VesperTroll3)
+						{
+							Dialog($"[color={RGB.LightCyan}] [[ 금화 + 20,000 ][/color]", true);
+
+							mParty.Gold += 20_000;
+
+							UpdateTileInfo(63, 25, 43);
+							SetBit(67);
+						}
+						else if (battleEvent == BattleEvent.VesperTroll4)
+						{
+							Dialog($"[color={RGB.LightCyan}] [[ 식량 + 50 ][/color]", true);
+
+							if (mParty.Food + 50 < 256)
+								mParty.Food += 50;
+							else
+								mParty.Food = 255;
+
+							UpdateTileInfo(60, 37, 43);
+							SetBit(68);
+						}
+						else if (battleEvent == BattleEvent.VesperTroll5)
+						{
+							Dialog($"[color={RGB.LightCyan}] [[ 곤봉 + 5 ][/color]", true);
+
+							if (mParty.Backpack[1, 0] + 5 < 256)
+								mParty.Backpack[1, 0] += 5;
+							else
+								mParty.Backpack[1, 0] = 255;
+
+							UpdateTileInfo(39, 39, 43);
+							SetBit(69);
+						}
+						else if (battleEvent == BattleEvent.VesperTroll6)
+						{
+							Dialog($"[color={RGB.LightCyan}] [[ 화살 + 30 ][/color]", true);
+
+							if (mParty.Arrow + 30 < 65_536)
+								mParty.Arrow += 30;
+							else
+								mParty.Arrow = 65_535;
+
+							UpdateTileInfo(21, 39, 43);
+							SetBit(70);
+						}
+						else if (battleEvent == BattleEvent.VesperTroll7)
+						{
+							Dialog($"[color={RGB.LightCyan}] [[ 금화 + 1,000 ][/color]", true);
+
+							mParty.Gold += 1_000;
+
+							UpdateTileInfo(19, 25, 43);
+							SetBit(71);
 						}
 
 						mEncounterEnemyList.Clear();
@@ -935,7 +1013,14 @@ namespace MysticUWP
 							mXAxis = 24;
 							mYAxis = 20;
 						}
-						else if (battleEvent == BattleEvent.Troll)
+						else if (battleEvent == BattleEvent.VesperTroll1 ||
+						battleEvent == BattleEvent.VesperTroll2 ||
+						battleEvent == BattleEvent.VesperTroll3 ||
+						battleEvent == BattleEvent.VesperTroll4 ||
+						battleEvent == BattleEvent.VesperTroll5 ||
+						battleEvent == BattleEvent.VesperTroll6 ||
+						battleEvent == BattleEvent.VesperTroll7 ||
+						battleEvent == BattleEvent.TrollAssassin)
 						{
 							mXAxis = mMapHeader.StartX;
 							mYAxis = mMapHeader.StartY;
@@ -1455,9 +1540,9 @@ namespace MysticUWP
 							mBattleEvent = BattleEvent.OrcKing;
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.BattleTroll)
+						else if (specialEvent == SpecialEventType.BattleVesperTroll1)
 						{
-							mBattleEvent = BattleEvent.Troll;
+							mBattleEvent = BattleEvent.VesperTroll1;
 
 							if (mXAxis == 29 && mYAxis == 18)
 							{
@@ -1491,6 +1576,108 @@ namespace MysticUWP
 							HideMap();
 
 							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleVesperTroll2) {
+							mBattleEvent = BattleEvent.VesperTroll2;
+
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 3; i++)
+								JoinEnemy(27);
+							for (var i = 0; i < 3; i++)
+								JoinEnemy(26);
+							JoinEnemy(28);
+
+							DisplayEnemy();
+							HideMap();
+
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleVesperTroll3)
+						{
+							mBattleEvent = BattleEvent.VesperTroll3;
+
+							mEncounterEnemyList.Clear();
+							
+							JoinEnemy(25);
+							for (var i = 0; i < 6; i++)
+								JoinEnemy(26);
+
+							DisplayEnemy();
+							HideMap();
+
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleVesperTroll4)
+						{
+							mBattleEvent = BattleEvent.VesperTroll4;
+
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 4; i++)
+								JoinEnemy(26);
+							for (var i = 0; i < 2; i++)
+								JoinEnemy(25);
+
+							DisplayEnemy();
+							HideMap();
+
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleVesperTroll5)
+						{
+							mBattleEvent = BattleEvent.VesperTroll5;
+
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 5; i++)
+								JoinEnemy(25);
+							for (var i = 0; i < 2; i++)
+								JoinEnemy(27);
+
+							DisplayEnemy();
+							HideMap();
+
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleVesperTroll6)
+						{
+							mBattleEvent = BattleEvent.VesperTroll6;
+
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 6; i++)
+								JoinEnemy(26);
+							JoinEnemy(27);
+
+							DisplayEnemy();
+							HideMap();
+
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleVesperTroll7)
+						{
+							mBattleEvent = BattleEvent.VesperTroll7;
+
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 5; i++)
+								JoinEnemy(26);
+
+							DisplayEnemy();
+							HideMap();
+
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.ReadVesperMemo) {
+							Talk(new string[] {
+								$"[color={RGB.White}] 혹시나 이 글을 누가 읽기를 바라며 ...[/color]",
+								"",
+								$"[color={RGB.White}] 트롤족에 의한 베스퍼성의 괴멸은 예견되었던거나 다름없었다." +
+								"  우리는 인간이기에  인간의 편을 들수밖에 없었고  또한 우리의 견해와 입장으로써 이 사실을 다른 대륙으로 알렸다." +
+								" 하지만 그것은 잘못되었다는 것을  이내 알았다. 아마 내가 죽고 난 상황에서의 이곳은  인류와 트롤 모두가 자신들의 정의에 따라  서로를 저주하며 대립하고 있을 것이다." + 
+								" 어떻게 보면 서"
+							});
 						}
 					}
 
@@ -7022,15 +7209,6 @@ namespace MysticUWP
 						InvokeAnimation(AnimationType.PassCrystal);
 					}
 				}
-				else if (mMapName == "Vesper") {
-					if (GetTileInfo(moveX, moveY) == 53) {
-						if (GetBit(9))
-							Talk($"[color={RGB.LightMagenta}] 아직도 남은 인간이 있었다니... 너도 나에게 죽어줘야겠다.[/color]", SpecialEventType.BattleTroll);
-						else
-							Talk(" 당신 앞의 트롤이 무어라 말했지만 알아 들을 수가 없었다.", SpecialEventType.BattleTroll);
-					}
-					
-				}
 			}
 			else if (mMapName == "LastDtch") {
 				if ((moveX == 56 && moveY == 16) || (moveX == 53 && moveY == 19) || (moveX == 57 && moveY == 21))
@@ -7389,7 +7567,49 @@ namespace MysticUWP
 					else
 						Talk("무장을 제법 갖춘 2명의 오크 전사와 다른 전투사들이 당신을 공격하기 시작했다.", SpecialEventType.BattleOrcTempleEnterance);
 				}
-			}		
+			}
+			else if (mMapName == "Vesper")
+			{
+				if (GetTileInfo(moveX, moveY) == 53)
+				{
+					var specialEvent = SpecialEventType.None;
+
+					if (moveX == 29 && moveY == 18)
+						specialEvent = SpecialEventType.BattleVesperTroll1;
+					else if (moveX == 49 && moveY == 18)
+						specialEvent = SpecialEventType.BattleVesperTroll2;
+					else if (moveX == 63 && moveY == 25)
+						specialEvent = SpecialEventType.BattleVesperTroll3;
+					else if (moveX == 60 && moveY == 37)
+						specialEvent = SpecialEventType.BattleVesperTroll4;
+					else if (moveX == 39 && moveY == 39)
+						specialEvent = SpecialEventType.BattleVesperTroll5;
+					else if (moveX == 21 && moveY == 39)
+						specialEvent = SpecialEventType.BattleVesperTroll6;
+					else if (moveX == 19 && moveY == 25)
+						specialEvent = SpecialEventType.BattleVesperTroll7;
+
+
+					if (GetBit(9))
+						Talk($"[color={RGB.LightMagenta}] 아직도 남은 인간이 있었다니... 너도 나에게 죽어줘야겠다.[/color]", specialEvent);
+					else
+						Talk(" 당신 앞의 트롤이 무어라 말했지만 알아 들을 수가 없었다.", specialEvent);
+				}
+				else if (moveX == 46 && moveY == 54) {
+					Dialog(new string[] {
+						" 당신 앞의 시체는 다른 시체들보다 늦게 살해 당했는지 부패의 정도가 덜했다.  비교적 형태를 알아 볼 수 있었기에  당신은 그의 몸을 조사하기 시작했다.",
+						""
+					});
+
+					if (GetBit(15))
+						Dialog(" 하지만 더 이상 발견되지 않았다.", true);
+					else
+						InvokeAnimation(AnimationType.InvestigateDeadBody);
+				}
+				else {
+					Dialog(" 당신 앞에는 형체도 알아보기 힘들 정도로 처참히 살해된 인간의 시체가 있었다.");
+				}
+			}
 		}
 
 		private void ShowSign(int x, int y)
@@ -12286,6 +12506,13 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.MoveGround3) {
 					AnimateFadeInOut();
 				}
+				else if (mAnimationEvent == AnimationType.InvestigateDeadBody) {
+					Task.Delay(1000).Wait();
+				}
+				else if (mAnimationEvent == AnimationType.UseHerbOfRessurection)
+				{
+					Task.Delay(1500).Wait();
+				}
 			});
 
 			await animationTask;
@@ -12598,6 +12825,24 @@ namespace MysticUWP
 				mYAxis = 51;
 
 				ClearDialog();
+			}
+			else if (mAnimationEvent == AnimationType.InvestigateDeadBody) {
+				Dialog(" 곧이어 당신은 그 시체의 오른 손에 무언가가 꽉 쥐어져 있음을 알아차렸고 그것이 메세지를 전하기 위한 메모 쪽지라는 것을 알게 되었다." +
+				" 당신은 그의 손을 펴보려 했지만 그의 몸은 빳빳하게 굳어 있었고 좀처럼 펼 수가 없었다.", true);
+
+				if (mParty.Item[4] > 0) {
+					mParty.Item[4]--;
+
+					InvokeAnimation(AnimationType.UseHerbOfRessurection);
+				}
+			}
+			else if (mAnimationEvent == AnimationType.UseHerbOfRessurection) {
+				Talk(new string[] {
+					"",
+					" 문득 당신은 지금 가지고 있는 부활의 약초가 생각이 났다." +
+					"  비록 지금의 그 시체는 살릴 수 없을 정도로 부패했기 때문에 살려내기는 불가능했지만  최소한 죽은지 얼마안된 상태까지는 만들 수 있을거라 생각했다." +
+					" 당신은 그 시체에게 부활의 약초를 사용했고  예상대로 그의 몸은 약간의 핏기가 돌게 되었고  어렵지않게 그의 손에 쥐여진  종이 쪽지를  빼낼 수가 있었다. 내용은 이러했다."
+				}, SpecialEventType.ReadVesperMemo, true);
 			}
 			else
 			{
@@ -13288,8 +13533,15 @@ namespace MysticUWP
 			BattleOrcTempleEnterance,
 			BattleOrcArchiMage,
 			BattleOrcKing,
-			BattleTroll,
-			BattleTrollAssassin
+			BattleTrollAssassin,
+			BattleVesperTroll1,
+			BattleVesperTroll2,
+			BattleVesperTroll3,
+			BattleVesperTroll4,
+			BattleVesperTroll5,
+			BattleVesperTroll6,
+			BattleVesperTroll7,
+			ReadVesperMemo
 		}
 
 		private enum BattleEvent
@@ -13308,7 +13560,13 @@ namespace MysticUWP
 			OrcTempleEnterance,
 			OrcArchiMage,
 			OrcKing,
-			Troll,
+			VesperTroll1,
+			VesperTroll2,
+			VesperTroll3,
+			VesperTroll4,
+			VesperTroll5,
+			VesperTroll6,
+			VesperTroll7,
 			TrollAssassin,
 		}
 
@@ -13361,7 +13619,9 @@ namespace MysticUWP
 			LearnOrcSpeaking,
 			LearnOrcSpeaking2,
 			MoveGround2,
-			MoveGround3
+			MoveGround3,
+			InvestigateDeadBody,
+			UseHerbOfRessurection,
 		}
 
 		private enum SpinnerType
