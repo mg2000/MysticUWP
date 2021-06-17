@@ -262,6 +262,7 @@ namespace MysticUWP
 			mEnterTypeMap["Gaea"] = "가이아 테라성";
 			mEnterTypeMap["OrcTown"] = "오크 마을";
 			mEnterTypeMap["Vesper"] = "베스퍼성";
+			mEnterTypeMap["TrolTown"] = "트롤 마을";
 
 			gamePageKeyDownEvent = async (sender, args) =>
 			{
@@ -350,8 +351,30 @@ namespace MysticUWP
 							else if (mMapName == "Ground3") {
 								if (x == 68 && y == 28)
 									ShowEnterMenu("Vesper");
+								else if (x == 80 && y == 14)
+									ShowEnterMenu("TrolTown");
+								else if (x == 80 && y == 75) {
+									if (GetBit(10))
+									{
+										if (!GetBit(9))
+										{
+											Dialog(" 당신이 기묘한 비석 앞에 섰을때 그것은 트롤 글로 적힌 주문이란걸 알았다. 당신은 낮은 소리로 그 주문을 읖조렸다." +
+											"  순간 비석이  둘로 쪼개어지며 에테르체의 형상이 나타났다. 그리고는 서서히 생체 프라즈마질의 트롤 형상으로 변해갔다." +
+											"  그것이 완전한 트롤의 형상으로 변하자  내게 무어라 알수 없는 말을 지껄이더니 다시 당신의 모습으로 닮아갔다." +
+											"  당신의 모습으로 변한 플라즈마체의 기운은 서서히 당신의 몸속에 스며 들어갔다." +
+											" 그 알수 없는 존재와의 결합이 끝났을때  당신은  그 존재가 지껄였던 말이 트롤족의 말이었음을 알게 되었다." +
+											"  그리고  이제 당신이  트롤족의 말을 할 수 있다는 걸 깨닭게 되었다.");
+											SetBit(9);
+										}
+										else
+											Dialog(" 당신 앞에는  반으로 쪼개어진 비석만 남아있었다.");
+									}
+									else
+										Dialog(" 당신 앞에는 기묘한 도형이 새겨진 비석이 서 있었다.");
+								}
 							}
-							
+							else if (mMapName == "Vesper" || mMapName == "TrolTown")
+								TalkMode(x, y);
 						}
 
 						if (mMapHeader.TileType == PositionType.Town)
@@ -1032,6 +1055,46 @@ namespace MysticUWP
 							UpdateTileInfo(24, 66, 44);
 							UpdateTileInfo(25, 66, 44);
 						}
+						else if (battleEvent == BattleEvent.Troll6)
+						{
+							UpdateTileInfo(5, 30, 44);
+							SetBit(78);
+						}
+						else if (battleEvent == BattleEvent.Troll7)
+						{
+							UpdateTileInfo(8, 29, 44);
+							SetBit(79);
+						}
+						else if (battleEvent == BattleEvent.Troll8)
+						{
+							UpdateTileInfo(6, 32, 44);
+							SetBit(80);
+						}
+						else if (battleEvent == BattleEvent.Troll9)
+						{
+							UpdateTileInfo(10, 34, 44);
+							SetBit(81);
+						}
+						else if (battleEvent == BattleEvent.Troll10)
+						{
+							UpdateTileInfo(39, 29, 44);
+							SetBit(82);
+						}
+						else if (battleEvent == BattleEvent.Troll11)
+						{
+							UpdateTileInfo(40, 34, 44);
+							SetBit(83);
+						}
+						else if (battleEvent == BattleEvent.Troll12)
+						{
+							UpdateTileInfo(42, 31, 44);
+							SetBit(84);
+						}
+						else if (battleEvent == BattleEvent.Troll13)
+						{
+							UpdateTileInfo(44, 33, 44);
+							SetBit(85);
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1243,6 +1306,9 @@ namespace MysticUWP
 						else if (specialEvent == SpecialEventType.NextToBattleMode)
 						{
 							AddBattleCommand(true);
+						}
+						else if (specialEvent == SpecialEventType.GameOver) {
+							ShowGameOver();
 						}
 						else if (specialEvent == SpecialEventType.HearAncientEvil)
 						{
@@ -1485,7 +1551,8 @@ namespace MysticUWP
 						}
 						else if (specialEvent == SpecialEventType.LearnTrollWriting)
 						{
-							UpdateView();
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
 
 							Dialog(" 이제 당신은  트롤의 글을  읽고 쓸 수 있게 되었다.");
 						}
@@ -1583,18 +1650,15 @@ namespace MysticUWP
 						{
 							mBattleEvent = BattleEvent.VesperTroll1;
 
-							if (mXAxis == 29 && mYAxis == 18)
-							{
-								mEncounterEnemyList.Clear();
-								JoinEnemy(27);
-								for (var i = 0; i < 6; i++)
-									JoinEnemy(26);
+							mEncounterEnemyList.Clear();
+							JoinEnemy(27);
+							for (var i = 0; i < 6; i++)
+								JoinEnemy(26);
 
-								DisplayEnemy();
-								HideMap();
+							DisplayEnemy();
+							HideMap();
 
-								StartBattle(false);
-							}
+							StartBattle(false);
 						}
 						else if (specialEvent == SpecialEventType.BattleTrollAssassin)
 						{
@@ -1768,6 +1832,58 @@ namespace MysticUWP
 								"",
 								$"[color={RGB.LightBlue}] 이건 자네가 좀 심했네.  그의 말이 황당하기는 했지만  거짓인것 같지는 않았다고  생각하네." +
 								" 이왕 들은건데 그 장소까지 알았으면 좋았을걸...[/color]"
+							});
+						}
+						else if (specialEvent == SpecialEventType.AskKillTroll6 ||
+						specialEvent == SpecialEventType.AskKillTroll7 ||
+						specialEvent == SpecialEventType.AskKillTroll8 ||
+						specialEvent == SpecialEventType.AskKillTroll9 ||
+						specialEvent == SpecialEventType.AskKillTroll10 ||
+						specialEvent == SpecialEventType.AskKillTroll11 ||
+						specialEvent == SpecialEventType.AskKillTroll12 ||
+						specialEvent == SpecialEventType.AskKillTroll13)
+						{
+							var menuMode = MenuMode.None;
+
+							switch (specialEvent)
+							{
+								case SpecialEventType.AskKillTroll6:
+									menuMode = MenuMode.KillTroll6;
+									break;
+								case SpecialEventType.AskKillTroll7:
+									menuMode = MenuMode.KillTroll7;
+									break;
+								case SpecialEventType.AskKillTroll8:
+									menuMode = MenuMode.KillTroll8;
+									break;
+								case SpecialEventType.AskKillTroll9:
+									menuMode = MenuMode.KillTroll9;
+									break;
+								case SpecialEventType.AskKillTroll10:
+									menuMode = MenuMode.KillTroll10;
+									break;
+								case SpecialEventType.AskKillTroll11:
+									menuMode = MenuMode.KillTroll11;
+									break;
+								case SpecialEventType.AskKillTroll12:
+									menuMode = MenuMode.KillTroll12;
+									break;
+								case SpecialEventType.AskKillTroll13:
+									menuMode = MenuMode.KillTroll13;
+									break;
+							}
+
+							Ask(" 당신 앞에 있는 트롤족을  당신은  어떻게 할 것인가를 선택하시오.", menuMode, new string[] {
+								"죽여 버린다",
+								"그냥 살려 준다"
+							});
+						}
+						else if (specialEvent == SpecialEventType.MeetBecrux) {
+							Ask(" 나는 베스퍼성에서 베크룩스라고 불리던 사람이오.  나는 단독으로 트롤킹을 잡기위해 여기로 잠입했다가  적의 숫자에 밀려서 포로로 잡혀버렸소." +
+							" 일대일의 대결이라면 자신이 있었는데 적의 수가 워낙 많아서 이런 곳까지 잡혀오게 되었던거요.  나는 이 일로  더욱 타종족에 대한 미움이 커져 버렸소." +
+							" 나는 당신들에게 진정으로 부탁하나 하겠소.  나를 당신의 일행에 넣어 주시오.", MenuMode.JoinBercux, new string[] {
+								"당신의 부탁을 들어주겠소",
+								"미안하지만 그런 어렵겠소"
 							});
 						}
 					}
@@ -4613,7 +4729,7 @@ namespace MysticUWP
 
 									if (mYAxis == 5)
 										mYAxis = mMapHeader.ExitY - 1;
-									else if (mYAxis == 49)
+									else if (mYAxis == 69)
 										mYAxis = mMapHeader.ExitY + 1;
 									else
 										mYAxis = mMapHeader.ExitY;
@@ -5339,7 +5455,7 @@ namespace MysticUWP
 											startX = 69;
 											startY = 37;
 										}
-										else if (28 < mYAxis)
+										else if (mYAxis < 28)
 										{
 											startX = 37;
 											startY = 6;
@@ -5380,6 +5496,67 @@ namespace MysticUWP
 
 										break;
 									}
+									case "TrolTown":
+										mMapName = mTryEnterMap;
+
+										await RefreshGame();
+
+										if (GetBit(46))
+											UpdateTileInfo(36, 16, 44);
+
+										if (GetBit(72)) {
+											UpdateTileInfo(24, 7, 44);
+											UpdateTileInfo(25, 7, 44);
+										}
+
+										if (GetBit(73))
+											UpdateTileInfo(16, 18, 44);
+
+										if (GetBit(74))
+											UpdateTileInfo(33, 18, 44);
+
+										if (GetBit(75))
+										{
+											UpdateTileInfo(12, 31, 44);
+											UpdateTileInfo(12, 32, 44);
+										}
+
+										if (GetBit(76)) {
+											UpdateTileInfo(37, 31, 44);
+											UpdateTileInfo(37, 32, 44);
+										}
+
+										if (GetBit(77)) {
+											UpdateTileInfo(23, 66, 44);
+											UpdateTileInfo(24, 66, 44);
+											UpdateTileInfo(25, 66, 44);
+										}
+
+										if (GetBit(78))
+											UpdateTileInfo(5, 30, 44);
+
+										if (GetBit(79))
+											UpdateTileInfo(8, 29, 44);
+
+										if (GetBit(80))
+											UpdateTileInfo(6, 32, 44);
+
+										if (GetBit(81))
+											UpdateTileInfo(10, 34, 44);
+
+										if (GetBit(82))
+											UpdateTileInfo(39, 29, 44);
+
+										if (GetBit(83))
+											UpdateTileInfo(40, 34, 44);
+
+										if (GetBit(84))
+											UpdateTileInfo(42, 31, 44);
+
+										if (GetBit(85))
+											UpdateTileInfo(44, 33, 44);
+
+										break;
 								}
 							}
 							else
@@ -6030,17 +6207,7 @@ namespace MysticUWP
 							{
 								if (mParty.Food >= 50)
 								{
-									Talk(" 당신은 그에게 일주일간 트롤의 글을 배웠다.", SpecialEventType.LearnTrollWriting);
-
-									mParty.Day += 7;
-									mParty.Food -= 50;
-									if (mParty.Day > 360)
-									{
-										mParty.Year++;
-										mParty.Day = mParty.Day % 360 + 1;
-									}
-
-									SetBit(10);
+									InvokeAnimation(AnimationType.LearnTrollWriting);
 								}
 								else
 									Dialog(" 하지만 당신에게는 충분한 식량이 없군요.");
@@ -6507,6 +6674,108 @@ namespace MysticUWP
 							" 그들은 마법도 사용할 줄 모르고 생활하고 있지만  대단한 살상무기를 많이 보유하고 있었소.  또한 '뉴욕'이란 도시를 보았을때 정말 그들의 과학력과 건축기술에 탄복하고 말았소." +
 							" 당신도 내 말을 믿을수 있겠소?", SpecialEventType.KillPhysicist);
 						}
+						else if (menuMode == MenuMode.KillTroll6 ||
+						menuMode == MenuMode.KillTroll7 ||
+						menuMode == MenuMode.KillTroll8 ||
+						menuMode == MenuMode.KillTroll9 ||
+						menuMode == MenuMode.KillTroll10 ||
+						menuMode == MenuMode.KillTroll11 ||
+						menuMode == MenuMode.KillTroll12 ||
+						menuMode == MenuMode.KillTroll13)
+						{
+							switch (menuMode)
+							{
+								case MenuMode.KillTroll6:
+									mBattleEvent = BattleEvent.Troll6;
+									break;
+								case MenuMode.KillTroll7:
+									mBattleEvent = BattleEvent.Troll7;
+									break;
+								case MenuMode.KillTroll8:
+									mBattleEvent = BattleEvent.Troll8;
+									break;
+								case MenuMode.KillTroll9:
+									mBattleEvent = BattleEvent.Troll9;
+									break;
+								case MenuMode.KillTroll10:
+									mBattleEvent = BattleEvent.Troll10;
+									break;
+								case MenuMode.KillTroll11:
+									mBattleEvent = BattleEvent.Troll11;
+									break;
+								case MenuMode.KillTroll12:
+									mBattleEvent = BattleEvent.Troll12;
+									break;
+								case MenuMode.KillTroll13:
+									mBattleEvent = BattleEvent.Troll13;
+									break;
+							}
+
+
+							mEncounterEnemyList.Clear();
+							JoinEnemy(24);
+
+							DisplayEnemy();
+							HideMap();
+
+							StartBattle(true);
+						}
+						else if (menuMode == MenuMode.JoinCapella)
+						{
+							if (mMenuFocusID == 0)
+							{
+								if (mPlayerList.Count < 5)
+								{
+									var bercux = new Lore()
+									{
+										Name = "베크룩스",
+										Gender = GenderType.Male,
+										Class = 1,
+										ClassType = ClassCategory.Magic,
+										Level = 9,
+										Strength = 10,
+										Mentality = 17,
+										Concentration = 18,
+										Endurance = 12,
+										Resistance = 15,
+										Agility = 14,
+										Accuracy = 16,
+										Luck = 12,
+										Poison = 0,
+										Unconscious = 0,
+										Dead = 0,
+										SP = 0,
+										Experience = 0,
+										Weapon = 0,
+										Shield = 0,
+										Armor = 1,
+										PotentialAC = 1,
+										AttackMagic = 40,
+										PhenoMagic = 40,
+										CureMagic = 40,
+										SpecialMagic = 0,
+										ESPMagic = 30,
+										SummonMagic = 20
+									};
+
+									bercux.HP = bercux.Endurance * bercux.Level * 10;
+									bercux.UpdatePotentialExperience();
+									UpdateItem(bercux);
+
+									mPlayerList.Add(bercux);
+									DisplayPlayerInfo();
+
+									SetBit(46);
+									UpdateTileInfo(36, 16, 44);
+								}
+								else
+								{
+									Dialog(" 벌써 사람이 모두 채워져 있군요.  다음 기회를 기다리지요.");
+								}
+							}
+							else
+								ShowNoThanks();
+						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
 					//				{
@@ -6957,6 +7226,30 @@ namespace MysticUWP
 					ShowExitMenu();
 				else
 					triggered = false;
+			}
+			else if (mMapName == "TrolTown") {
+				if ((mXAxis == 5 && mYAxis == 35) || (mXAxis == 44 && mYAxis == 28)) {
+					Dialog(" 당신이 아래에 있는 벽돌을 밟자  벽돌은 약간 아래로 꺼졌다.  그리고 몇 초후에 둔탁한 기계음이 들렸다.");
+					for (var x = 24; x < 26; x++) {
+						if ((mXAxis == 5 && mXAxis == 35))
+						{
+							for (var y = 23; y < 25; y++)
+								UpdateTileInfo(x, y, 44);
+						}
+						else
+						{
+							for (var y = 21; y < 23; y++)
+								UpdateTileInfo(x, y, 44);
+						}
+					}
+				}
+				else if (24 <= mXAxis && mXAxis <= 25 && 25 <= mYAxis && mYAxis <= 29) {
+					if (mParty.Etc[3] == 0) {
+						Talk("일행은 계곡으로 떨어져 버렸다.", SpecialEventType.GameOver);
+					}
+				}
+				else if (mYAxis =)
+
 			}
 	
 			return triggered;
@@ -7435,12 +7728,13 @@ namespace MysticUWP
 				else if ((moveX == 23 && moveY == 58) || (moveX == 19 && moveY == 59) || (moveX == 18 && moveY == 55))
 					ShowHospitalMenu();
 				else if (moveX == 20 && moveY == 54)
-					ShowItemStoreMenu();
+					ShowMedicineStoreMenu();
 				else if ((moveX == 19 && moveY == 20) || (moveX == 21 && moveY == 22))
 					ShowClassTrainingMenu();
 				else if (moveX == 14 && moveY == 18)
 					ShowExpStoreMenu();
-				else if (moveX == 16 && moveY == 23) {
+				else if (moveX == 16 && moveY == 23)
+				{
 					Ask(new string[] {
 					$" 나의 이름은 메듀사의 머리를 뜻하는 [color={RGB.LightCyan}]알골[/color]이라고하오." +
 					" 나는 이름처럼, 보기만해도 상대를 제압할 수 있는 용맹을 지녔소.  나는 소환계통의 마법을 이 곳에서 수 년을 연마했다오.",
@@ -7450,47 +7744,58 @@ namespace MysticUWP
 					"않됐지만 저는 지금 바쁘군요"
 					});
 				}
-				else if (moveX == 55 && moveY == 39) {
+				else if (moveX == 55 && moveY == 39)
+				{
 					Ask($" 나는 켄타우루스의 정기를 받은 사냥꾼으로, [color={RGB.LightCyan}]프록시마[/color]라고하오.  이름에서 알수 있듯이 나의 수호성은 알파 센타우리라오." +
 					" 사냥을 나온 중에  당신이 이 곳에 있다는 소리를 듣고 당신의 일행에 참가 하려고 왔던거요.  나를 받아 들이겠소?", MenuMode.JoinProxima, new string[] {
 					"좋소, 승락하지요",
 					"글세요, 곤란한데요"
 					});
 				}
-				else if (moveX == 37 && moveY == 16) {
-					if (!GetBit(5) || GetBit(6)) {
+				else if (moveX == 37 && moveY == 16)
+				{
+					if (!GetBit(5) || GetBit(6))
+					{
 						Dialog(" 나의 성 배리언트 피플즈에 오신 것을 대단이 환영하오." +
 						"  우리 성의 이름에서  알 수 있듯이 이 곳의 사람들은  진정한 용기에서 오는 참다운 용기를 아주 높이 평가하고 있소." +
 						" 당신같이 용기있는 자들이라면  이 성 어느 곳에서도 환영을 받을 것이오.");
 					}
-					else {
+					else
+					{
 						Talk(" 당신의 위용은 모두 전해 들었소.  인류를 위협하는 세 종족을 없에고  마지막 남은 우라누스 테라의 드라코니안족을 벌하러 간다고 들었소." +
 						"  나에게는 우라누스 게이트를 여는 마법이 있소. 그럼 당신을 우라누스 테라로 보내 드리리다.", SpecialEventType.SendValiantToUranos);
 					}
 				}
-				else if (moveX == 44 && moveY == 44) {
+				else if (moveX == 44 && moveY == 44)
+				{
 					Dialog("가이아 테라는 대지신을 상징하는 대륙입니다.");
 				}
-				else if (moveX == 31 && moveY == 60) {
+				else if (moveX == 31 && moveY == 60)
+				{
 					Dialog(" 오크족은 미개한 집단이지만 개중에는 머리가 약간 뛰어나서  마법 능력이 있는 자도 있다고 하더군요.");
 				}
-				else if (moveX == 49 && moveY == 55) {
+				else if (moveX == 49 && moveY == 55)
+				{
 					Dialog(" 오크족의 마을은 대륙의 남동쪽에 있습니다. 그들의 무기는 시원챦은 것들뿐이라  우리에게 위협이 되지는 않습니다.");
 				}
-				else if (moveX == 43 && moveY == 30) {
+				else if (moveX == 43 && moveY == 30)
+				{
 					if (!GetBit(5) || GetBit(6))
 						Dialog(" 이 대륙에는 모두 4 개의 대륙으로 가는 게이트가 있습니다. 그 중, 2 개의 게이트가 이 성 안에 있습니다.");
 					else
 						Dialog(" 지금 당신은 우라누스 게이트를 찾고 있는 것 같은데,  그렇다면 저희 성주님을 만나 보십시요.");
 				}
-				else if (moveX == 35 && moveY == 18) {
+				else if (moveX == 35 && moveY == 18)
+				{
 					Dialog(" 고대 최강의 마법사였던  레드 안타레스의 아들이 시공간을 넘어  이 세계 어딘가에서 살고 있다고 들었습니다.");
 				}
-				else if (moveX == 40 && moveY == 20) {
+				else if (moveX == 40 && moveY == 20)
+				{
 					Dialog(" 세상에는  크리스탈에  여러가지 힘을 봉인한 물질이 있습니다.  가장 강력한 영혼의 크리스탈은  모든 적을 한꺼번에 유체이탈 시켜 버린다더군요." +
 					" 그것뿐만 아니라 화염의 크리스탈과 한파의 크리스탈 같은 공격용 크리스탈,  소환의 크리스탈 같은 소환용 크리스탈도 있고, 치료용과  그 이외의 용도로 쓰이는 것도 있다고 들었습니다.");
 				}
-				else if (moveX == 40 && moveY == 18) {
+				else if (moveX == 40 && moveY == 18)
+				{
 					if (!GetBit(4))
 					{
 						Dialog(" 제 생각에는 당신이 지금하려고 하는 일이 옳지 않다고 봅니다.  비록 트롤족이 야만스럽고 호전적이라는 하지만  아무런 이유없이 베스퍼성을 침공하려 했겠습니까?" +
@@ -7499,7 +7804,8 @@ namespace MysticUWP
 					else
 						Dialog(" 당신이 트롤족을 멸한 것은  후세에 오점으로 남을 것입니다.");
 				}
-				else if (moveX == 35 && moveY == 20) {
+				else if (moveX == 35 && moveY == 20)
+				{
 					if (!GetBit(5))
 					{
 						Dialog(" 이쉬도 테라에는  아직 인류의 문명이 뻗치지 못했습니다. 거기에는 코볼트족이 지배하고 있기 때문에 아무도 접근하지 못했던 것입니다." +
@@ -7743,6 +8049,10 @@ namespace MysticUWP
 			}
 			else if (mMapName == "TrolTown") {
 				if (GetTileInfo(moveX, moveY) == 54) {
+					void CantSpeakTrollSpeaking(SpecialEventType specialEvent) {
+						Talk(" 당신 앞의 트롤족이 당신에게 무어라 말을 했지만 알아 들을 수가 없었다.", specialEvent);
+					}
+
 					if ((moveX == 24 && moveY == 7) || (moveX == 25 && moveY == 7)) {
 						if (!GetBit(16) && GetBit(9)) {
 							Ask($"[color={RGB.LightMagenta}] 아니! 이곳까지 이방인이 쳐들어 오다니.... 나는 이곳의 왕인  트롤킹이라고 하는데  우리 협상으로 해결하는게 어떻겠는가?[/color]"
@@ -7860,7 +8170,73 @@ namespace MysticUWP
 								"날 속이려고 드는군, 자 죽어랏!"
 							});
 						}
+						else
+							CantSpeakTrollSpeaking(SpecialEventType.AskKillTroll6);
 					}
+					else if (moveX == 8 && moveY == 29) {
+						if (GetBit(9))
+							Talk(" 으악! 인간이다 모두 도망쳐라!  인간이 우리 동굴에 침입했다.", SpecialEventType.AskKillTroll7);
+						else
+							CantSpeakTrollSpeaking(SpecialEventType.AskKillTroll6);
+					}
+					else if (moveX == 6 && moveY == 32)
+					{
+						if (GetBit(9))
+							Talk(" 정말 당신들은 집요하군요. 또 우리에게 해를 입히려 쳐들어오다니...", SpecialEventType.AskKillTroll8);
+						else
+							CantSpeakTrollSpeaking(SpecialEventType.AskKillTroll8);
+					}
+					else if (moveX == 10 && moveY == 34)
+					{
+						if (GetBit(9))
+							Talk(" 당신들이 나를 죽이더라도 나의 신인  에인션트 이블님이 복수를 해 주실 겁니다.", SpecialEventType.AskKillTroll9);
+						else
+							CantSpeakTrollSpeaking(SpecialEventType.AskKillTroll9);
+					}
+					else if (moveX == 39 && moveY == 29)
+					{
+						if (GetBit(9))
+							Talk(" 침략자 !!", SpecialEventType.AskKillTroll10);
+						else
+							CantSpeakTrollSpeaking(SpecialEventType.AskKillTroll10);
+					}
+					else if (moveX == 40 && moveY == 34)
+					{
+						if (GetBit(9))
+							Talk(" 아이고, 위대하신 용사님들.  제발 저에게 헤로인 주사를 좀 놔 주십시요. 부탁합니다.  지금 헤로인을 맞지 않으면 죽을 것 같습니다.", SpecialEventType.AskKillTroll11);
+						else
+							CantSpeakTrollSpeaking(SpecialEventType.AskKillTroll11);
+					}
+					else if (moveX == 42 && moveY == 31) {
+						if (GetBit(9))
+						{
+							Talk(" 당신네 인간들은  우리 트롤족에게서 금을 뺏기위해,  진통과 설사에 좋다는 명목으로 헤로인을 주사하기 시작했소." +
+							"  그 때문에 상당수의 트롤 주민들이 헤로인 중독에 고생하며,  또한 헤로인을 구하기 위해  인간들에게  많은 금을 지불하고 있소.", SpecialEventType.AskKillTroll12);
+						}
+						else
+							CantSpeakTrollSpeaking(SpecialEventType.AskKillTroll12);
+					}
+					else if (moveX == 44 && moveY == 33) {
+						if (GetBit(9))
+							Talk(" 으윽, 제발 헤로인 좀 놔 주십시오. 금 일 만개를 드리리다.", SpecialEventType.AskKillTroll13);
+						else
+							CantSpeakTrollSpeaking(SpecialEventType.AskKillTroll13);
+					}
+				}
+				else if (moveX == 36 && moveY == 16) {
+					Talk(" 당신들이 우리를 구하러 온 사람들이오? 정말 감사하오.  소문에 의하면 베스퍼성이  완전히 전멸 당했다는데 그 말이 사실이오?  그렇다면 정말 유감이군요.", SpecialEventType.MeetBecrux);
+				}
+				else if (moveX == 41 && moveY == 15) {
+					Dialog(" 헤로인을 만드는건 쉬워요. 설익은 양귀비 열매 꼬투리에 흠집을내면 나오는 우유같은 수액을  갈색 고무질로 건조 시키면 되는거니까요." +
+					" 그건 일종의 중추 신경 완화제의 역할을 하죠. 그걸 트롤에게 팔아서 꽤 돈을 벌었는데  한날 트롤족들이 들고 일어나는 바람에 꼼짝없이 잡혀서 여기에 있는거죠.");
+				}
+				else if (moveX == 41 && moveY == 20) {
+					Talk(" 베스퍼성의 사람들은  이 대륙을 확실한 인간의 영토로 굳히기 위해  번번히 트롤족의 동굴을 공격했소." +
+					"  때로는 협박을하고 때로는 회유책을 쓰면서  그들을 대륙의 구석으로 몰아 붙이려 했지만 역부족이었소." +
+					"  그래서 베스퍼 성주를 중심으로 트롤의 동굴에 대대적인 공격을 감행했었소.  그때 죽거나 잡힌 트롤들은 모두 사지가 절단된채  쇠 꼬챙이에 꿰어 매달려 있었소." +
+					" 그들에게 겁을 주어 다시는 인간에게 대항하지 못하게 하자는 속셈이었던 거요.  하지만 예상은 빗나갔었소." +
+					" 그 광경들을 본 트롤들은 치밀어 오르는 분노에 집단적으로 베스퍼성에 대한 야습을 개시했던 거요. 여지껏 당하고만 살아왔던 한을  이때 모두 폭발시켰던 거라오." +
+					" 그래서 예상하지도 못했던 기습을 받은 베스퍼성은 순식간에 전멸되었던 것이었소. 모두가 다  우리가 자청한 일이나 다름없었던 거지요.", SpecialEventType.None);
 				}
 			}
 		}
@@ -12766,6 +13142,9 @@ namespace MysticUWP
 				{
 					Task.Delay(1500).Wait();
 				}
+				else if (mAnimationEvent == AnimationType.LearnTrollWriting) {
+					AnimateTransition();
+				}
 			});
 
 			await animationTask;
@@ -13080,6 +13459,9 @@ namespace MysticUWP
 				ClearDialog();
 			}
 			else if (mAnimationEvent == AnimationType.InvestigateDeadBody) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
 				Dialog(" 곧이어 당신은 그 시체의 오른 손에 무언가가 꽉 쥐어져 있음을 알아차렸고 그것이 메세지를 전하기 위한 메모 쪽지라는 것을 알게 되었다." +
 				" 당신은 그의 손을 펴보려 했지만 그의 몸은 빳빳하게 굳어 있었고 좀처럼 펼 수가 없었다.", true);
 
@@ -13090,12 +13472,28 @@ namespace MysticUWP
 				}
 			}
 			else if (mAnimationEvent == AnimationType.UseHerbOfRessurection) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
 				Talk(new string[] {
 					"",
 					" 문득 당신은 지금 가지고 있는 부활의 약초가 생각이 났다." +
 					"  비록 지금의 그 시체는 살릴 수 없을 정도로 부패했기 때문에 살려내기는 불가능했지만  최소한 죽은지 얼마안된 상태까지는 만들 수 있을거라 생각했다." +
 					" 당신은 그 시체에게 부활의 약초를 사용했고  예상대로 그의 몸은 약간의 핏기가 돌게 되었고  어렵지않게 그의 손에 쥐여진  종이 쪽지를  빼낼 수가 있었다. 내용은 이러했다."
 				}, SpecialEventType.ReadVesperMemo, true);
+			}
+			else if (mAnimationEvent == AnimationType.LearnTrollWriting) {
+				Talk(" 당신은 그에게 일주일간 트롤의 글을 배웠다.", SpecialEventType.LearnTrollWriting);
+
+				mParty.Day += 7;
+				mParty.Food -= 50;
+				if (mParty.Day > 360)
+				{
+					mParty.Year++;
+					mParty.Day = mParty.Day % 360 + 1;
+				}
+
+				SetBit(10);
 			}
 			else
 			{
@@ -13350,7 +13748,8 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.LiveJail || 
 				mAnimationEvent == AnimationType.FollowSoldier2 ||
 				mAnimationEvent == AnimationType.ConfirmPardon2 ||
-				mAnimationEvent == AnimationType.LearnOrcSpeaking2) && mAnimationFrame <= 117)
+				mAnimationEvent == AnimationType.LearnOrcSpeaking2 ||
+				mAnimationEvent == AnimationType.LearnTrollWriting) && mAnimationFrame <= 117)
 				AnimateTransition(mAnimationFrame, playerX, playerY);
 		}
 
@@ -13454,15 +13853,17 @@ namespace MysticUWP
 
 				if (mMapName == "OrcTown" && (tileIdx == 53 || tileIdx == 54 || tileIdx == 34))
 					tileIdx = 43;
+				else if (mMapName == "Ground3" && tileIdx == 21)
+					tileIdx = 13;
 				else if (mMapName == "Vesper")
 				{
 					if (tileIdx == 53)
-					{
-
-					}
+						tileIdx = 43;
 					else if (tileIdx == 54)
 						tileIdx = 44;
 				}
+				else if (mMapName == "TrolTown" && (tileIdx == 53 || tileIdx == 54))
+					tileIdx = 44;
 
 
 				if (mSpecialEvent == SpecialEventType.Penetration)
@@ -13586,12 +13987,25 @@ namespace MysticUWP
 							break;
 					}
 				}
-				if (mMapName == "OrcTown")
+				else if (mMapName == "Vesper")
 				{
 					switch (oriTileIdx)
 					{
+						case 53:
+							mDecorateTiles.Draw(sb, 3, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+							break;
 						case 54:
 							mDecorateTiles.Draw(sb, 2, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+							break;
+					}
+				}
+				else if (mMapName == "TrolTown") {
+					switch (oriTileIdx) {
+						case 53:
+							mDecorateTiles.Draw(sb, 4, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+							break;
+						case 54:
+							mDecorateTiles.Draw(sb, 3, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
 							break;
 					}
 				}
@@ -13825,7 +14239,17 @@ namespace MysticUWP
 			BattleTroll2,
 			BattleTroll5,
 			KillPhysicist,
-			KillPhysicist2
+			KillPhysicist2,
+			AskKillTroll6,
+			AskKillTroll7,
+			AskKillTroll8,
+			AskKillTroll9,
+			AskKillTroll10,
+			AskKillTroll11,
+			AskKillTroll12,
+			AskKillTroll13,
+			MeetBecrux,
+			GameOver
 		}
 
 		private enum BattleEvent
@@ -13857,7 +14281,15 @@ namespace MysticUWP
 			Troll2,
 			Troll3,
 			Troll4,
-			Troll5
+			Troll5,
+			Troll6,
+			Troll7,
+			Troll8,
+			Troll9,
+			Troll10,
+			Troll11,
+			Troll12,
+			Troll13
 		}
 
 		private enum BattleTurn
@@ -13912,6 +14344,7 @@ namespace MysticUWP
 			MoveGround3,
 			InvestigateDeadBody,
 			UseHerbOfRessurection,
+			LearnTrollWriting
 		}
 
 		private enum SpinnerType
@@ -14034,7 +14467,16 @@ namespace MysticUWP
 			GuardOrcTown,
 			NegotiateTrollKing,
 			TrollKingSuggestion,
-			PhysicistTeaching
+			PhysicistTeaching,
+			KillTroll6,
+			KillTroll7,
+			KillTroll8,
+			KillTroll9,
+			KillTroll10,
+			KillTroll11,
+			KillTroll12,
+			KillTroll13,
+			JoinBercux
 		}
 	}
 }
