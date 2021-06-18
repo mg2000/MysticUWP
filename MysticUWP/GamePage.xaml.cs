@@ -487,7 +487,10 @@ namespace MysticUWP
 							}
 							else if (GetTileInfo(x, y) == 53)
 							{
-								ShowSign(x, y);
+								if (mMapName == "TrolTown")
+									TalkMode(x, y);
+								else
+									ShowSign(x, y);
 								mTriggeredDownEvent = true;
 							}
 							else if (GetTileInfo(x, y) == 48)
@@ -537,7 +540,7 @@ namespace MysticUWP
 							}
 							else if (GetTileInfo(x, y) == 53)
 							{
-								if (mMapName == "OrcTown" || mMapName == "Vesper" || mMapName == "TrolTown" || mMapName == "Tomb")
+								if (mMapName == "OrcTown" || mMapName == "Vesper" || mMapName == "Tomb")
 									TalkMode(x, y);
 								else
 									ShowSign(x, y);
@@ -1307,9 +1310,6 @@ namespace MysticUWP
 						{
 							AddBattleCommand(true);
 						}
-						else if (specialEvent == SpecialEventType.GameOver) {
-							ShowGameOver();
-						}
 						else if (specialEvent == SpecialEventType.HearAncientEvil)
 						{
 							Talk(new string[] {
@@ -1813,7 +1813,7 @@ namespace MysticUWP
 							StartBattle(false);
 						}
 						else if (specialEvent == SpecialEventType.KillPhysicist) {
-							Lore murderPlayer = mPlayerList.Count > 5 ? mPlayerList[mPlayerList.Count - 1] : null;
+							Lore murderPlayer = mPlayerList.Count > 1 ? mPlayerList[mPlayerList.Count - 1] : null;
 							if (murderPlayer != null) {
 								Talk(new string[] {
 									$" 그때 당신 옆에 있던 {murderPlayer.NameSubjectBJosa} 검을 들어 그를 내리쳤다.",
@@ -6683,44 +6683,47 @@ namespace MysticUWP
 						menuMode == MenuMode.KillTroll12 ||
 						menuMode == MenuMode.KillTroll13)
 						{
-							switch (menuMode)
+							if (mMenuFocusID == 0)
 							{
-								case MenuMode.KillTroll6:
-									mBattleEvent = BattleEvent.Troll6;
-									break;
-								case MenuMode.KillTroll7:
-									mBattleEvent = BattleEvent.Troll7;
-									break;
-								case MenuMode.KillTroll8:
-									mBattleEvent = BattleEvent.Troll8;
-									break;
-								case MenuMode.KillTroll9:
-									mBattleEvent = BattleEvent.Troll9;
-									break;
-								case MenuMode.KillTroll10:
-									mBattleEvent = BattleEvent.Troll10;
-									break;
-								case MenuMode.KillTroll11:
-									mBattleEvent = BattleEvent.Troll11;
-									break;
-								case MenuMode.KillTroll12:
-									mBattleEvent = BattleEvent.Troll12;
-									break;
-								case MenuMode.KillTroll13:
-									mBattleEvent = BattleEvent.Troll13;
-									break;
+								switch (menuMode)
+								{
+									case MenuMode.KillTroll6:
+										mBattleEvent = BattleEvent.Troll6;
+										break;
+									case MenuMode.KillTroll7:
+										mBattleEvent = BattleEvent.Troll7;
+										break;
+									case MenuMode.KillTroll8:
+										mBattleEvent = BattleEvent.Troll8;
+										break;
+									case MenuMode.KillTroll9:
+										mBattleEvent = BattleEvent.Troll9;
+										break;
+									case MenuMode.KillTroll10:
+										mBattleEvent = BattleEvent.Troll10;
+										break;
+									case MenuMode.KillTroll11:
+										mBattleEvent = BattleEvent.Troll11;
+										break;
+									case MenuMode.KillTroll12:
+										mBattleEvent = BattleEvent.Troll12;
+										break;
+									case MenuMode.KillTroll13:
+										mBattleEvent = BattleEvent.Troll13;
+										break;
+								}
+
+
+								mEncounterEnemyList.Clear();
+								JoinEnemy(24);
+
+								DisplayEnemy();
+								HideMap();
+
+								StartBattle(true);
 							}
-
-
-							mEncounterEnemyList.Clear();
-							JoinEnemy(24);
-
-							DisplayEnemy();
-							HideMap();
-
-							StartBattle(true);
 						}
-						else if (menuMode == MenuMode.JoinCapella)
+						else if (menuMode == MenuMode.JoinBercux)
 						{
 							if (mMenuFocusID == 0)
 							{
@@ -7114,7 +7117,7 @@ namespace MysticUWP
 					}
 					else
 					{
-
+						InvokeAnimation(AnimationType.MoveGround4);
 					}
 				}
 				else if (mYAxis == 44)
@@ -7228,10 +7231,12 @@ namespace MysticUWP
 					triggered = false;
 			}
 			else if (mMapName == "TrolTown") {
-				if ((mXAxis == 5 && mYAxis == 35) || (mXAxis == 44 && mYAxis == 28)) {
+				if ((mXAxis == 5 && mYAxis == 35) || (mXAxis == 44 && mYAxis == 28))
+				{
 					Dialog(" 당신이 아래에 있는 벽돌을 밟자  벽돌은 약간 아래로 꺼졌다.  그리고 몇 초후에 둔탁한 기계음이 들렸다.");
-					for (var x = 24; x < 26; x++) {
-						if ((mXAxis == 5 && mXAxis == 35))
+					for (var x = 24; x < 26; x++)
+					{
+						if ((mXAxis == 5 && mYAxis == 35))
 						{
 							for (var y = 23; y < 25; y++)
 								UpdateTileInfo(x, y, 44);
@@ -7243,13 +7248,44 @@ namespace MysticUWP
 						}
 					}
 				}
-				else if (24 <= mXAxis && mXAxis <= 25 && 25 <= mYAxis && mYAxis <= 29) {
-					if (mParty.Etc[3] == 0) {
-						Talk("일행은 계곡으로 떨어져 버렸다.", SpecialEventType.GameOver);
+				else if (24 <= mXAxis && mXAxis <= 25 && 25 <= mYAxis && mYAxis <= 29)
+				{
+					if (mParty.Etc[3] == 0)
+					{
+						ShowGameOver(new string[] { "일행은 계곡으로 떨어져 버렸다." });
 					}
 				}
-				else if (mYAxis =)
-
+				else if (mXAxis == 12 && mYAxis == 18)
+				{
+					ShowGameOver(new string[] { " 당신이 이곳에 서자 갑자기 부비트랩이 작동하며 거대한 폭발이 일어났고, 곧이어 의식이 흐려졌다" });
+				}
+				else if (mXAxis == 11 && mYAxis == 16 && !GetBit(130))
+				{
+					Dialog($"당신은 [color={RGB.LightCyan}]에너지 크리스탈[/color]을 발견했다.");
+					mParty.Crystal[6]++;
+					SetBit(130);
+				}
+				else if (mXAxis == 13 && mYAxis == 16 && !GetBit(131))
+				{
+					Dialog($"당신은 [color={RGB.LightCyan}]한파의 크리스탈[/color]을 발견했다.");
+					mParty.Crystal[1]++;
+					SetBit(131);
+				}
+				else if (mXAxis == 13 && mYAxis == 16 && !GetBit(131))
+				{
+					FindGold(132, 15_000);
+				}
+				else if (mXAxis == 13 && mYAxis == 20 && !GetBit(133))
+				{
+					Dialog($"당신은 식량 200개를 발견했다.");
+					if (mParty.Food + 200 < 256)
+						mParty.Food += 200;
+					SetBit(133);
+				}
+				else if (mYAxis == 69)
+					ShowExitMenu();
+				else
+					triggered = false;
 			}
 	
 			return triggered;
@@ -8108,7 +8144,7 @@ namespace MysticUWP
 							StartBattle(false);
 						}
 					}
-					else if (moveX == 33 && moveY == 18)
+					else if ((moveX == 12 && moveY == 31) || (moveX == 12 && moveY == 32))
 					{
 						for (var i = 0; i < 4; i++)
 							JoinEnemy(30);
@@ -8121,7 +8157,7 @@ namespace MysticUWP
 
 
 						mBattleEvent = BattleEvent.Troll3;
-						StartBattle(false);
+						StartBattle(true);
 					}
 					else if((moveX == 37 && moveY == 31) || (moveX == 37 && moveY == 32))
 					{
@@ -8138,7 +8174,7 @@ namespace MysticUWP
 						HideMap();
 
 						mBattleEvent = BattleEvent.Troll4;
-						StartBattle(false);
+						StartBattle(true);
 					}
 					else if ((moveX == 23 && moveY == 66) || (moveX == 24 && moveY == 66) || (moveX == 25 && moveY == 66))
 					{
@@ -8297,7 +8333,7 @@ namespace MysticUWP
 						"",
 						$"[color={RGB.White}] 선을 위해서라면 어떤 위험이나 어려움에도 굴하지 않는 사람들이 있는 곳, 라스트 디치.[/color]",
 						"",
-						$"           여러분을 환영합니다.",
+						$"[color={RGB.White}]           여러분을 환영합니다.[/color]",
 						"",
 						"",
 						$"[color={RGB.LightMagenta}]            이곳의 성주로부터[/color]"
@@ -13132,7 +13168,8 @@ namespace MysticUWP
 					AnimateTransition();
 				}
 				else if (mAnimationEvent == AnimationType.MoveGround2 || 
-				mAnimationEvent == AnimationType.MoveGround3) {
+				mAnimationEvent == AnimationType.MoveGround3 || 
+				mAnimationEvent == AnimationType.MoveGround4) {
 					AnimateFadeInOut();
 				}
 				else if (mAnimationEvent == AnimationType.InvestigateDeadBody) {
@@ -13495,6 +13532,17 @@ namespace MysticUWP
 
 				SetBit(10);
 			}
+			else if (mAnimationEvent == AnimationType.MoveGround4) {
+				mMapName = "Ground4";
+
+				await RefreshGame();
+
+				mXAxis = 47;
+				mYAxis = 35;
+
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+			}
 			else
 			{
 				mAnimationEvent = AnimationType.None;
@@ -13606,8 +13654,8 @@ namespace MysticUWP
 			if (GetBit(9)) {
 				Dialog(new string[] {
 					"",
-					" 우리는 트롤킹님의 신변 보호를 맡고 있는 트롤의 광전사들과 위저드이다. 우리들은 목숨을 걸고 당신들로부터 우리의 왕을 지킬 것이다."
-				});
+					$"[color={RGB.LightMagenta}] 우리는 트롤킹님의 신변 보호를 맡고 있는 트롤의 광전사들과 위저드이다. 우리들은 목숨을 걸고 당신들로부터 우리의 왕을 지킬 것이다.[/color]"
+				}, true);
 			}
 
 			for (var i = 0; i < 4; i++)
@@ -13622,6 +13670,7 @@ namespace MysticUWP
 			HideMap();
 
 			mSpecialEvent = SpecialEventType.BattleTrollKing;
+			ContinueText.Visibility = Visibility.Visible;
 		}
 
 		private void canvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
@@ -13669,7 +13718,8 @@ namespace MysticUWP
 			var fadeIn = false;
 			var fadeOut = false;
 
-			if (mAnimationEvent == AnimationType.LearnOrcWriting)
+			if (mAnimationEvent == AnimationType.LearnOrcWriting ||
+				mAnimationEvent == AnimationType.MoveGround4)
 				fadeOut = true;
 			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting ||
 				mAnimationEvent == AnimationType.MoveGround2 ||
@@ -13775,7 +13825,8 @@ namespace MysticUWP
 			var fadeIn = false;
 			var fadeOut = false;
 
-			if (mAnimationEvent == AnimationType.LearnOrcWriting)
+			if (mAnimationEvent == AnimationType.LearnOrcWriting ||
+				mAnimationEvent == AnimationType.MoveGround4)
 				fadeOut = true;
 			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting ||
 				mAnimationEvent == AnimationType.MoveGround2 ||
@@ -14249,7 +14300,6 @@ namespace MysticUWP
 			AskKillTroll12,
 			AskKillTroll13,
 			MeetBecrux,
-			GameOver
 		}
 
 		private enum BattleEvent
@@ -14344,7 +14394,8 @@ namespace MysticUWP
 			MoveGround3,
 			InvestigateDeadBody,
 			UseHerbOfRessurection,
-			LearnTrollWriting
+			LearnTrollWriting,
+			MoveGround4
 		}
 
 		private enum SpinnerType
