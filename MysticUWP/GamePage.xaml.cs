@@ -263,6 +263,9 @@ namespace MysticUWP
 			mEnterTypeMap["OrcTown"] = "오크 마을";
 			mEnterTypeMap["Vesper"] = "베스퍼성";
 			mEnterTypeMap["TrolTown"] = "트롤 마을";
+			mEnterTypeMap["Kobold"] = "코볼트 마을";
+			mEnterTypeMap["Ancient"] = "에인션트이블 신전";
+			mEnterTypeMap["Hut"] = "오두막집";
 
 			gamePageKeyDownEvent = async (sender, args) =>
 			{
@@ -374,7 +377,33 @@ namespace MysticUWP
 								}
 							}
 							else if (mMapName == "Vesper" || mMapName == "TrolTown")
+							{
 								TalkMode(x, y);
+							}
+							else if (mMapName == "Ground4") {
+								if (x == 81 && y == 15) {
+									if (GetBit(86))
+									{
+										Dialog(" 당신은  코볼트킹을 가둬놓기 위해 만든 로드안의 결계 때문에 안으로 들어갈 수 없었다.");
+									}
+									else
+										ShowEnterMenu("Kobold");
+								}
+								else if (x == 19 && y == 38) {
+									ShowEnterMenu("Ancient");
+								}
+								else if (x == 47 && y == 56) {
+									ShowEnterMenu("Hut");
+								}
+								else if (x == 25 && y == 15) {
+									Dialog(new string[] {
+										$"[color={RGB.LightRed}] 여기는 '발하라 전당'.[/color]",
+										$"[color={RGB.LightRed}] 시간 관계상 제작을 하지 못했음.[/color]",
+										"",
+										"                       제작자 씀."
+									});
+								}
+							}
 						}
 
 						if (mMapHeader.TileType == PositionType.Town)
@@ -1885,6 +1914,9 @@ namespace MysticUWP
 								"당신의 부탁을 들어주겠소",
 								"미안하지만 그런 어렵겠소"
 							});
+						}
+						else if (specialEvent == SpecialEventType.LearnKoboldWriting) {
+							InvokeAnimation(AnimationType.CompleteLearnKoboldWriting);
 						}
 					}
 
@@ -4736,6 +4768,33 @@ namespace MysticUWP
 
 									mMapName = "Ground3";
 								}
+								else if (mMapName == "Hut")
+								{
+									if (mXAxis == 4)
+										mXAxis = mMapHeader.ExitX - 1;
+									else if (mXAxis == 25)
+										mXAxis = mMapHeader.ExitX + 1;
+									else
+										mXAxis = mMapHeader.ExitX;
+
+									if (mYAxis == 5)
+										mYAxis = mMapHeader.ExitY - 1;
+									else if (mYAxis == 24)
+										mYAxis = mMapHeader.ExitY + 1;
+									else
+										mYAxis = mMapHeader.ExitY;
+
+									mMapName = "Ground4";
+								}
+								else if (mMapName == "Kobold") {
+									if (GetBit(86)) {
+										Talk(new string[] {
+										" 당신이 문을 나서려 하자  도망쳤던 코볼트킹이 당신 앞을 가로 막았다.",
+										"",
+										$"[color={RGB.LightMagenta}] 나는 너를 내 손으로 처치하지 않고는 편안히 죽을 수가 없었다." +
+										" 그래서 나는 영원한 생명을 가지기를 원했고  그 댓가로 악마에게 혼을 팔았다. 나는 결코 죽지않고 너를 끝까지 괴롭힐 것이다.[/color]")
+									}
+								}
 								else
 								{
 									mXAxis = mMapHeader.ExitX;
@@ -5557,6 +5616,104 @@ namespace MysticUWP
 											UpdateTileInfo(44, 33, 44);
 
 										break;
+									case "Kobold":
+										mMapName = mTryEnterMap;
+
+										await RefreshGame();
+
+										if (mParty.Etc[29] == 0)
+											mParty.Etc[29] = ((mRand.Next(5) + 1) << 4) + (mRand.Next(5) + 1);
+
+										if (mParty.Etc[30] == 0)
+											mParty.Etc[30] = mRand.Next(31) + 1;
+
+										break;
+									case "Ancient":
+									{
+										var startX = 0;
+										var startY = 0;
+
+										if (mXAxis < 19)
+										{
+											startX = 5;
+											startY = 14;
+										}
+										else if (mXAxis > 19)
+										{
+											startX = 13;
+											startY = 14;
+										}
+										else if (mYAxis < 38)
+										{
+											startX = 9;
+											startY = 6;
+										}
+										else if (mYAxis > 38)
+										{
+											startX = 9;
+											startY = 23;
+										}
+
+										mMapName = mTryEnterMap;
+
+										await RefreshGame();
+
+										mXAxis = startX;
+										mYAxis = startY;
+
+										if (GetBit(28))
+										{
+											for (var x = 9; x < 11; x++)
+												UpdateTileInfo(x, 16, 44);
+										}
+
+										if (GetBit(23))
+										{
+											for (var x = 9; x < 11; x++)
+												UpdateTileInfo(x, 12, 44);
+										}
+										break;
+									}
+									case "Hut":
+									{
+										var startX = 0;
+										var startY = 0;
+
+										if (mXAxis < 47)
+										{
+											startX = 5;
+											startY = 14;
+										}
+										else if (mXAxis > 47)
+										{
+											startX = 24;
+											startY = 14;
+										}
+										else if (mYAxis < 56)
+										{
+											startX = 14;
+											startY = 6;
+										}
+										else if (mYAxis > 56)
+										{
+											startX = 14;
+											startY = 23;
+										}
+
+										mMapName = mTryEnterMap;
+
+										await RefreshGame();
+
+										mXAxis = startX;
+										mYAxis = startY;
+
+										if (GetBit(204))
+											UpdateTileInfo(7, 12, 35);
+
+										if (GetBit(205))
+											UpdateTileInfo(7, 13, 35);
+										break;
+									}
 								}
 							}
 							else
@@ -6779,6 +6936,32 @@ namespace MysticUWP
 							else
 								ShowNoThanks();
 						}
+						else if (menuMode == MenuMode.LearnKoboldWriting) {
+							if (mMenuFocusID == 0)
+							{
+								if (mParty.Item[0] >= 5)
+								{
+									mParty.Item[0] -= 5;
+
+									InvokeAnimation(AnimationType.LearnKoboldWriting);
+								}
+								else
+								{
+									Dialog(" 하지만 당신에게는 체력 회복약 5개가 없다.");
+								}
+							}
+							else
+								ClearDialog();
+						}
+						else if (menuMode == MenuMode.CrossLava) {
+							if (mMenuFocusID == 0)
+							{
+								mXAxis = 57;
+								mYAxis = 62;
+							}
+							else
+								UpdateTileInfo(47, 72, 0);
+						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
 					//				{
@@ -7286,6 +7469,52 @@ namespace MysticUWP
 					ShowExitMenu();
 				else
 					triggered = false;
+			}
+			else if (mMapName == "Ground4") {
+				if (mXAxis == 47 && mYAxis == 34)
+				{
+					InvokeAnimation(AnimationType.MoveGaeaTerraCastle);
+				}
+				else
+					triggered = false;
+			}
+			else if (mMapName == "Hut") {
+				if (mXAxis == 8 && mYAxis == 12 && !GetBit(204))
+				{
+					Dialog(new string[] {
+						" 당신은 앞에 있는 창을 가졌다",
+						$"[color={RGB.LightCyan}] [[ 랜서 + 1 ][/color]"
+					});
+
+					if (mParty.Backpack[2, 5] + 1 < 255)
+						mParty.Backpack[2, 5]++;
+
+					SetBit(204);
+					UpdateTileInfo(7, 12, 35);
+				}
+				else if (mXAxis == 8 && mYAxis == 13 && !GetBit(205))
+				{
+					Dialog(new string[] {
+						" 당신은 앞에 있는 창을 가졌다",
+						$"[color={RGB.LightCyan}] [[ 라멜라 + 1 ][/color]"
+					});
+
+					if (mParty.Backpack[5, 5] + 1 < 255)
+						mParty.Backpack[5, 5]++;
+
+					SetBit(205);
+					UpdateTileInfo(7, 13, 35);
+				}
+				else if (4 <= mXAxis && mXAxis <= 25 && 5 <= mYAxis && mYAxis <= 24)
+				{
+					ShowExitMenu();
+				}
+				else
+					triggered = false;
+			}
+			else if (mMapName == "Kobold") {
+				if (mXAxis == 4)
+					ShowExitMenu();
 			}
 	
 			return triggered;
@@ -8275,6 +8504,19 @@ namespace MysticUWP
 					" 그래서 예상하지도 못했던 기습을 받은 베스퍼성은 순식간에 전멸되었던 것이었소. 모두가 다  우리가 자청한 일이나 다름없었던 거지요.", SpecialEventType.None);
 				}
 			}
+			else if (mMapName == "Hut") {
+				if (moveX == 14 && moveY == 8) {
+					if (!GetBit(12)) {
+						Ask(" 나는 어릴때부터 코볼트족에게 발견되어 그들의 손에 자라났습니다." +
+						"  지금은 비록 인간이라는 이유로 그들의 집단에서 소외되어 이곳에서 홀로 살고 있지만  한때는 코볼트족의 말과 글을 사용하던 시절이 있습니다." +
+						" 당신 혹시 나에게 체력 회복약 5개만 주지 않겠습니까?  그런다면  나는 기꺼이 당신에게 코볼트의 글을 가르쳐 주겠습니다." +
+						"  그것도  일주일만에 말입니다.", MenuMode.LearnKoboldWriting, new string[] {
+							"좋소, 그렇게 합시다",
+							"체력 회복약 5개는 좀..."
+						});
+					}
+				}
+			}
 		}
 
 		private void ShowSign(int x, int y)
@@ -8375,7 +8617,7 @@ namespace MysticUWP
 						"",
 						"",
 						$"[color={RGB.LightMagenta}]            이곳의 성주로부터[/color]"
-					});
+					}, true);
 				}
 			}
 			else if (mMapName == "Ground3") {
@@ -8383,7 +8625,34 @@ namespace MysticUWP
 					"",
 					"",
 					$"[color={RGB.White}]   이 광산은 아직 개발 중이라 위험하므로 출입을 금지함[/color]"
-				});
+				}, true);
+			}
+			else if (mMapName == "Kobold") {
+				if (x == 8 && y == 29) {
+					Dialog(new string[] {
+						"",
+						"",
+						$"[color={RGB.LightGreen}] 여기서는 믿을만한 기술이[/color] [color={RGB.LightCyan}]투시[/color][color={RGB.LightGreen}]밖에는 없소[/color]",
+						$"[color={RGB.LightGreen}]    상당히 난해한 곳이 많으니 주의하시오[/color]",
+						"",
+						"",
+						"",
+						$"[color={RGB.LightMagenta}]                  로드안[/color]"
+					}, true);
+				}
+				else if (x == 53 && y == 62) {
+					Ask(new string[] {
+						"푯말에 쓰여있기로 ...",
+						"",
+						"",
+						"",
+						"  당신이 원한다면",
+						"         당신 앞의 용암을 건너게 해주겠소"
+					}, MenuMode.CrossLava, new string[] {
+						"     용암을 건너겠다",
+						"     건널 필요는 없다"
+					});
+				}
 			}
 		}
 
@@ -13167,9 +13436,10 @@ namespace MysticUWP
 				{
 					AnimateTransition();
 				}
-				else if (mAnimationEvent == AnimationType.MoveGround2 || 
-				mAnimationEvent == AnimationType.MoveGround3 || 
-				mAnimationEvent == AnimationType.MoveGround4) {
+				else if (mAnimationEvent == AnimationType.MoveGround2 ||
+				mAnimationEvent == AnimationType.MoveGround3 ||
+				mAnimationEvent == AnimationType.MoveGround4 ||
+				mAnimationEvent == AnimationType.MoveGaeaTerraCastle) {
 					AnimateFadeInOut();
 				}
 				else if (mAnimationEvent == AnimationType.InvestigateDeadBody) {
@@ -13181,6 +13451,12 @@ namespace MysticUWP
 				}
 				else if (mAnimationEvent == AnimationType.LearnTrollWriting) {
 					AnimateTransition();
+				}
+				else if (mAnimationEvent == AnimationType.LearnKoboldWriting) {
+					AnimateFadeInOut();
+				}
+				else if (mAnimationEvent == AnimationType.CompleteLearnKoboldWriting) {
+					AnimateFadeInOut();
 				}
 			});
 
@@ -13543,6 +13819,30 @@ namespace MysticUWP
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
 			}
+			else if (mAnimationEvent == AnimationType.MoveGaeaTerraCastle) {
+				mMapName = mMapHeader.ExitMap;
+
+				mXAxis = mMapHeader.ExitX - 1;
+				mYAxis = mMapHeader.ExitY - 1;
+
+				await RefreshGame();
+
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+			}
+			else if (mAnimationEvent == AnimationType.LearnKoboldWriting) {
+				Talk(" 일주일이 지났다.", SpecialEventType.LearnKoboldWriting);
+
+				SetBit(12);
+				mParty.Day += 7;
+				PlusTime(0, 0, 1);
+			}
+			else if (mAnimationEvent == AnimationType.CompleteLearnKoboldWriting) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				Dialog(" 당신은 이제 코볼트 글을 알게 되었다.");
+			}
 			else
 			{
 				mAnimationEvent = AnimationType.None;
@@ -13719,11 +14019,14 @@ namespace MysticUWP
 			var fadeOut = false;
 
 			if (mAnimationEvent == AnimationType.LearnOrcWriting ||
-				mAnimationEvent == AnimationType.MoveGround4)
+				mAnimationEvent == AnimationType.MoveGround4 ||
+				mAnimationEvent == AnimationType.MoveGaeaTerraCastle ||
+				mAnimationEvent == AnimationType.LearnKoboldWriting)
 				fadeOut = true;
 			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting ||
 				mAnimationEvent == AnimationType.MoveGround2 ||
-				mAnimationEvent == AnimationType.MoveGround3)
+				mAnimationEvent == AnimationType.MoveGround3 ||
+				mAnimationEvent == AnimationType.CompleteLearnKoboldWriting)
 				fadeIn = true;
 
 			using (var sb = args.DrawingSession.CreateSpriteBatch(CanvasSpriteSortMode.None, CanvasImageInterpolation.NearestNeighbor, CanvasSpriteOptions.ClampToSourceRect))
@@ -13826,11 +14129,14 @@ namespace MysticUWP
 			var fadeOut = false;
 
 			if (mAnimationEvent == AnimationType.LearnOrcWriting ||
-				mAnimationEvent == AnimationType.MoveGround4)
+				mAnimationEvent == AnimationType.MoveGround4 ||
+				mAnimationEvent == AnimationType.MoveGaeaTerraCastle ||
+				mAnimationEvent == AnimationType.LearnKoboldWriting)
 				fadeOut = true;
 			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting ||
 				mAnimationEvent == AnimationType.MoveGround2 ||
-				mAnimationEvent == AnimationType.MoveGround3)
+				mAnimationEvent == AnimationType.MoveGround3 ||
+				mAnimationEvent == AnimationType.CompleteLearnKoboldWriting)
 				fadeIn = true;
 
 			if ((layer[index] & 0x80) > 0)
@@ -13915,6 +14221,16 @@ namespace MysticUWP
 				}
 				else if (mMapName == "TrolTown" && (tileIdx == 53 || tileIdx == 54))
 					tileIdx = 44;
+				else if (mMapName == "Ground4")
+				{
+					if (tileIdx == 52)
+						tileIdx = 14;
+					else if (tileIdx == 54)
+						tileIdx = 15;
+				}
+				else if (mMapName == "Hut" && tileIdx == 53) {
+					tileIdx = 44;
+				}
 
 
 				if (mSpecialEvent == SpecialEventType.Penetration)
@@ -14059,6 +14375,10 @@ namespace MysticUWP
 							mDecorateTiles.Draw(sb, 3, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
 							break;
 					}
+				}
+				else if (mMapName == "Hut") {
+					if (oriTileIdx == 53)
+						mDecorateTiles.Draw(sb, 4, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
 				}
 			}
 		}
@@ -14300,6 +14620,7 @@ namespace MysticUWP
 			AskKillTroll12,
 			AskKillTroll13,
 			MeetBecrux,
+			LearnKoboldWriting
 		}
 
 		private enum BattleEvent
@@ -14395,7 +14716,10 @@ namespace MysticUWP
 			InvestigateDeadBody,
 			UseHerbOfRessurection,
 			LearnTrollWriting,
-			MoveGround4
+			MoveGround4,
+			MoveGaeaTerraCastle,
+			LearnKoboldWriting,
+			CompleteLearnKoboldWriting
 		}
 
 		private enum SpinnerType
@@ -14527,7 +14851,9 @@ namespace MysticUWP
 			KillTroll11,
 			KillTroll12,
 			KillTroll13,
-			JoinBercux
+			JoinBercux,
+			LearnKoboldWriting,
+			CrossLava
 		}
 	}
 }
