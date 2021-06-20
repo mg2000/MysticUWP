@@ -1127,6 +1127,28 @@ namespace MysticUWP
 							UpdateTileInfo(44, 33, 44);
 							SetBit(85);
 						}
+						else if (battleEvent == BattleEvent.ExitKoboldKing) {
+							BattleExitKobldKing();
+
+							return;
+						}
+						else if (battleEvent == BattleEvent.KoboldKnight) {
+							Dialog(" 당신은 쓰러진  코볼트 근위기사의 몸을 뒤져 에메랄드키를 찾아냈다.");
+							SetBit(17);
+						}
+						else if (battleEvent == BattleEvent.GoldKey) {
+							Dialog(" 당신은 벽에 걸려 있는 황금 키를 가졌다.");
+							SetBit(18);
+						}
+						else if (battleEvent == BattleEvent.KoboldMagicUser)
+						{
+							Dialog(" 당신은 코볼트 매직유저의 몸을 뒤져서  백금 키를 발견했다.");
+							SetBit(19);
+						}
+						else if (battleEvent == BattleEvent.SaphireKey) {
+							Dialog(" 당신은 벽에 걸린 사파이어 키를 가졌다.");
+							SetBit(20);
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1158,6 +1180,23 @@ namespace MysticUWP
 						{
 							mXAxis = mMapHeader.StartX;
 							mYAxis = mMapHeader.StartY;
+						}
+						else if (battleEvent == BattleEvent.ExitKoboldKing) {
+							mMapName = mMapHeader.EnterMap;
+							mXAxis = mMapHeader.ExitX - 1;
+							mYAxis = mMapHeader.ExitY - 1;
+
+							await RefreshGame();
+
+							if (GetBit(86)) {
+								Dialog(new string[] {
+									" 당신이 성 밖으로 탈출하자  허공에서 로드안의 음성이 들려왔다.",
+									$"[color={RGB.LightGreen}] 당신은 빨리 이곳을 나가시오.  나의 선의 봉인으로  악마의 힘을 빌린 코볼트킹을 막겠소. 아마 그는 다시는 이 성을 벗어나지 못할거요.'[/color]",
+									"",
+									" 말이채 끝나기도 전에 코볼트성 주위에는  구형의 결계가 형성 되었고  곧이어 기의 파문이 일렁이기 시작했다."
+								});
+								SetBit(5);
+							}
 						}
 
 						mEncounterEnemyList.Clear();
@@ -1917,6 +1956,9 @@ namespace MysticUWP
 						}
 						else if (specialEvent == SpecialEventType.LearnKoboldWriting) {
 							InvokeAnimation(AnimationType.CompleteLearnKoboldWriting);
+						}
+						else if (specialEvent == SpecialEventType.BattleExitKoboldKing) {
+							BattleExitKobldKing();
 						}
 					}
 
@@ -4792,7 +4834,17 @@ namespace MysticUWP
 										" 당신이 문을 나서려 하자  도망쳤던 코볼트킹이 당신 앞을 가로 막았다.",
 										"",
 										$"[color={RGB.LightMagenta}] 나는 너를 내 손으로 처치하지 않고는 편안히 죽을 수가 없었다." +
-										" 그래서 나는 영원한 생명을 가지기를 원했고  그 댓가로 악마에게 혼을 팔았다. 나는 결코 죽지않고 너를 끝까지 괴롭힐 것이다.[/color]")
+										" 그래서 나는 영원한 생명을 가지기를 원했고  그 댓가로 악마에게 혼을 팔았다. 나는 결코 죽지않고 너를 끝까지 괴롭힐 것이다.[/color]"
+										}, SpecialEventType.BattleExitKoboldKing);
+
+										return;
+									}
+									else {
+										mMapName = mMapHeader.EnterMap;
+										mXAxis = mMapHeader.ExitX - 1;
+										mYAxis = mMapHeader.ExitY - 1;
+
+										await RefreshGame();
 									}
 								}
 								else
@@ -7515,6 +7567,337 @@ namespace MysticUWP
 			else if (mMapName == "Kobold") {
 				if (mXAxis == 4)
 					ShowExitMenu();
+				else if (mXAxis == 7 && mYAxis == 29 && GetTileInfo(8, 29) != 53) {
+					UpdateTileInfo(8, 29, 53);
+					Dialog(" 갑자기 땅에서 푯말이 솟아 나왔다.");
+				}
+				else if (29 <= mXAxis && mXAxis <= 54 && 20 <= mYAxis && mYAxis <= 35) {
+					if (mXAxis == 48 && mYAxis == 30 && !GetBit(17))
+					{
+						for (var i = 0; i < 5; i++)
+							JoinEnemy(35);
+						for (var i = 0; i < 2; i++)
+							JoinEnemy(38);
+
+						DisplayEnemy();
+						HideMap();
+
+						mBattleEvent = BattleEvent.KoboldKnight;
+						StartBattle(false);
+					}
+					else {
+						for (var y = mYAxis - 1; y <= mYAxis + 1; y++) {
+							for (var x = mXAxis - 1; x <= mXAxis + 1; x++)
+								UpdateTileInfo(x, y, 50);
+						}
+
+						triggered = false;
+					}
+				}
+				else if (mXAxis == 37 && mYAxis == 12) {
+					UpdateTileInfo(98, 20, 43);
+
+					Dialog(" 당신이 바닥의 기묘한 벽돌을 밟자 돌이 약간 밑으로 들어갔다.");
+				}
+				else if (mXAxis == 120 && mYAxis == 35) {
+					UpdateTileInfo(109, 25, 43);
+
+					Dialog(" 당신이 바닥의 기묘한 벽돌을 밟자 돌이 약간 밑으로 들어갔다.");
+				}
+				else if (mXAxis == 111 && mYAxis == 28)
+				{
+					UpdateTileInfo(95, 20, 43);
+
+					Dialog(" 당신이 바닥의 기묘한 벽돌을 밟자 돌이 약간 밑으로 들어갔다.");
+				}
+				else if (mXAxis == 95 && mYAxis == 35)
+				{
+					UpdateTileInfo(106, 29, 43);
+
+					Dialog(" 당신이 바닥의 기묘한 벽돌을 밟자 돌이 약간 밑으로 들어갔다.");
+				}
+				else if (mXAxis == 104 && mYAxis == 26)
+				{
+					UpdateTileInfo(117, 34, 43);
+
+					Dialog(" 당신이 바닥의 기묘한 벽돌을 밟자 돌이 약간 밑으로 들어갔다.");
+				}
+				else if (mXAxis == 99 && mYAxis == 35 && !GetBit(18)) {
+					for (var i = 0; i < 7; i++)
+						JoinEnemy(35);
+					JoinEnemy(38);
+
+					DisplayEnemy();
+					HideMap();
+
+					mBattleEvent = BattleEvent.GoldKey;
+					StartBattle(false);
+				}
+				else if (mXAxis == 31 && mYAxis == 89 && !GetBit(19)) {
+					for (var i = 0; i < 7; i++)
+						JoinEnemy(35);
+					JoinEnemy(36);
+
+					DisplayEnemy();
+					HideMap();
+
+					mBattleEvent = BattleEvent.KoboldMagicUser;
+					StartBattle(false);
+				}
+				else if (95 <= mXAxis && mXAxis <= 118 && 84 <= mYAxis && mYAxis <= 97) {
+			
+				}
+				else if (mXAxis == 94 && mYAxis == 90 && !GetBit(20)) {
+					for (var i = 0; i < 6; i++)
+						JoinEnemy(35);
+					for (var i = 0; i < 2; i++)
+						JoinEnemy(36);
+
+					DisplayEnemy();
+					HideMap();
+
+					mBattleEvent = BattleEvent.SaphireKey;
+					StartBattle(false);
+				}
+				else if (mXAxis == 36 && GetBit(18))
+				{
+					UpdateTileInfo(27, 59, 43);
+					UpdateTileInfo(27, 60, 43);
+					UpdateTileInfo(28, 59, 0);
+					UpdateTileInfo(28, 60, 0);
+
+					triggered = false;
+				}
+				else if (mXAxis == 123 && GetBit(19) && GetBit(89)) {
+					UpdateTileInfo(122, 59, 43);
+					UpdateTileInfo(27, 60, 43);
+					UpdateTileInfo(28, 59, 0);
+					UpdateTileInfo(28, 60, 0);
+
+					triggered = false;
+				}
+				else if (mXAxis == 61 && GetBit(20)) {
+					for (var y = 59; y <= 61; y++) {
+						for (var x = 62; x < 64; x++)
+							UpdateTileInfo(x, y, 43);
+					}
+					UpdateTileInfo(64, 59, 0);
+					UpdateTileInfo(64, 60, 0);
+
+					triggered = false;
+				}
+				else if (mXAxis == 26 && GetBit(17)) {
+					for (var y = 59; y <= 61; y++)
+					{
+						for (var x = 86; x < 68; x++)
+							UpdateTileInfo(x, y, 43);
+					}
+					UpdateTileInfo(85, 59, 0);
+					UpdateTileInfo(85, 60, 0);
+
+					triggered = false;
+				}
+				else if (mXAxis == 121 && !GetBit(92)) {
+					for (var i = 0; i < 6; i++)
+						JoinEnemy(38);
+					for (var i = 0; i < 2; i++)
+						JoinEnemy(39);
+
+					DisplayEnemy();
+					HideMap();
+
+					Talk($"[color={RGB.LightMagenta}] 정말 끈질긴 인간들이군. 번번히 패하면서 또 시비를 걸어 오다니...", SpecialEventType.BattleKoboldSoldier);
+				}
+				else if (mXAxis == 28 && !GetBit(91)) {
+					for (var i = 0; i < 4; i++)
+						JoinEnemy(38);
+					for (var i = 0; i < 3; i++)
+						JoinEnemy(36);
+					JoinEnemy(40);
+
+					DisplayEnemy();
+					HideMap();
+
+					Talk($"[color={RGB.LightMagenta}] 또 인간들이 우리 성을 침범하러 왔군.  너희들은 이 주위의 해골들이 보이지 않는가?" +
+					" 이것들은 우리에게 무모한 싸움을 걸었다가 죽어간 사람들의 해골이다.[/color]", SpecialEventType.BattleKoboldSoldier2);
+				}
+				else if (mXAxis == 85 && !GetBit(90)) {
+					for (var i = 0; i < 7; i++)
+						JoinEnemy(36);
+					JoinEnemy(37);
+
+					DisplayEnemy();
+					HideMap();
+
+					Talk($"[color={RGB.LightMagenta}] 나는 이 성의 경비대장이다.  나의 임무는 바로 너희들을  이 안으로  들여 놓지 않는 것이다. 나의 목숨을 바쳐서라도...", SpecialEventType.BattleKoboldGuardian);
+				}
+				else if (mXAxis == 85 && GetBit(90)) {
+					for (var y = 59; y < 61; y++) {
+						for (var x = 62; x < 65; x++)
+							UpdateTileInfo(x, y, 43);
+					}
+
+					for (var y = 59; y < 61; y++) {
+						for (var x = 27; x < 29; x++)
+							UpdateTileInfo(x, y, 43);
+					}
+
+					triggered = false;
+				}
+				else if (mXAxis == 64 && !GetBit(89)) {
+					for (var i = 0; i < 3; i++)
+						JoinEnemy(38);
+					JoinEnemy(41);
+
+					DisplayEnemy();
+					HideMap();
+
+					Talk($"[color={RGB.LightMagenta}] 용케도 우리 성의 내부까지 들어왔군. 당신들은 소환 마법이란걸 들어봤나? 지금 바로 내가 소환 마법의 진가를 보여주지.", SpecialEventType.BattleKoboldSummoner);
+				}
+				else if (mXAxis == 47 && mYAxis == 72 && GetTileInfo(45, 46) == 50) {
+					for (var y = 41; y < 50; y++) {
+						for (var x = 36; x < 54; x++) {
+							if (GetTileInfo(x, y) == 50)
+								UpdateTileInfo(x, y, 49);
+						}					
+					}
+
+					triggered = false;
+				}
+				else if (mXAxis == 44 && mYAxis == 45 && GetTileInfo(55, 62) == 50)
+				{
+					for (var y = 50; y < 74; y++)
+					{
+						for (var x = 55; x < 60; x++)
+						{
+							if (GetTileInfo(x, y) == 50)
+								UpdateTileInfo(x, y, 48);
+						}
+					}
+
+					triggered = false;
+				}
+				else if (41 <= mXAxis && mXAxis <= 52 && 54 <= mYAxis && mYAxis <= 65) {
+					if (mParty.Etc[35] > 3)
+						triggered = false;
+					else {
+						mParty.Etc[35]++;
+						UpdateTileInfo(mXAxis, mYAxis, 43);
+
+						if (mParty.Etc[35] == 4) {
+							Dialog(" 당신은 땅에 반쯤 묻혀있는  오팔키를 발견했다.");
+							SetBit(21);
+						}
+						else {
+							// 현재 위치 제외 보정 필요
+							UpdateTileInfo(mRand.Next(12) + 41, mRand.Next(12) + 54, 0);
+							triggered = true;
+						}
+					}
+				}
+				else if (90 <= mXAxis && mXAxis <= 120 && 40 <= mYAxis && mYAxis <= 79) {
+					if (mXAxis == 90 && mYAxis == 40 && !GetBit(22)) {
+						Dialog(" 당신은 어둠속에서도  반짝이는 물체를  하나 보았다. 자세히보니 그것은 흑요석키였고 즉시 그것을 가졌다.");
+
+						SetBit(22);
+					}
+					else if ((mXAxis == 90 && mYAxis == 58) || (mXAxis == 120 && mYAxis == 61)) && mEbony)
+					{
+						mEbony = false;
+						triggered = false;
+					}
+					else if (mXAxis == 92 && mYAxis == 59) {
+						mEbony = false;
+
+						mXAxis = 90;
+						mYAxis = 59;
+					}
+					else if (mXAxis == 118 && mYAxis == 60) {
+						mXAxis = 120;
+						mYAxis = 60;
+					}
+					else if (mXAxis == 102 && mYAxis == 74) {
+						mEbony = false;
+
+						mXAxis = 106;
+						mYAxis = 59;
+					}
+					else if (mXAxis == 107 && mYAxis == 74) {
+						mXAxis = 101;
+						mYAxis = 48;
+					}
+					else if (mXAxis == 104 && mYAxis == 57 && GetTileInfo(104, 58) != 43) {
+						UpdateTileInfo(104, 58, 43);
+						triggered = false;
+					}
+					else if (!mEbony) {
+						mEbony = true;
+						triggered = false;
+					}
+				}
+				else if (mXAxis == 57 && mYAxis == 100 && GetTileInfo(57, 99) != 48) {
+					for (var y = 85; y < 100; y++)
+						UpdateTileInfo(57, y, 49);
+					UpdateTileInfo(57, 84, 0);
+
+					Dialog(" 당신이 무심코 벽에 팔을 기대자 벽은 안으로 쑥 들어가 버렸다. 그리고는 새로운 길이 나타났다.");
+				}
+				else if (mXAxis == 57 && mYAxis == 84) {
+					UpdateTileInfo(57, 84, 43);
+					UpdateTileInfo(75, 73, 52);
+
+					Dialog(" 당신이 발 밑의 벽돌을 밟자  벽돌은  유압에 의해 서서히 가라앉기 시작했다.  당신은 즉시 벽돌에서 발을 떼고 한 걸음 물러섰다." +
+					" 하지만 벽돌은 빨려 들어가듯이 밑으로 가라 앉았다.");
+
+					var friend = mPlayerList.Count > 1 ? mPlayerList[mPlayerList.Count - 1] : null;
+
+					if (friend != null) {
+						Dialog(new string[] {
+							"",
+							$" 그때 옆에 있던 {friend.NameSubjectBJosa} 말했다.",
+							"",
+							$"[color={RGB.LightBlue}] 이런 장치는 전에 한번 본 적이 있다네. 벽돌이 가라 앉는 무게와 압력으로 다른 곳의 물체를 떠올리는 장치라네." +
+							" 그런데 어디가 다시 떠올랐는지 모르겠군.[/color]"
+						}, true);
+					}
+				}
+				else if (mXAxis == 75 && mYAxis == 73) {
+					UpdateTileInfo(64, 24, 35);
+					UpdateTileInfo(63, 24, 0);
+					UpdateTileInfo(75, 73, 48);
+
+					Dialog(" 당신이 물 위로 떠오른 땅을 밟자  다시 가라앉아 버렸다.");
+				}
+				else if (mXAxis == 63 && mYAxis == 24 && GetTileInfo(107, 52) != 0) {
+					for (var y = 52; y < 54; y++) {
+						for (var x = 107; x < 108; x++)
+							UpdateTileInfo(x, y, 0);
+					}
+					UpdateTileInfo(63, 24, 43);
+
+					Dialog(" 성의 남동쪽에서  돌연히 커다란 진동음과 함께 기계 소리가 들렸다.");
+				}
+				else if (mXAxis == 105 && mYAxis == 53 && !GetBit(200)) {
+					Dialog(" 당신은 벽에서 무언가 반짝이는 것이 있어 벽으로 다가갔다.  가까이에서 보니 그것은 수정이었다.  하지만 그 수정은 특이하게도 스스로 희미한 빛을 발하고 있었다." +
+					"  당신이 수정속을 들여다 보았을때  소스라치게 놀랄 수 밖에 없었다.  그속에는 형체를 분간하기 힘들 정도의 많은 영혼들이 배회하고 있었다.  그들이 아마이 희미한 빛을 발하는 것 같았다." +
+					"  당신이 약간의 힘을 주어 빼어 보니 쉽게 벽에서 떨어져 나왔다.");
+
+					var friend = mPlayerList.Count > 1 ? mPlayerList[1] : null;
+
+					if (friend != null)
+					{
+						Talk(new string[] {
+							"",
+							$" 그걸 보더니 {friend.NameSubjectBJosa} 말했다.",
+							"",
+							$"[color={RGB.LightBlue}] 아니, 이건....  이건 바로 그 전설 속에서나 논해지던[/color] [color={RGB.LightCyan}]영혼의 크리스탈[/color][color={RGB.LightBlue}]임에 틀림없네." +
+							" 이것은 전세계에 두개 밖에 존재하지 않는 귀한 것인데 우리가 발견했군."
+						}, SpecialEventType.None);
+					}
+
+					SetBit(200);
+					mParty.Crystal[4]++;
+				}
 			}
 	
 			return triggered;
@@ -13948,7 +14331,7 @@ namespace MysticUWP
 			ShowSpinner(SpinnerType.RestTimeRange, rangeItems.ToArray(), 0);
 		}
 
-		void BattleTrollKing()
+		private void BattleTrollKing()
 		{
 			Dialog(" 순간 사납게 생긴 두 명의 트롤 전사와  마법사 복장의 한 명이 나타났다.");
 			if (GetBit(9)) {
@@ -13971,6 +14354,18 @@ namespace MysticUWP
 
 			mSpecialEvent = SpecialEventType.BattleTrollKing;
 			ContinueText.Visibility = Visibility.Visible;
+		}
+
+		private void BattleExitKobldKing() {
+			mEncounterEnemyList.Clear();
+
+			JoinEnemy(44);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.ExitKoboldKing;
+			StartBattle(false);
 		}
 
 		private void canvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
@@ -14620,7 +15015,8 @@ namespace MysticUWP
 			AskKillTroll12,
 			AskKillTroll13,
 			MeetBecrux,
-			LearnKoboldWriting
+			LearnKoboldWriting,
+			BattleExitKoboldKing
 		}
 
 		private enum BattleEvent
@@ -14660,7 +15056,12 @@ namespace MysticUWP
 			Troll10,
 			Troll11,
 			Troll12,
-			Troll13
+			Troll13,
+			ExitKoboldKing,
+			KoboldKnight,
+			GoldKey,
+			KoboldMagicUser,
+			SaphireKey
 		}
 
 		private enum BattleTurn
