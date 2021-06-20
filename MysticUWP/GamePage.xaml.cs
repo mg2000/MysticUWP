@@ -7898,6 +7898,65 @@ namespace MysticUWP
 					SetBit(200);
 					mParty.Crystal[4]++;
 				}
+				else if (mXAxis == 74 && mYAxis == 59 && GetBit(21) && GetTileInfo(74, 60) != 43) {
+					UpdateTileInfo(74, 60, 43);
+					triggered = false;
+				}
+				else if (mXAxis == 75 && mYAxis == 60 && GetBit(22) && GetTileInfo(76, 60) != 43) {
+					UpdateTileInfo(76, 60, 43);
+					triggered = false;
+				}
+				else if (mXAxis == 76 && mYAxis == 58 && !GetBit(88)) {
+					for (var i = 0; i < 3; i++)
+						JoinEnemy(38);
+
+					for (var i = 0; i < 2; i++)
+						JoinEnemy(39);
+
+					for (var i = 0; i < 2; i++)
+						JoinEnemy(40);
+
+					DisplayEnemy();
+					HideMap();
+
+					Talk($"[color={RGB.LightMagenta}] 신성한 신의 제단에 더러운 발을 디딘 놈들은 누구냐?  신을 모독한 너희네 인간들에게 몸소 가르침을 주겠다. 밧아랏!![/color]"
+					, SpecialEventType.BattleKoboldAlter);
+				}
+				else if (mYAxis == 38 && GetBit(88) && ((mParty.Etc[29] >> 4) == (mYAxis - 63) / 4)) {
+					if (GetTileInfo(mXAxis, mYAxis - 1) != 43) {
+						for (var y = mYAxis - 2; y <= mYAxis - 1; y++) {
+							for (var x = mXAxis - 1; x <= mXAxis; x++)
+								UpdateTileInfo(x, y, 43);
+						}
+					}
+
+					triggered = false;
+				}
+				else if (mYAxis == 81 && GetBit(88) && ((mParty.Etc[29] & 0x0F) == (mYAxis - 64) / 4)) {
+					if (GetTileInfo(mXAxis, mYAxis + 1) != 43)
+					{
+						for (var y = mYAxis + 1; y <= mYAxis + 2; y++)
+						{
+							for (var x = mXAxis; x <= mXAxis + 1; x++)
+								UpdateTileInfo(x, y, 43);
+						}
+					}
+
+					triggered = false;
+				}
+				else if (mXAxis == 67 && mYAxis == 24) {
+					if (GetBit(147))
+						triggered = false;
+					else if ((mParty.Etc[30] & 1) > 0) {
+						if (GetBit(24)) {
+							if (GetBit(134))
+								triggered = false;
+							else {
+								BattleTreasureBox1();
+							}
+						}
+					}
+				}
 			}
 	
 			return triggered;
