@@ -176,6 +176,9 @@ namespace MysticUWP
 		private int mWatchMin;
 		private int mWatchSec;
 
+		private int mAnswerID;
+		private bool mAllPass = true;
+
 		public GamePage()
 		{
 			this.InitializeComponent();
@@ -1048,7 +1051,8 @@ namespace MysticUWP
 							UpdateTileInfo(19, 25, 43);
 							SetBit(71);
 						}
-						else if (battleEvent == BattleEvent.TrollKing) {
+						else if (battleEvent == BattleEvent.TrollKing)
+						{
 							Dialog(new string[] {
 								" 당신은 경호대원들을 물리치고는 뒤에서 벌벌 떨고 있는 트롤킹에게 검을 겨누었다." +
 								" 그는 겁에 질린채 주저 않았고 당신은 그를 단숨에 베어버렸다.",
@@ -1063,25 +1067,30 @@ namespace MysticUWP
 							UpdateTileInfo(24, 7, 44);
 							UpdateTileInfo(25, 7, 44);
 						}
-						else if (battleEvent == BattleEvent.Troll1) {
+						else if (battleEvent == BattleEvent.Troll1)
+						{
 							SetBit(73);
 							UpdateTileInfo(16, 18, 44);
 						}
-						else if (battleEvent == BattleEvent.Troll2) {
+						else if (battleEvent == BattleEvent.Troll2)
+						{
 							SetBit(74);
 							UpdateTileInfo(33, 18, 44);
 						}
-						else if (battleEvent == BattleEvent.Troll3) {
+						else if (battleEvent == BattleEvent.Troll3)
+						{
 							SetBit(75);
 							UpdateTileInfo(12, 31, 44);
 							UpdateTileInfo(12, 32, 44);
 						}
-						else if (battleEvent == BattleEvent.Troll4) {
+						else if (battleEvent == BattleEvent.Troll4)
+						{
 							SetBit(76);
 							UpdateTileInfo(37, 31, 44);
 							UpdateTileInfo(37, 32, 44);
 						}
-						else if (battleEvent == BattleEvent.Troll5) {
+						else if (battleEvent == BattleEvent.Troll5)
+						{
 							SetBit(77);
 							UpdateTileInfo(23, 66, 44);
 							UpdateTileInfo(24, 66, 44);
@@ -1127,16 +1136,19 @@ namespace MysticUWP
 							UpdateTileInfo(44, 33, 44);
 							SetBit(85);
 						}
-						else if (battleEvent == BattleEvent.ExitKoboldKing) {
+						else if (battleEvent == BattleEvent.ExitKoboldKing)
+						{
 							BattleExitKobldKing();
 
 							return;
 						}
-						else if (battleEvent == BattleEvent.KoboldKnight) {
+						else if (battleEvent == BattleEvent.KoboldKnight)
+						{
 							Dialog(" 당신은 쓰러진  코볼트 근위기사의 몸을 뒤져 에메랄드키를 찾아냈다.");
 							SetBit(17);
 						}
-						else if (battleEvent == BattleEvent.GoldKey) {
+						else if (battleEvent == BattleEvent.GoldKey)
+						{
 							Dialog(" 당신은 벽에 걸려 있는 황금 키를 가졌다.");
 							SetBit(18);
 						}
@@ -1145,10 +1157,44 @@ namespace MysticUWP
 							Dialog(" 당신은 코볼트 매직유저의 몸을 뒤져서  백금 키를 발견했다.");
 							SetBit(19);
 						}
-						else if (battleEvent == BattleEvent.SaphireKey) {
+						else if (battleEvent == BattleEvent.SaphireKey)
+						{
 							Dialog(" 당신은 벽에 걸린 사파이어 키를 가졌다.");
 							SetBit(20);
 						}
+						else if (battleEvent == BattleEvent.KoboldAlter)
+						{
+							Dialog(" 당신은 대제사장으로부터 다이아몬드키 두 개를 빼았았다.");
+							SetBit(88);
+						}
+						else if (battleEvent == BattleEvent.TreasureBox1)
+						{
+							UpdateTileInfo(68, 24, 43);
+							SetBit(134);
+						}
+						else if (battleEvent == BattleEvent.TreasureBox2)
+						{
+							UpdateTileInfo(72, 24, 43);
+							SetBit(135);
+						}
+						else if (battleEvent == BattleEvent.TreasureBox3)
+						{
+							UpdateTileInfo(76, 24, 43);
+							SetBit(136);
+						}
+						else if (battleEvent == BattleEvent.TreasureBox4)
+						{
+							UpdateTileInfo(80, 24, 43);
+							SetBit(137);
+						}
+						else if (battleEvent == BattleEvent.KoboldSoldier)
+							SetBit(92);
+						else if (battleEvent == BattleEvent.KoboldSoldier2)
+							SetBit(91);
+						else if (battleEvent == BattleEvent.KoboldGuardian)
+							SetBit(90);
+						else if (battleEvent == BattleEvent.KoboldSummoner)
+							SetBit(89);
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1197,6 +1243,39 @@ namespace MysticUWP
 								});
 								SetBit(5);
 							}
+						}
+						else if (battleEvent == BattleEvent.KoboldAlter) {
+							mYAxis++;
+						}
+						else if (battleEvent == BattleEvent.TreasureBox1)
+						{
+							mYAxis++;
+						}
+						else if (battleEvent == BattleEvent.TreasureBox2)
+						{
+							mYAxis++;
+						}
+						else if (battleEvent == BattleEvent.TreasureBox3)
+						{
+							mYAxis++;
+						}
+						else if (battleEvent == BattleEvent.TreasureBox4)
+						{
+							mYAxis++;
+						}
+						else if (battleEvent == BattleEvent.KoboldSoldier)
+						{
+							mXAxis++;
+						}
+						else if (battleEvent == BattleEvent.KoboldSoldier2) {
+							mXAxis--;
+						}
+						else if (battleEvent == BattleEvent.KoboldGuardian) {
+							mXAxis++;
+						}
+						else if (battleEvent == BattleEvent.KoboldSummoner)
+						{
+							mYAxis--;
 						}
 
 						mEncounterEnemyList.Clear();
@@ -1959,6 +2038,114 @@ namespace MysticUWP
 						}
 						else if (specialEvent == SpecialEventType.BattleExitKoboldKing) {
 							BattleExitKobldKing();
+						}
+						else if (specialEvent == SpecialEventType.BattleKoboldAlter) {
+							mBattleEvent = BattleEvent.KoboldAlter;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleTreasureBox1 ||
+							specialEvent == SpecialEventType.BattleTreasureBox2 ||
+							specialEvent == SpecialEventType.BattleTreasureBox3 ||
+							specialEvent == SpecialEventType.BattleTreasureBox4)
+						{
+							switch (specialEvent) {
+								case SpecialEventType.BattleTreasureBox1:
+									mBattleEvent = BattleEvent.TreasureBox1;
+									break;
+								case SpecialEventType.BattleTreasureBox2:
+									mBattleEvent = BattleEvent.TreasureBox2;
+									break;
+								case SpecialEventType.BattleTreasureBox3:
+									mBattleEvent = BattleEvent.TreasureBox3;
+									break;
+								case SpecialEventType.BattleTreasureBox4:
+									mBattleEvent = BattleEvent.TreasureBox4;
+									break;
+							}
+
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleKoboldSoldier) {
+							mBattleEvent = BattleEvent.KoboldSoldier;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleKoboldSoldier2) {
+							mBattleEvent = BattleEvent.KoboldSoldier2;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleKoboldGuardian) {
+							mBattleEvent = BattleEvent.KoboldGuardian;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleKoboldSummoner) {
+							mBattleEvent = BattleEvent.KoboldSummoner;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.AskTreasureboxQuestion1) {
+							mAllPass = true;
+
+							var options = ShuffleOptions(new string[] {
+								"로드안",
+								"네크로만서",
+								"레드 안타레스",
+								"알비레오"
+							});
+
+							for (var i = 0; i < options.Length; i++) {
+								if (options[i] == "알비레오")
+								{
+									mAnswerID = i;
+									break;
+								}
+							}
+
+							Ask($"[color={RGB.White}] 1편 <또 다른 지식의 성전>과 2편 <다크 메이지 실리안 카미너스>에  모두 출현했던 인물이 아닌 것은 누구인가?[/color]",
+							MenuMode.Answer1_1, options);
+						}
+						else if (specialEvent == SpecialEventType.AskTreasureboxQuestion2) {
+							mAllPass = true;
+
+							var argument = mRand.Next(100) + 1;
+
+							var options = ShuffleOptions(new string[] {
+								$"{argument * 3 / 100} x 10^15",
+								$"{argument * 1 / 100} x 10^15",
+								$"{argument * 10 / 100} x 10^15",
+								$"{argument * 9 / 100} x 10^15"
+							});
+
+							for (var i = 0; i < options.Length; i++)
+							{
+								if (options[i] == $"{argument * 9 / 100} x 10^15")
+								{
+									mAnswerID = i;
+									break;
+								}
+							}
+
+							Ask($"[color={RGB.White}] 당신은  핵융합 마법을  종종 사용하곤 한다." +
+							$" 당신이 공기 중에 분포 해 있는  수소원자 4개를 헬륨원자 1개로 핵융합 시켰을때  질량결손이 {argument}mg 이라면 적에게 방출된 에너지는 얼마인가?[/color]",
+							MenuMode.Answer2_1, options);
+						}
+						else if (specialEvent == SpecialEventType.AskTreasureboxQuestion3)
+						{
+							mAllPass = true;
+
+							Ask($"[color={RGB.White}] 달과 지구의 나이는 같거나 지구가 더 많다.[/color]",
+							MenuMode.Answer3_1, new string[] {
+								"맞다",
+								"아니다"
+							});
+						}
+						else if (specialEvent == SpecialEventType.AskTreasureboxQuestion4)
+						{
+							mAllPass = true;
+
+							Ask($"[color={RGB.White}] BASIC 언어의  ';'(세미콜론)은  문장의 끝을 의미한다[/color]",
+							MenuMode.Answer4_1, new string[] {
+								"맞다",
+								"아니다"
+							});
 						}
 					}
 
@@ -7340,7 +7527,7 @@ namespace MysticUWP
 				else if (mYAxis == 9 && (!GetBit(3) || !GetBit(4)))
 				{
 					mYAxis++;
-					
+
 					Dialog($"[color={RGB.LightMagenta}]원인을 알 수 없는 힘이 당신을 거부했다.[/color]");
 				}
 				else if (mYAxis == 5)
@@ -7645,7 +7832,7 @@ namespace MysticUWP
 					StartBattle(false);
 				}
 				else if (95 <= mXAxis && mXAxis <= 118 && 84 <= mYAxis && mYAxis <= 97) {
-			
+
 				}
 				else if (mXAxis == 94 && mYAxis == 90 && !GetBit(20)) {
 					for (var i = 0; i < 6; i++)
@@ -7759,7 +7946,7 @@ namespace MysticUWP
 						for (var x = 36; x < 54; x++) {
 							if (GetTileInfo(x, y) == 50)
 								UpdateTileInfo(x, y, 49);
-						}					
+						}
 					}
 
 					triggered = false;
@@ -7801,7 +7988,7 @@ namespace MysticUWP
 
 						SetBit(22);
 					}
-					else if ((mXAxis == 90 && mYAxis == 58) || (mXAxis == 120 && mYAxis == 61)) && mEbony)
+					else if (((mXAxis == 90 && mYAxis == 58) || (mXAxis == 120 && mYAxis == 61)) && mEbony)
 					{
 						mEbony = false;
 						triggered = false;
@@ -7952,14 +8139,200 @@ namespace MysticUWP
 							if (GetBit(134))
 								triggered = false;
 							else {
-								BattleTreasureBox1();
+								BattleTreasureBox(SpecialEventType.BattleTreasureBox1);
 							}
 						}
+						else if (GetBit(11)) {
+							AskTreasureBoxQuestion(SpecialEventType.AskTreasureboxQuestion1);
+						}
+						else {
+							Dialog(" 당신이 보물상자 앞으로 다가섰을때  상자 위의 두개골이 무어라 말을 했지만 전혀 알아 들을 수가 없었다.");
+						}
+					}
+					else {
+						Dialog(" 당신이 보물상자 앞으로 다가섰지만  상자 위의 두개골은 아무말도 하지 않았다.");
 					}
 				}
+				else if (mXAxis == 71 && mYAxis == 24) {
+					if (GetBit(148))
+						triggered = false;
+					else if ((mParty.Etc[30] & (1 << 1)) > 0) {
+						if (GetBit(25)) {
+							if (GetBit(135))
+								triggered = false;
+							else
+								BattleTreasureBox(SpecialEventType.BattleTreasureBox2);
+						}
+						else if (GetBit(11))
+						{
+							AskTreasureBoxQuestion(SpecialEventType.AskTreasureboxQuestion2);
+						}
+						else
+						{
+							Dialog(" 당신이 보물상자 앞으로 다가섰을때  상자 위의 두개골이 무어라 말을 했지만 전혀 알아 들을 수가 없었다.");
+						}
+					}
+					else
+					{
+						Dialog(" 당신이 보물상자 앞으로 다가섰지만  상자 위의 두개골은 아무말도 하지 않았다.");
+					}
+				}
+				else if (mXAxis == 75 && mYAxis == 24)
+				{
+					if (GetBit(149))
+						triggered = false;
+					else if ((mParty.Etc[30] & (1 << 2)) > 0)
+					{
+						if (GetBit(26))
+						{
+							if (GetBit(136))
+								triggered = false;
+							else
+								BattleTreasureBox(SpecialEventType.BattleTreasureBox3);
+						}
+						else if (GetBit(11))
+						{
+							AskTreasureBoxQuestion(SpecialEventType.AskTreasureboxQuestion3);
+						}
+						else
+						{
+							Dialog(" 당신이 보물상자 앞으로 다가섰을때  상자 위의 두개골이 무어라 말을 했지만 전혀 알아 들을 수가 없었다.");
+						}
+					}
+					else
+					{
+						Dialog(" 당신이 보물상자 앞으로 다가섰지만  상자 위의 두개골은 아무말도 하지 않았다.");
+					}
+				}
+				else if (mXAxis == 79 && mYAxis == 24)
+				{
+					if (GetBit(150))
+						triggered = false;
+					else if ((mParty.Etc[30] & (1 << 3)) > 0)
+					{
+						if (GetBit(27))
+						{
+							if (GetBit(137))
+								triggered = false;
+							else
+								BattleTreasureBox(SpecialEventType.BattleTreasureBox4);
+						}
+						else if (GetBit(11))
+						{
+							AskTreasureBoxQuestion(SpecialEventType.AskTreasureboxQuestion4);
+						}
+						else
+						{
+							Dialog(" 당신이 보물상자 앞으로 다가섰을때  상자 위의 두개골이 무어라 말을 했지만 전혀 알아 들을 수가 없었다.");
+						}
+					}
+					else
+					{
+						Dialog(" 당신이 보물상자 앞으로 다가섰지만  상자 위의 두개골은 아무말도 하지 않았다.");
+					}
+				}
+				else if (mXAxis == 83 && mYAxis == 24) {
+					if (!GetBit(23)) {
+						Talk(new string[] {
+							" 당신이 앞에 있는 보물상자를 보았을때  섬찟함을 느끼며 한 걸음 물러섰다.  그 상자 위에는 인간의 해골이 앉아 있었고 그 해골에는 두 눈동자와 머리카락이 듬성듬성 붙어 있었다.",
+							" 스르르 해골이 고개를 들며 당신을 노려 보았다. 당신은 다시 한 걸음을 물러섰다.  그러자 그 해골은 뼈뿐인 두 손을 들어 당신을 가리켰다. 그리고 인간의 말을 하기 시작했다.",
+							"",
+							$"[color={RGB.LightBlue}] 당신은 당신들이 지금하고 있는 일이 어떤 것인지 모르고 있다." +
+							"  지금 이 시대가  정의라고 생각하는 것을 역사가 반드시 정의라고 평가짓지는 않을 것이다. 당신이 만약 에인션트 이블을 만나지 않았다면 당장 그를 만나보아라." +
+							" 그를 통해 당신은 진정한 정의를 체험하게 될 것이다. 게다가 너는 ...[/color]",
+							"",
+							" 그가  이런 말을 하고 있을때  갑자기 천정을 뚫고 직격뇌진이 그를 강타했다." +
+							"  당신은 순간적으로 벌어진 이 일을 보고  넋나간듯 얼마동안 있다가 산산히 흩어진 뼈를 보며 방금의 말을 되새겼다."
+						}, SpecialEventType.OpenTreasureBox);
+
+						SetBit(23);
+					}
+					else
+					{
+						if ((mParty.Etc[30] & (1 << 4)) > 0)
+						{
+							if (GetBit(151))
+								triggered = false;
+							else
+								OpenTreasureBox();
+						}
+						else
+							triggered = false;
+					}
+				}
+				else if (((mXAxis == 75 && mYAxis == 89) || (mXAxis == 76 && mYAxis == 89)) && !GetBit(87)) {
+					mEncounterEnemyList.Clear();
+
+					for (var i = 0; i < 2; i++)
+						JoinEnemy(40);
+					JoinEnemy(39);
+					JoinEnemy(41);
+					JoinEnemy(43);
+
+					DisplayEnemy();
+					HideMap();
+
+					Talk($"[color={RGB.LightMagenta}] 나는 코볼트킹님의 근위대의 대장이다.  내가 살아 있는한  너희들을 결코 이 안으로 한발자국도 들여놓지 못할 것이다.[/color]", SpecialEventType.BattleKoboldGuardian);
+				}
+				else if (((mXAxis == 75 && mYAxis == 85) || (mXAxis == 76 && mYAxis == 85)) && !GetBit(86))
+				{
+					mEncounterEnemyList.Clear();
+
+					JoinEnemy(44);
+
+					Talk($"[color={RGB.LightMagenta}] 지상 최상 최대의 마도사인 나, 코볼트킹에게 도전해 오다니 전말 배짱 한번 좋구나. 네놈들은 나 혼자서 상대하겠다. 가소로운 것들...[/color]", SpecialEventType.BattleKoboldGuardian);
+				}
+				else
+					triggered = false;
 			}
 	
 			return triggered;
+		}
+
+		private string[] ShuffleOptions(string[] options) {
+			for (var i = 0; i < options.Length; i++) {
+				var shuffleIdx = mRand.Next(options.Length);
+				var temp = options[i];
+				options[i] = options[shuffleIdx];
+				options[shuffleIdx] = temp;
+			}
+
+			return options;
+		}
+
+
+		private void BattleTreasureBox(SpecialEventType specialEvent) {
+			mEncounterEnemyList.Clear();
+
+			JoinEnemy(45);
+
+			Talk(" 갑자기 보물상자의 양 옆에서 팔이 나오고 밑에서 다리가 나오더니  괴물로 변해 당신을 공격하기 시작했다." +
+			"  당신은  그것이 보물상자의 모습을 하고 있는  미미크라는 것을 금방 알아차렸다.", specialEvent);
+		}
+
+		private void AskTreasureBoxQuestion(SpecialEventType specialEvent) {
+			Talk(" 당신이 보물상자 앞으로 다가섰을때  상자 위의 두개골이 당신에게 질문을 던졌다.", specialEvent);
+		}
+
+		private void OpenTreasureBox() {
+			Dialog(new string[] {
+				" 당신은 해골이 걸터 앉아 있던 보물상자를 열었다.",
+				"",
+				$"[color={RGB.LightCyan}] [[ 크로매틱 방패 + 1 ][/color]",
+				$"[color={RGB.LightCyan}] [[ 브리간디 + 1 ][/color]",
+				$"[color={RGB.LightCyan}] [[ 철퇴 + 1 ][/color]"
+			});
+
+			if (mParty.Backpack[1, 4] < 255)
+				mParty.Backpack[1, 4]++;
+
+			if (mParty.Backpack[4, 3] < 255)
+				mParty.Backpack[4, 3]++;
+
+			if (mParty.Backpack[5, 4] < 255)
+				mParty.Backpack[5, 4]++;
+
+			SetBit(151);
 		}
 
 		private async Task MoveGround3() {
@@ -8552,7 +8925,7 @@ namespace MysticUWP
 					});
 				}
 				else if (moveX == 41 && moveY == 24) {
-					if (!GetBit(3) && GetBit(4)) {
+					if (GetBit(3) && GetBit(4)) {
 						Dialog(" 당신이 원한다면 우리 성의 북쪽에 있는 이쉬도 테라로 가는 게이트 입구를 열어 주겠소.");
 						if (!GetBit(5))
 							Dialog(" 거기에는 코볼트족만이 살고 있으니 조심하시오.", true);
@@ -15075,7 +15448,16 @@ namespace MysticUWP
 			AskKillTroll13,
 			MeetBecrux,
 			LearnKoboldWriting,
-			BattleExitKoboldKing
+			BattleExitKoboldKing,
+			BattleKoboldAlter,
+			BattleTreasureBox1,
+			BattleTreasureBox2,
+			BattleTreasureBox3,
+			BattleTreasureBox4,
+			BattleKoboldSoldier,
+			BattleKoboldSoldier2,
+			BattleKoboldGuardian,
+			BattleKoboldSummoner
 		}
 
 		private enum BattleEvent
@@ -15120,7 +15502,16 @@ namespace MysticUWP
 			KoboldKnight,
 			GoldKey,
 			KoboldMagicUser,
-			SaphireKey
+			SaphireKey,
+			KoboldAlter,
+			TreasureBox1,
+			TreasureBox2,
+			TreasureBox3,
+			TreasureBox4,
+			KoboldSoldier,
+			KoboldSoldier2,
+			KoboldGuardian,
+			KoboldSummoner
 		}
 
 		private enum BattleTurn
