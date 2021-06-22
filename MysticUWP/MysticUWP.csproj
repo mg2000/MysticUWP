@@ -177,6 +177,10 @@
     <Content Include="Assets\VALIANT.M" />
     <Content Include="Assets\VESPER.M" />
     <Content Include="Assets\EnemyData.json" />
+    <Content Include="Assets\ANCIENT.M" />
+    <Content Include="Assets\DRACTOWN.M" />
+    <Content Include="Assets\HUT.M" />
+    <Content Include="Assets\IMPERIUM.M" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\WizardEyeTile.png" />
     <Content Include="Properties\Default.rd.xml" />
