@@ -3002,10 +3002,13 @@ namespace MysticUWP
 
 						void ShowWizardEye()
 						{
+#if DEBUG
+#else
 							if (mMapHeader.Handicap && (mMapHeader.HandicapBit & (1 << 5)) > 0) {
 								Dialog($"[color={RGB.LightMagenta}] 당신의 머리속에는 아무런 형상도 떠오르지 않았다.[/color]");
 								return;
 							}
+#endif
 
 							var xInit = 0;
 							var yInit = 0;
@@ -3796,7 +3799,8 @@ namespace MysticUWP
 
 							if (GetTileInfo(newX, newY) == 0 ||
 									((mMapHeader.TileType == PositionType.Den || mMapHeader.TileType == PositionType.Keep) && GetTileInfo(newX, newY) == 52) ||
-									(mMapHeader.TileType == PositionType.Town && GetTileInfo(newX, newY) == 48))
+									(mMapHeader.TileType == PositionType.Keep && GetTileInfo(newX, newY) >= 42) ||
+									(mMapHeader.TileType == PositionType.Town && GetTileInfo(newX, newY) >= 48))
 								AppendText($"[color={RGB.LightMagenta}]알 수 없는 힘이 당신의 마법을 배척합니다.[/color]");
 							else
 							{
@@ -3823,7 +3827,7 @@ namespace MysticUWP
 								AppendText($"[color={RGB.White}]지형 변화에 성공했습니다.[/color]");
 							}
 						}
-						else if (menuMode == MenuMode.TransformDirection)
+						else if (menuMode == MenuMode.BigTransformDirection)
 						{
 
 							mMenuMode = MenuMode.None;
@@ -3844,9 +3848,6 @@ namespace MysticUWP
 									xOffset = -1;
 									break;
 							}
-
-							var newX = mXAxis + xOffset;
-							var newY = mYAxis + yOffset;
 
 							var range = xOffset == 0 ? 5 : 4;
 
@@ -3874,15 +3875,15 @@ namespace MysticUWP
 							for (var i = 1; i <= range; i++)
 							{
 								if (GetTileInfo(mXAxis + xOffset * i, mYAxis + yOffset * i) == 0 ||
-										((mMapHeader.TileType == PositionType.Den || mMapHeader.TileType == PositionType.Keep) && GetTileInfo(mXAxis + xOffset * i, mYAxis + yOffset * i) == 52) ||
-										(mMapHeader.TileType == PositionType.Town && GetTileInfo(mXAxis + xOffset * i, mYAxis + yOffset * i) == 48))
+									((mMapHeader.TileType == PositionType.Den || mMapHeader.TileType == PositionType.Keep) && GetTileInfo(mXAxis + xOffset * i, mYAxis + yOffset * i) == 52) ||
+									(mMapHeader.TileType == PositionType.Keep && GetTileInfo(mXAxis + xOffset * i, mYAxis + yOffset * i) >= 42) ||
+									(mMapHeader.TileType == PositionType.Town && GetTileInfo(mXAxis + xOffset * i, mYAxis + yOffset * i) >= 48))
 								{
-									AppendText($"[color={RGB.LightMagenta}]알 수 없는 힘이 당신의 마법을 배척합니다.[/color]");
-									return;
+									Dialog($"[color={RGB.LightMagenta}]알 수 없는 힘이 당신의 마법을 배척합니다.[/color]");
 								}
 								else
 								{
-									UpdateTileInfo(newX, newY, tile);
+									UpdateTileInfo(mXAxis + xOffset * i, mYAxis + yOffset * i, tile);
 								}
 							}
 
@@ -8278,7 +8279,38 @@ namespace MysticUWP
 					StartBattle(false);
 				}
 				else if (95 <= mXAxis && mXAxis <= 118 && 84 <= mYAxis && mYAxis <= 97) {
+					var xOffset = 0;
+					var yOffset = 0;
+					if (mRand.Next(2) == 0) {
+						xOffset = mXAxis - prevX;
+						yOffset = mYAxis - prevY;
+					}
+					else {
+						while (xOffset == 0 && yOffset == 0) {
+							xOffset = mRand.Next(3) - 1;
+							yOffset = mRand.Next(3) - 1;
+						}
+					}
 
+					var newX = mXAxis + xOffset;
+					var newY = mYAxis + yOffset;
+
+					if (GetTileInfo(newX, newY) == 43) {
+						UpdateTileInfo(mXAxis, mYAxis, 43);
+						UpdateTileInfo(newX, newY, 0);
+					}
+					else {
+						newX = mXAxis - 2 * xOffset;
+						newY = mYAxis - 2 * yOffset;
+
+						UpdateTileInfo(mXAxis, mYAxis, 43);
+						UpdateTileInfo(newX, newY, 0);
+					}
+
+					if (GetTileInfo(mXAxis + (mXAxis - prevX), mYAxis + (mYAxis - prevY)) == 37 || GetTileInfo(mXAxis + (mXAxis - prevX), mYAxis + (mYAxis - prevY)) == 38) {
+						mXAxis = mXAxis + 2 * (mXAxis - prevX);
+						mYAxis = mYAxis + 2 * (mYAxis - prevY);
+					}
 				}
 				else if (mXAxis == 94 && mYAxis == 90 && !GetBit(20)) {
 					for (var i = 0; i < 6; i++)
@@ -8310,23 +8342,17 @@ namespace MysticUWP
 					triggered = false;
 				}
 				else if (mXAxis == 61 && GetBit(20)) {
-					for (var y = 59; y <= 61; y++) {
-						for (var x = 62; x < 64; x++)
+					for (var y = 59; y < 61; y++) {
+						for (var x = 62; x <= 64; x++)
 							UpdateTileInfo(x, y, 43);
 					}
-					UpdateTileInfo(64, 59, 0);
-					UpdateTileInfo(64, 60, 0);
-
 					triggered = false;
 				}
 				else if (mXAxis == 26 && GetBit(17)) {
-					for (var y = 59; y <= 61; y++)
-					{
-						for (var x = 86; x < 68; x++)
-							UpdateTileInfo(x, y, 43);
-					}
-					UpdateTileInfo(85, 59, 0);
-					UpdateTileInfo(85, 60, 0);
+					UpdateTileInfo(27, 59, 43);
+					UpdateTileInfo(27, 60, 43);
+					UpdateTileInfo(28, 59, 0);
+					UpdateTileInfo(28, 60, 0);
 
 					triggered = false;
 				}
@@ -8423,7 +8449,16 @@ namespace MysticUWP
 						}
 						else {
 							// 현재 위치 제외 보정 필요
-							UpdateTileInfo(mRand.Next(12) + 41, mRand.Next(12) + 54, 0);
+							var newX = 0;
+							var newY = 0;
+
+							do
+							{
+								newX = mRand.Next(12) + 41;
+								newY = mRand.Next(12) + 54;
+							} while (newX == mXAxis && newY == mYAxis);
+							
+							UpdateTileInfo(newX, newY, 0);
 							triggered = true;
 						}
 					}
@@ -8468,7 +8503,7 @@ namespace MysticUWP
 						triggered = false;
 					}
 				}
-				else if (mXAxis == 57 && mYAxis == 100 && GetTileInfo(57, 99) != 48) {
+				else if (mXAxis == 57 && mYAxis == 100 && GetTileInfo(57, 99) != 49) {
 					for (var y = 85; y < 100; y++)
 						UpdateTileInfo(57, y, 49);
 					UpdateTileInfo(57, 84, 0);
