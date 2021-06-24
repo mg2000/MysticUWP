@@ -49,6 +49,16 @@ namespace MysticUWP
 			set;
 		}
 
+		public bool Ebony {
+			get;
+			set;
+		}
+
+		public bool MoonLight {
+			get;
+			set;
+		}
+
 		public long SaveTime
 		{
 			get;

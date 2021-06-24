@@ -1205,10 +1205,18 @@ namespace MysticUWP
 							SetBit(92);
 						else if (battleEvent == BattleEvent.KoboldSoldier2)
 							SetBit(91);
-						else if (battleEvent == BattleEvent.KoboldGuardian)
+						else if (battleEvent == BattleEvent.KoboldSecurity)
 							SetBit(90);
+						else if (battleEvent == BattleEvent.KoboldGuardian) {
+							SetBit(87);
+						}
 						else if (battleEvent == BattleEvent.KoboldSummoner)
 							SetBit(89);
+						else if (battleEvent == BattleEvent.KoboldKing) {
+							Dialog(" 당신이  코볼트킹을 물리쳤구나라고 생각했을때 코볼트킹은 공간이동의 마법을 써서 어디론가 사라져 버렸다." +
+							" 당신은 당황해서 이곳 전지역을 투시해 보았지만 그는 없었다.");
+							SetBit(86);
+						}
 						else if (battleEvent == BattleEvent.DraconianBeliever) {
 							for (var x = 9; x < 11; x++)
 								UpdateTileInfo(x, 16, 44);
@@ -1289,12 +1297,21 @@ namespace MysticUWP
 						else if (battleEvent == BattleEvent.KoboldSoldier2) {
 							mXAxis--;
 						}
-						else if (battleEvent == BattleEvent.KoboldGuardian) {
+						else if (battleEvent == BattleEvent.KoboldSecurity) {
 							mXAxis++;
+						}
+						else if (battleEvent == BattleEvent.KoboldGuardian) {
+							mYAxis++;
 						}
 						else if (battleEvent == BattleEvent.KoboldSummoner)
 						{
 							mYAxis--;
+						}
+						else if (battleEvent == BattleEvent.KoboldKing) {
+							mBattleEvent = BattleEvent.KoboldKing;
+							Talk(" 당신은 코볼트킹에게서 도망치려 했지만 그가 만든 결계를 벗어 날 수가 없었다.", SpecialEventType.BackToBattleMode);
+
+							return;
 						}
 
 						mEncounterEnemyList.Clear();
@@ -1470,6 +1487,8 @@ namespace MysticUWP
 						{
 							if (BattlePanel.Visibility == Visibility.Collapsed)
 								DisplayEnemy();
+
+							mBattleCommandQueue.Clear();
 							BattleMode();
 						}
 						else if (specialEvent == SpecialEventType.NextToBattleMode)
@@ -2092,12 +2111,21 @@ namespace MysticUWP
 							mBattleEvent = BattleEvent.KoboldSoldier2;
 							StartBattle(false);
 						}
+						else if (specialEvent == SpecialEventType.BattleKoboldSecurity)
+						{
+							mBattleEvent = BattleEvent.KoboldSecurity;
+							StartBattle(false);
+						}
 						else if (specialEvent == SpecialEventType.BattleKoboldGuardian) {
 							mBattleEvent = BattleEvent.KoboldGuardian;
 							StartBattle(false);
 						}
 						else if (specialEvent == SpecialEventType.BattleKoboldSummoner) {
 							mBattleEvent = BattleEvent.KoboldSummoner;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleKoboldKing) {
+							mBattleEvent = BattleEvent.KoboldKing;
 							StartBattle(false);
 						}
 						else if (specialEvent == SpecialEventType.AskTreasureboxQuestion1) {
@@ -2649,7 +2677,7 @@ namespace MysticUWP
 						{
 							var specialEvent = SpecialEventType.None;
 							if (menuMode == MenuMode.ChooseBattleCureSpell)
-								specialEvent = SpecialEventType.BackToBattleMode;
+								specialEvent = SpecialEventType.NextToBattleMode;
 
 							Talk("당신은 치료 마법을 사용할 능력이 없습니다.", specialEvent);
 						}
@@ -3243,7 +3271,7 @@ namespace MysticUWP
 								else
 								{
 									if (applyCureMode == MenuMode.ApplyBattleCureSpell || applyAllCureMode == MenuMode.ApplyBattleCureAllSpell)
-										Talk(" 강한 치료 마법은 아직 불가능 합니다.", SpecialEventType.BackToBattleMode);
+										Talk(" 강한 치료 마법은 아직 불가능 합니다.", SpecialEventType.NextToBattleMode);
 									else
 										Dialog(" 강한 치료 마법은 아직 불가능 합니다.");
 								}
@@ -3511,7 +3539,7 @@ namespace MysticUWP
 								{
 									var specialEvent = SpecialEventType.None;
 									if (menuMode == MenuMode.ChooseBattleCureSpell)
-										specialEvent = SpecialEventType.BackToBattleMode;
+										specialEvent = SpecialEventType.NextToBattleMode;
 
 									Talk("강한 치료 마법은 아직 불가능 합니다.", specialEvent);
 									return;
@@ -5954,7 +5982,7 @@ namespace MysticUWP
 										await RefreshGame();
 
 										if (mParty.Etc[29] == 0)
-											mParty.Etc[29] = ((mRand.Next(5) + 1) << 4) + (mRand.Next(5) + 1);
+											mParty.Etc[29] = (mRand.Next(5) + 1) << 4 + mRand.Next(5) + 1;
 
 										if (mParty.Etc[30] == 0)
 											mParty.Etc[30] = mRand.Next(31) + 1;
@@ -6084,7 +6112,10 @@ namespace MysticUWP
 								Encounter = mEncounter,
 								MaxEnemy = mMaxEnemy,
 								Cruel = mCruel,
-								SaveTime = DateTime.Now.Ticks
+								Ebony = mEbony,
+								MoonLight = mMoonLight,
+								SaveTime = DateTime.Now.Ticks,
+								
 							};
 
 							var saveJSON = JsonConvert.SerializeObject(saveData);
@@ -8335,9 +8366,9 @@ namespace MysticUWP
 				}
 				else if (mXAxis == 123 && GetBit(19) && GetBit(89)) {
 					UpdateTileInfo(122, 59, 43);
-					UpdateTileInfo(27, 60, 43);
-					UpdateTileInfo(28, 59, 0);
-					UpdateTileInfo(28, 60, 0);
+					UpdateTileInfo(122, 60, 43);
+					UpdateTileInfo(121, 59, 0);
+					UpdateTileInfo(121, 60, 0);
 
 					triggered = false;
 				}
@@ -8346,13 +8377,17 @@ namespace MysticUWP
 						for (var x = 62; x <= 64; x++)
 							UpdateTileInfo(x, y, 43);
 					}
+					UpdateTileInfo(64, 59, 0);
+					UpdateTileInfo(64, 60, 0);
 					triggered = false;
 				}
 				else if (mXAxis == 26 && GetBit(17)) {
-					UpdateTileInfo(27, 59, 43);
-					UpdateTileInfo(27, 60, 43);
-					UpdateTileInfo(28, 59, 0);
-					UpdateTileInfo(28, 60, 0);
+					for (var y = 59; y < 61; y++) {
+						for (var x = 86; x < 88; x++)
+							UpdateTileInfo(x, y, 43);
+					}
+					UpdateTileInfo(85, 59, 0);
+					UpdateTileInfo(85, 60, 0);
 
 					triggered = false;
 				}
@@ -8388,7 +8423,7 @@ namespace MysticUWP
 					DisplayEnemy();
 					HideMap();
 
-					Talk($"[color={RGB.LightMagenta}] 나는 이 성의 경비대장이다.  나의 임무는 바로 너희들을  이 안으로  들여 놓지 않는 것이다. 나의 목숨을 바쳐서라도...", SpecialEventType.BattleKoboldGuardian);
+					Talk($"[color={RGB.LightMagenta}] 나는 이 성의 경비대장이다.  나의 임무는 바로 너희들을  이 안으로  들여 놓지 않는 것이다. 나의 목숨을 바쳐서라도...", SpecialEventType.BattleKoboldSecurity);
 				}
 				else if (mXAxis == 85 && GetBit(90)) {
 					for (var y = 59; y < 61; y++) {
@@ -8464,7 +8499,8 @@ namespace MysticUWP
 					}
 				}
 				else if (90 <= mXAxis && mXAxis <= 120 && 40 <= mYAxis && mYAxis <= 79) {
-					if (mXAxis == 90 && mYAxis == 40 && !GetBit(22)) {
+					if (mXAxis == 90 && mYAxis == 40 && !GetBit(22))
+					{
 						Dialog(" 당신은 어둠속에서도  반짝이는 물체를  하나 보았다. 자세히보니 그것은 흑요석키였고 즉시 그것을 가졌다.");
 
 						SetBit(22);
@@ -8474,34 +8510,42 @@ namespace MysticUWP
 						mEbony = false;
 						triggered = false;
 					}
-					else if (mXAxis == 92 && mYAxis == 59) {
+					else if (mXAxis == 92 && mYAxis == 59)
+					{
 						mEbony = false;
 
 						mXAxis = 90;
 						mYAxis = 59;
 					}
-					else if (mXAxis == 118 && mYAxis == 60) {
+					else if (mXAxis == 118 && mYAxis == 60)
+					{
 						mXAxis = 120;
 						mYAxis = 60;
 					}
-					else if (mXAxis == 102 && mYAxis == 74) {
+					else if (mXAxis == 102 && mYAxis == 74)
+					{
 						mEbony = false;
 
 						mXAxis = 106;
 						mYAxis = 59;
 					}
-					else if (mXAxis == 107 && mYAxis == 74) {
+					else if (mXAxis == 107 && mYAxis == 74)
+					{
 						mXAxis = 101;
 						mYAxis = 48;
 					}
-					else if (mXAxis == 104 && mYAxis == 57 && GetTileInfo(104, 58) != 43) {
+					else if (mXAxis == 104 && mYAxis == 57 && GetTileInfo(104, 58) != 43)
+					{
 						UpdateTileInfo(104, 58, 43);
 						triggered = false;
 					}
-					else if (!mEbony) {
+					else if (!mEbony)
+					{
 						mEbony = true;
 						triggered = false;
 					}
+					else
+						triggered = false;
 				}
 				else if (mXAxis == 57 && mYAxis == 100 && GetTileInfo(57, 99) != 49) {
 					for (var y = 85; y < 100; y++)
@@ -8590,7 +8634,7 @@ namespace MysticUWP
 					Talk($"[color={RGB.LightMagenta}] 신성한 신의 제단에 더러운 발을 디딘 놈들은 누구냐?  신을 모독한 너희네 인간들에게 몸소 가르침을 주겠다. 밧아랏!![/color]"
 					, SpecialEventType.BattleKoboldAlter);
 				}
-				else if (mYAxis == 38 && GetBit(88) && ((mParty.Etc[29] >> 4) == (mYAxis - 63) / 4)) {
+				else if (mYAxis == 38 && GetBit(88) && ((mParty.Etc[29] >> 4) == (mXAxis - 62) / 4)) {
 					if (GetTileInfo(mXAxis, mYAxis - 1) != 43) {
 						for (var y = mYAxis - 2; y <= mYAxis - 1; y++) {
 							for (var x = mXAxis - 1; x <= mXAxis; x++)
@@ -8600,7 +8644,7 @@ namespace MysticUWP
 
 					triggered = false;
 				}
-				else if (mYAxis == 81 && GetBit(88) && ((mParty.Etc[29] & 0x0F) == (mYAxis - 64) / 4)) {
+				else if (mYAxis == 81 && GetBit(88) && ((mParty.Etc[29] & 0x0F) == (mXAxis - 63) / 4)) {
 					if (GetTileInfo(mXAxis, mYAxis + 1) != 43)
 					{
 						for (var y = mYAxis + 1; y <= mYAxis + 2; y++)
@@ -8761,7 +8805,10 @@ namespace MysticUWP
 
 					JoinEnemy(44);
 
-					Talk($"[color={RGB.LightMagenta}] 지상 최상 최대의 마도사인 나, 코볼트킹에게 도전해 오다니 전말 배짱 한번 좋구나. 네놈들은 나 혼자서 상대하겠다. 가소로운 것들...[/color]", SpecialEventType.BattleKoboldGuardian);
+					DisplayEnemy();
+					HideMap();
+
+					Talk($"[color={RGB.LightMagenta}] 지상 최상 최대의 마도사인 나, 코볼트킹에게 도전해 오다니 전말 배짱 한번 좋구나. 네놈들은 나 혼자서 상대하겠다. 가소로운 것들...[/color]", SpecialEventType.BattleKoboldKing);
 				}
 				else
 					triggered = false;
@@ -13531,7 +13578,10 @@ namespace MysticUWP
 			}
 
 
-			if (mEbony & mParty.Etc[0] == 0) {
+			if (mEbony && mParty.Etc[0] > 0) {
+				InvokeAnimation(AnimationType.TurnOffTorch);
+			}
+			else if (mEbony && mParty.Etc[0] == 0) {
 				mMoonLight = false;
 				mXWide = 0;
 				mYWide = 0;
@@ -13847,6 +13897,9 @@ namespace MysticUWP
 			{
 				HealOne(player, whomPlayer, cureResult);
 			});
+
+			if (mAssistPlayer != null)
+				HealOne(player, mAssistPlayer, cureResult);
 		}
 
 		private void CureAll(Lore player, List<string> cureResult)
@@ -13855,6 +13908,9 @@ namespace MysticUWP
 			{
 				CureOne(player, whomPlayer, cureResult);
 			});
+
+			if (mAssistPlayer != null)
+				CureOne(player, mAssistPlayer, cureResult);
 		}
 
 		private void ConsciousAll(Lore player, List<string> cureResult)
@@ -13863,6 +13919,9 @@ namespace MysticUWP
 			{
 				ConsciousOne(player, whomPlayer, cureResult);
 			});
+
+			if (mAssistPlayer != null)
+				ConsciousOne(player, mAssistPlayer, cureResult);
 		}
 
 		private void RevitalizeAll(Lore player, List<string> cureResult)
@@ -13871,6 +13930,9 @@ namespace MysticUWP
 			{
 				RevitalizeOne(player, whomPlayer, cureResult);
 			});
+
+			if (mAssistPlayer != null)
+				RevitalizeOne(player, mAssistPlayer, cureResult);
 		}
 
 		private void CureSpell(Lore player, Lore whomPlayer, int magic, List<string> cureResult = null)
@@ -14530,6 +14592,8 @@ namespace MysticUWP
 			if (3 > mMaxEnemy || mMaxEnemy > 7)
 				mMaxEnemy = 5;
 
+			mEbony = saveData.Ebony;
+			mMoonLight = saveData.MoonLight;
 			mCruel = saveData.Cruel;
 			
 			DisplayPlayerInfo();
@@ -14662,13 +14726,16 @@ namespace MysticUWP
 					Task.Delay(3000).Wait();
 				else if (mAnimationEvent == AnimationType.TransformProtagonist2)
 					Task.Delay(2000).Wait();
-				else if (mAnimationEvent == AnimationType.ComeSoldier) {
-					for (var i = 1; i <= 3; i++) {
+				else if (mAnimationEvent == AnimationType.ComeSoldier)
+				{
+					for (var i = 1; i <= 3; i++)
+					{
 						mAnimationFrame = i;
 						Task.Delay(1000).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.FollowSoldier) {
+				else if (mAnimationEvent == AnimationType.FollowSoldier)
+				{
 					for (var i = 1; i <= 5; i++)
 					{
 						mAnimationFrame = i;
@@ -14678,7 +14745,8 @@ namespace MysticUWP
 							Task.Delay(800).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.FollowSoldier2) {
+				else if (mAnimationEvent == AnimationType.FollowSoldier2)
+				{
 					AnimateTransition();
 
 					Task.Delay(2000).Wait();
@@ -14690,38 +14758,46 @@ namespace MysticUWP
 					if (mPlayerList[0].ClassType == ClassCategory.Magic)
 						mFace += 8;
 
-					for (var i = 118; i <= 123; i++) {
+					for (var i = 118; i <= 123; i++)
+					{
 						mAnimationFrame = i;
 						Task.Delay(700).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.LeaveSoldier) {
-					for (var i = 1; i <= 6; i++) {
+				else if (mAnimationEvent == AnimationType.LeaveSoldier)
+				{
+					for (var i = 1; i <= 6; i++)
+					{
 						mAnimationFrame = i;
 						Task.Delay(700).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.VisitCanopus) {
-					for (var i = 1; i <= 3; i++) {
+				else if (mAnimationEvent == AnimationType.VisitCanopus)
+				{
+					for (var i = 1; i <= 3; i++)
+					{
 						mAnimationFrame = i;
 						Task.Delay(500).Wait();
 					}
 				}
 				else if (mAnimationEvent == AnimationType.RequestPardon)
 				{
-					for (var i = 1; i <= 4; i++) {
+					for (var i = 1; i <= 4; i++)
+					{
 						mAnimationFrame = i;
 						Task.Delay(1500).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.ConfirmPardon) {
+				else if (mAnimationEvent == AnimationType.ConfirmPardon)
+				{
 					for (var i = 1; i <= 4; i++)
 					{
 						mAnimationFrame = i;
 						Task.Delay(500).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.ConfirmPardon2) {
+				else if (mAnimationEvent == AnimationType.ConfirmPardon2)
+				{
 					AnimateTransition();
 				}
 				else if (mAnimationEvent == AnimationType.ConfirmPardon3)
@@ -14732,16 +14808,20 @@ namespace MysticUWP
 						Task.Delay(1000).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.JoinCanopus) {
-					for (var i = 1; i <= 3; i++) {
+				else if (mAnimationEvent == AnimationType.JoinCanopus)
+				{
+					for (var i = 1; i <= 3; i++)
+					{
 						mAnimationFrame = i;
 
 						if (i < 3)
 							Task.Delay(1000).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.LeavePrisonSoldier) {
-					for (var i = 1; i <= 4; i++) {
+				else if (mAnimationEvent == AnimationType.LeavePrisonSoldier)
+				{
+					for (var i = 1; i <= 4; i++)
+					{
 						mAnimationFrame = i;
 						Task.Delay(1000).Wait();
 					}
@@ -14754,8 +14834,10 @@ namespace MysticUWP
 						Task.Delay(1000).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.LearnOrcWriting) {
-					for (var i = 1; i <= 10; i++) {
+				else if (mAnimationEvent == AnimationType.LearnOrcWriting)
+				{
+					for (var i = 1; i <= 10; i++)
+					{
 						mAnimationFrame = i;
 						Task.Delay(100).Wait();
 					}
@@ -14779,25 +14861,32 @@ namespace MysticUWP
 				else if (mAnimationEvent == AnimationType.MoveGround2 ||
 				mAnimationEvent == AnimationType.MoveGround3 ||
 				mAnimationEvent == AnimationType.MoveGround4 ||
-				mAnimationEvent == AnimationType.MoveGaeaTerraCastle) {
+				mAnimationEvent == AnimationType.MoveGaeaTerraCastle)
+				{
 					AnimateFadeInOut();
 				}
-				else if (mAnimationEvent == AnimationType.InvestigateDeadBody) {
+				else if (mAnimationEvent == AnimationType.InvestigateDeadBody)
+				{
 					Task.Delay(1000).Wait();
 				}
 				else if (mAnimationEvent == AnimationType.UseHerbOfRessurection)
 				{
 					Task.Delay(1500).Wait();
 				}
-				else if (mAnimationEvent == AnimationType.LearnTrollWriting) {
+				else if (mAnimationEvent == AnimationType.LearnTrollWriting)
+				{
 					AnimateTransition();
 				}
-				else if (mAnimationEvent == AnimationType.LearnKoboldWriting) {
+				else if (mAnimationEvent == AnimationType.LearnKoboldWriting)
+				{
 					AnimateFadeInOut();
 				}
-				else if (mAnimationEvent == AnimationType.CompleteLearnKoboldWriting) {
+				else if (mAnimationEvent == AnimationType.CompleteLearnKoboldWriting)
+				{
 					AnimateFadeInOut();
 				}
+				else if (mAnimationEvent == AnimationType.TurnOffTorch)
+					Task.Delay(250).Wait();
 			});
 
 			await animationTask;
@@ -15183,6 +15272,13 @@ namespace MysticUWP
 
 				Dialog(" 당신은 이제 코볼트 글을 알게 되었다.");
 			}
+			else if (mAnimationEvent == AnimationType.TurnOffTorch) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				mParty.Etc[0] = 0;
+				UpdateView();
+			}
 			else
 			{
 				mAnimationEvent = AnimationType.None;
@@ -15402,8 +15498,13 @@ namespace MysticUWP
 						{
 							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1));
 						}
-						else
-							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
+						else if (!mEbony || mParty.Etc[0] > 0 || mMoonLight)
+						{
+							if (mEbony && mMoonLight && mXWide == 0 && mYWide == 0 && mParty.Etc[0] == 0)
+								mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(0.1f, 0.1f, 0.6f, 1));
+							else							
+								mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
+						}
 					}
 
 					if (mAnimationEvent == AnimationType.CaptureProtagonist && mAnimationFrame > 0)
@@ -16004,8 +16105,10 @@ namespace MysticUWP
 			BattleTreasureBox4,
 			BattleKoboldSoldier,
 			BattleKoboldSoldier2,
+			BattleKoboldSecurity,
 			BattleKoboldGuardian,
 			BattleKoboldSummoner,
+			BattleKoboldKing,
 			AskTreasureboxQuestion1,
 			AskTreasureboxQuestion2,
 			AskTreasureboxQuestion3,
@@ -16064,8 +16167,10 @@ namespace MysticUWP
 			TreasureBox4,
 			KoboldSoldier,
 			KoboldSoldier2,
+			KoboldSecurity,
 			KoboldGuardian,
 			KoboldSummoner,
+			KoboldKing,
 			DraconianBeliever
 		}
 
@@ -16125,7 +16230,8 @@ namespace MysticUWP
 			MoveGround4,
 			MoveGaeaTerraCastle,
 			LearnKoboldWriting,
-			CompleteLearnKoboldWriting
+			CompleteLearnKoboldWriting,
+			TurnOffTorch
 		}
 
 		private enum SpinnerType
