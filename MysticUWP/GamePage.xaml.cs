@@ -269,6 +269,8 @@ namespace MysticUWP
 			mEnterTypeMap["Kobold"] = "코볼트 마을";
 			mEnterTypeMap["Ancient"] = "에인션트이블 신전";
 			mEnterTypeMap["Hut"] = "오두막집";
+			mEnterTypeMap["DracTown"] = "드라코니안 마을";
+			mEnterTypeMap["Imperium"] = "임페리엄 마이너성";
 
 			gamePageKeyDownEvent = async (sender, args) =>
 			{
@@ -1255,16 +1257,17 @@ namespace MysticUWP
 							mYAxis = mMapHeader.StartY;
 						}
 						else if (battleEvent == BattleEvent.ExitKoboldKing) {
-							mMapName = mMapHeader.EnterMap;
-							mXAxis = mMapHeader.ExitX - 1;
-							mYAxis = mMapHeader.ExitY - 1;
+							mMapName = mMapHeader.ExitMap;
+							mXAxis = mMapHeader.ExitX;
+							mYAxis = mMapHeader.ExitY;
 
 							await RefreshGame();
 
 							if (GetBit(86)) {
 								Dialog(new string[] {
 									" 당신이 성 밖으로 탈출하자  허공에서 로드안의 음성이 들려왔다.",
-									$"[color={RGB.LightGreen}] 당신은 빨리 이곳을 나가시오.  나의 선의 봉인으로  악마의 힘을 빌린 코볼트킹을 막겠소. 아마 그는 다시는 이 성을 벗어나지 못할거요.'[/color]",
+									"",
+									$"[color={RGB.LightGreen}] 당신은 빨리 이곳을 나가시오.  나의 선의 봉인으로  악마의 힘을 빌린 코볼트킹을 막겠소. 아마 그는 다시는 이 성을 벗어나지 못할거요.[/color]",
 									"",
 									" 말이채 끝나기도 전에 코볼트성 주위에는  구형의 결계가 형성 되었고  곧이어 기의 파문이 일렁이기 시작했다."
 								});
@@ -2211,6 +2214,9 @@ namespace MysticUWP
 								mAssistPlayer.Experience += 500_000;
 
 							SetBit(206);
+						}
+						else if (specialEvent == SpecialEventType.SendValiantToUranos) {
+							InvokeAnimation(AnimationType.SendValiantToUranos);
 						}
 					}
 
@@ -3979,122 +3985,131 @@ namespace MysticUWP
 								{
 									var predictStr = new string[]
 									{
-										"로드 안을 만날",
-										"메너스로 갈",
-										"다시 로드 안에게 갈",
-										"다시 메너스를 조사할",
-										"다시 로어 성으로 돌아갈",
-										"라스트디치의 성주를 만날",
-										"피라미드 속의 로어 헌터를 찾을",
-										"라스트디치의 군주에게로 돌아갈",
-										"피라미드 속의 두 동굴에서 두 개의 석판을 찾을",
-										"첫 번째 월식을 기다릴",
-										"메너스를 통해 지하 세계로 갈",
-										"빛의 지붕을 방문할",
-										"빛의 사원에서 악의 추종자들의 메시지를 볼",
-										"필멸의 생존을 탐험할",
-										"지하 세계 중앙의 통로를 통해 지상으로 갈",
-										"두 번째 월식을 기다릴",
-										"베리알의 동굴에서 결전을 벌일",
-										"몰록의 동굴에서 결전을 벌일",
-										"마지막 세 번째 월식을 기다릴",
-										"아스모데우스의 동굴에서 결전을 벌일",
-										"메피스토펠레스와 대결을 벌일"
+										"메너스 광산을 나갈",
+										"로드안에게 불려갈",
+										"로드안과 계속 이야기 할",
+										"가이아테라로 갈",
+										"가이아 테라성의 성주에게 부탁을 받을",
+										"오크 마을을 점령 할",
+										"가이아 테라성의 성주를 다시 만날",
+										"아프로디테 테라로 갈",
+										"대륙의 중앙에 있는 베스퍼성을 점령 할",
+										"베스퍼성 북동쪽의 트롤 마을을 점령 할",
+										"로드안에게 돌아갈",
+										"가이아 테라로 다시 갈",
+										"가이아 테라성 북쪽에 있는 게이트를 통해 이쉬도 테라로 갈",
+										"대륙 뷱동쪽에 있는 코볼트 마을을 점령 할",
+										"가이아 테라로 돌아갈",
+										"배리언트 피플즈의 성주를 만나 우라누스 테라로 갈",
+										"드라코니안성을 점령 할",
+										"대륙의 서쪽에 있는 임페리엄 마이너성에서 에인션트 이블을 만날",
+										"다시 로드안을 만날",
+										"배리언트 피플즈의 반란을 진압하려 갈",
+										"가이아 테라에 있는 오크의 원혼을 봉인 할",
+										"아프로디테 테라에 있는 트롤의 원혼을 봉인 할",
+										"이쉬도 테라에 있는 코볼트의 원혼을 봉인 할",
+										"로어 대륙에 있는 드라코니안의 원혼을 봉인 할",
+										"하데스 게이트를 통해서 하데스 테라로 갈",
+										"투시를 통해서 어떤 장소를 발견 할",
+										"에인션트 이블의 도움을 받은뒤 다시 로어 대륙으로 나갈",
+										"헤어졌던 동료를 만날",
+										"로어성의 궁사들과 결전을 벌일",
+										"로어성에서 로드안과 최후의 결전을 벌일"
 									};
 
 									int predict = -1;
-									switch (mParty.Etc[9])
+									if (mParty.Etc[19] == 0)
 									{
-										case 0:
+										if (!GetBit(0))
 											predict = 0;
-											break;
-										case 1:
+										else
 											predict = 1;
-											break;
-										case 2:
-											predict = 2;
-											break;
-										case 3:
-											predict = 3;
-											break;
-										case 4:
-											predict = 4;
-											break;
-										case 5:
-											switch (mParty.Etc[10])
-											{
-												case 0:
-													predict = 5;
-													break;
-												case 1:
-													predict = 6;
-													break;
-												case 2:
-													predict = 7;
-													break;
-												case 3:
+									}
+									else if (1 <= mParty.Etc[19] && mParty.Etc[19] <= 2)
+										predict = 2;
+									else if (mParty.Etc[19] == 3) {
+										switch (mParty.Etc[20]) {
+											case 0:
+												if (mMapName != "Gaea")
+													predict = 3;
+												else
+													predict = 4;
+												break;
+											case 1:
+												predict = 5;
+												break;
+											case 2:
+												predict = 6;
+												break;
+											case 3:
+												if (GetBit(4))
+													predict = 10;
+												else if (GetBit(1))
+													predict = 9;
+												else if (mMapName == "Ground3" || mMapName == "TrolTown" || mMapName == "Vesper")
 													predict = 8;
-													break;
-												case 4:
+												else
 													predict = 7;
-													break;
-												case 5:
-													predict = 2;
-													break;
-											}
-											break;
-										case 6:
-											predict = 2;
-											break;
-										case 7:
-											predict = 0;
-											break;
-										case 8:
-											predict = 9;
-											break;
-										case 9:
-											if ((mParty.Etc[8] & (1 << 3)) == 0)
-												predict = 13;
-											else if ((mParty.Etc[8] & (1 << 2)) == 0)
-												predict = 12;
-											else if ((mParty.Etc[8] & (1 << 1)) == 0)
-												predict = 11;
-											else if ((mParty.Etc[8] & 1) == 0)
-												predict = 10;
+												break;
+										}
+									}
+									else if (4 <= mParty.Etc[19] && mParty.Etc[19] <= 6) {
+										if (GetBit(6))
+											predict = 17;
+										else if (mMapName == "Ground5")
+											predict = 16;
+										else if (GetBit(5))
+										{
+											if (mMapName == "Ground2")
+												predict = 15;
 											else
 												predict = 14;
-											break;
-										case 10:
+										}
+										else if (mMapName == "Ground4")
+											predict = 13;
+										else if (mMapName == "Gaea")
+											predict = 12;
+										else if (mMapName == "Ground2" || mMapName == "Valiant" || mMapName == "OrcTown")
+											predict = 6;
+										else if (mParty.Etc[19] == 5)
 											predict = 2;
-											break;
-										case 11:
-											predict = 15;
-											break;
-										case 12:
-											if ((mParty.Etc[8] & (1 << 6)) == 0)
-												predict = 17;
-											else if ((mParty.Etc[8] & (1 << 5)) == 0)
-												predict = 16;
-											else if ((mParty.Etc[8] & (1 << 4)) == 0)
-												predict = 10;
-											break;
-										case 13:
-											predict = 2;
-											break;
-										case 14:
-											predict = 18;
-											break;
-										case 15:
-											if ((mParty.Etc[8] & (1 << 2)) == 0)
-												predict = 20;
-											else if ((mParty.Etc[8] & (1 << 1)) == 0)
+										else if (mParty.Etc[19] == 4)
+											predict = 10;
+										else
+											predict = 11;
+									}
+									else if (mParty.Etc[19] == 7)
+										predict = 18;
+									else if (mParty.Etc[19] == 8)
+										predict = 19;
+										
+		
+									if (mParty.Etc[24] == 1) {
+										switch (mParty.Etc[19]) {
+											case 9:
 												predict = 19;
-											else if ((mParty.Etc[8] & 1) == 0)
-												predict = 10;
-											break;
-										case 16:
-											predict = 21;
-											break;
+												break;
+											case 10:
+												predict = mParty.Etc[25] + 21;
+												break;
+											case 11:
+												predict = 11;
+												break;
+										}
+									}
+									else if (mParty.Etc[24] == 2) {
+										if (mParty.Year >= 795)
+											predict = 29;
+										else if (GetBit(49))
+											predict = 28;
+										else if (GetBit(48))
+											predict = 27;
+										else if (GetBit(32))
+											predict = 26;
+										else if (mMapName == "UnderGrd")
+											predict = 25;
+										else
+											predict = 24;
 									}
 
 									AppendText(new string[] { $" 당신은 당신의 미래를 예언한다 ...", "" });
@@ -8505,6 +8520,28 @@ namespace MysticUWP
 
 						SetBit(22);
 					}
+					else if (mXAxis == 105 && mYAxis == 53 && !GetBit(200))
+					{
+						Dialog(" 당신은 벽에서 무언가 반짝이는 것이 있어 벽으로 다가갔다.  가까이에서 보니 그것은 수정이었다.  하지만 그 수정은 특이하게도 스스로 희미한 빛을 발하고 있었다." +
+						"  당신이 수정속을 들여다 보았을때  소스라치게 놀랄 수 밖에 없었다.  그속에는 형체를 분간하기 힘들 정도의 많은 영혼들이 배회하고 있었다.  그들이 아마이 희미한 빛을 발하는 것 같았다." +
+						"  당신이 약간의 힘을 주어 빼어 보니 쉽게 벽에서 떨어져 나왔다.");
+
+						var friend = mPlayerList.Count > 1 ? mPlayerList[1] : null;
+
+						if (friend != null)
+						{
+							Talk(new string[] {
+							"",
+							$" 그걸 보더니 {friend.NameSubjectBJosa} 말했다.",
+							"",
+							$"[color={RGB.LightBlue}] 아니, 이건....  이건 바로 그 전설 속에서나 논해지던[/color] [color={RGB.LightCyan}]영혼의 크리스탈[/color][color={RGB.LightBlue}]임에 틀림없네." +
+							" 이것은 전세계에 두개 밖에 존재하지 않는 귀한 것인데 우리가 발견했군.[/color]"
+						}, SpecialEventType.None);
+						}
+
+						SetBit(200);
+						mParty.Crystal[4]++;
+					}
 					else if (((mXAxis == 90 && mYAxis == 58) || (mXAxis == 120 && mYAxis == 61)) && mEbony)
 					{
 						mEbony = false;
@@ -8582,33 +8619,12 @@ namespace MysticUWP
 				}
 				else if (mXAxis == 63 && mYAxis == 24 && GetTileInfo(107, 52) != 0) {
 					for (var y = 52; y < 54; y++) {
-						for (var x = 107; x < 108; x++)
+						for (var x = 107; x < 109; x++)
 							UpdateTileInfo(x, y, 0);
 					}
 					UpdateTileInfo(63, 24, 43);
 
 					Dialog(" 성의 남동쪽에서  돌연히 커다란 진동음과 함께 기계 소리가 들렸다.");
-				}
-				else if (mXAxis == 105 && mYAxis == 53 && !GetBit(200)) {
-					Dialog(" 당신은 벽에서 무언가 반짝이는 것이 있어 벽으로 다가갔다.  가까이에서 보니 그것은 수정이었다.  하지만 그 수정은 특이하게도 스스로 희미한 빛을 발하고 있었다." +
-					"  당신이 수정속을 들여다 보았을때  소스라치게 놀랄 수 밖에 없었다.  그속에는 형체를 분간하기 힘들 정도의 많은 영혼들이 배회하고 있었다.  그들이 아마이 희미한 빛을 발하는 것 같았다." +
-					"  당신이 약간의 힘을 주어 빼어 보니 쉽게 벽에서 떨어져 나왔다.");
-
-					var friend = mPlayerList.Count > 1 ? mPlayerList[1] : null;
-
-					if (friend != null)
-					{
-						Talk(new string[] {
-							"",
-							$" 그걸 보더니 {friend.NameSubjectBJosa} 말했다.",
-							"",
-							$"[color={RGB.LightBlue}] 아니, 이건....  이건 바로 그 전설 속에서나 논해지던[/color] [color={RGB.LightCyan}]영혼의 크리스탈[/color][color={RGB.LightBlue}]임에 틀림없네." +
-							" 이것은 전세계에 두개 밖에 존재하지 않는 귀한 것인데 우리가 발견했군."
-						}, SpecialEventType.None);
-					}
-
-					SetBit(200);
-					mParty.Crystal[4]++;
 				}
 				else if (mXAxis == 74 && mYAxis == 59 && GetBit(21) && GetTileInfo(74, 60) != 43) {
 					UpdateTileInfo(74, 60, 43);
@@ -14887,6 +14903,10 @@ namespace MysticUWP
 				}
 				else if (mAnimationEvent == AnimationType.TurnOffTorch)
 					Task.Delay(250).Wait();
+				else if (mAnimationEvent == AnimationType.SendValiantToUranos)
+					AnimateTransition();
+				else if (mAnimationEvent == AnimationType.LandUranos)
+					AnimateFadeInOut();
 			});
 
 			await animationTask;
@@ -15279,6 +15299,13 @@ namespace MysticUWP
 				mParty.Etc[0] = 0;
 				UpdateView();
 			}
+			else if (mAnimationEvent == AnimationType.SendValiantToUranos) {
+				mMapName = "Ground5";
+
+				await RefreshGame();
+
+				InvokeAnimation(AnimationType.LandUranos);
+			}
 			else
 			{
 				mAnimationEvent = AnimationType.None;
@@ -15474,7 +15501,8 @@ namespace MysticUWP
 			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting ||
 				mAnimationEvent == AnimationType.MoveGround2 ||
 				mAnimationEvent == AnimationType.MoveGround3 ||
-				mAnimationEvent == AnimationType.CompleteLearnKoboldWriting)
+				mAnimationEvent == AnimationType.CompleteLearnKoboldWriting ||
+				mAnimationEvent == AnimationType.LandUranos)
 				fadeIn = true;
 
 			using (var sb = args.DrawingSession.CreateSpriteBatch(CanvasSpriteSortMode.None, CanvasImageInterpolation.NearestNeighbor, CanvasSpriteOptions.ClampToSourceRect))
@@ -15555,7 +15583,8 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.FollowSoldier2 ||
 				mAnimationEvent == AnimationType.ConfirmPardon2 ||
 				mAnimationEvent == AnimationType.LearnOrcSpeaking2 ||
-				mAnimationEvent == AnimationType.LearnTrollWriting) && mAnimationFrame <= 117)
+				mAnimationEvent == AnimationType.LearnTrollWriting ||
+				mAnimationEvent == AnimationType.SendValiantToUranos) && mAnimationFrame <= 117)
 				AnimateTransition(mAnimationFrame, playerX, playerY);
 		}
 
@@ -15589,7 +15618,8 @@ namespace MysticUWP
 			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting ||
 				mAnimationEvent == AnimationType.MoveGround2 ||
 				mAnimationEvent == AnimationType.MoveGround3 ||
-				mAnimationEvent == AnimationType.CompleteLearnKoboldWriting)
+				mAnimationEvent == AnimationType.CompleteLearnKoboldWriting ||
+				mAnimationEvent == AnimationType.LandUranos)
 				fadeIn = true;
 
 			if ((layer[index] & 0x80) > 0)
@@ -16231,7 +16261,9 @@ namespace MysticUWP
 			MoveGaeaTerraCastle,
 			LearnKoboldWriting,
 			CompleteLearnKoboldWriting,
-			TurnOffTorch
+			TurnOffTorch,
+			SendValiantToUranos,
+			LandUranos
 		}
 
 		private enum SpinnerType
