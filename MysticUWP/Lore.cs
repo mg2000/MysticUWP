@@ -204,6 +204,17 @@ namespace MysticUWP
 			}
 		}
 
+		public string NameSubjectCJosa
+		{
+			get
+			{
+				if (Common.HasJongsung(Name[Name.Length - 1]))
+					return Name;
+				else
+					return Name + "이";
+			}
+		}
+
 		public string NameObjectJosa
 		{
 			get

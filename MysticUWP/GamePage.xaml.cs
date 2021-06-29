@@ -60,6 +60,7 @@ namespace MysticUWP
 
 		private LorePlayer mParty;
 		private List<Lore> mPlayerList;
+		private List<Lore> mBackupPlayerList;
 		private Lore mAssistPlayer = null;
 
 		private int mFace = 0;
@@ -422,6 +423,12 @@ namespace MysticUWP
 									else
 										Dialog(" 당신 앞에는  처음 보는 문자가 적힌  기둥이 서 있었다.");
 								}
+							}
+							else if (mMapName == "Ground5") {
+								if (x == 38 && y == 35)
+									ShowEnterMenu("DracTown");
+								else if (x == 14 && y == 30)
+									ShowEnterMenu("Imperium");
 							}
 						}
 
@@ -1224,7 +1231,96 @@ namespace MysticUWP
 								UpdateTileInfo(x, 16, 44);
 							SetBit(28);
 						}
-
+						else if (battleEvent == BattleEvent.Vampire) {
+							SetBit(105);
+							UpdateTileInfo(66, 65, 44);
+						}
+						else if (battleEvent == BattleEvent.Dracula) {
+							SetBit(109);
+							UpdateTileInfo(61, 78, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian1) {
+							SetBit(111);
+							UpdateTileInfo(23, 97, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian2)
+						{
+							SetBit(112);
+							UpdateTileInfo(23, 97, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian3)
+						{
+							SetBit(113);
+							UpdateTileInfo(23, 91, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian3)
+						{
+							SetBit(113);
+							UpdateTileInfo(24, 80, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian4)
+						{
+							SetBit(114);
+							UpdateTileInfo(33, 99, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian5)
+						{
+							SetBit(115);
+							UpdateTileInfo(35, 92, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian6)
+						{
+							SetBit(116);
+							UpdateTileInfo(41, 83, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian7)
+						{
+							SetBit(117);
+							UpdateTileInfo(32, 81, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian8)
+						{
+							SetBit(118);
+							UpdateTileInfo(40, 69, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian9)
+						{
+							SetBit(119);
+							UpdateTileInfo(31, 21, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian10)
+						{
+							SetBit(120);
+							UpdateTileInfo(39, 32, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian11)
+						{
+							SetBit(121);
+							UpdateTileInfo(15, 18, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian12)
+						{
+							SetBit(122);
+							UpdateTileInfo(15, 34, 44);
+						}
+						else if (battleEvent == BattleEvent.Draconian13)
+						{
+							SetBit(123);
+							UpdateTileInfo(14, 47, 44);
+						}
+						else if (battleEvent == BattleEvent.DraconianEntrance) {
+							SetBit(103);
+							UpdateTileInfo(13, 104, 44);
+							UpdateTileInfo(14, 105, 44);
+						}
+						else if (battleEvent == BattleEvent.DraconianEntrance2) {
+							SetBit(102);
+							for (var y = 58; y < 61; y++) {
+								for (var x = 46; x < 48; x++)
+									UpdateTileInfo(x, y, 44);
+							}
+						}
+						
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
 
@@ -1868,7 +1964,8 @@ namespace MysticUWP
 
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.BattleVesperTroll2) {
+						else if (specialEvent == SpecialEventType.BattleVesperTroll2)
+						{
 							mBattleEvent = BattleEvent.VesperTroll2;
 
 							mEncounterEnemyList.Clear();
@@ -1889,7 +1986,7 @@ namespace MysticUWP
 							mBattleEvent = BattleEvent.VesperTroll3;
 
 							mEncounterEnemyList.Clear();
-							
+
 							JoinEnemy(25);
 							for (var i = 0; i < 6; i++)
 								JoinEnemy(26);
@@ -1960,7 +2057,8 @@ namespace MysticUWP
 
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.ReadVesperMemo) {
+						else if (specialEvent == SpecialEventType.ReadVesperMemo)
+						{
 							Talk(new string[] {
 								$"[color={RGB.White}] 혹시나 이 글을 누가 읽기를 바라며 ...[/color]",
 								"",
@@ -1970,23 +2068,26 @@ namespace MysticUWP
 								" 어떻게 보면 서로의 이익을 찾기위해  명분을 세우고  침략을 정당화 시킨다고 할 수 있다. 우리는 인간이기에 우리쪽의 잘못은 감추려고한다." +
 								"  항상 다른 종족의 잘못을 들추어내며 우리를 더욱 값지게 해왔던게 사실이다. 이번의 경우도 그렇다." +
 								" 책임이 있다면  사실상 이번일은  인간의 책임이 더 크다.  자초지종을 말하자면  다음과 같다. 원래  아프로디테 테라는  트롤족의 땅이었다." +
-								" 하지만 인간의 영역을 더욱 확보하려는 야심에서 명분을 세우고  그들의 땅을 침범하여 성을 구축한 곳이 바로 이곳 베스퍼성이었다." + 
+								" 하지만 인간의 영역을 더욱 확보하려는 야심에서 명분을 세우고  그들의 땅을 침범하여 성을 구축한 곳이 바로 이곳 베스퍼성이었다." +
 								" 그리고 그 일을 총지휘한 자는 바로 ............."
 							}, SpecialEventType.NoMoreMemo);
 						}
-						else if (specialEvent == SpecialEventType.NoMoreMemo) {
+						else if (specialEvent == SpecialEventType.NoMoreMemo)
+						{
 							Talk(" 당신이 여기까지 읽어내려 갔을때 그 종이 쪽지는 산화하여 공중으로 흩어져 버렸다." +
 							"  당신은  지금 이 쪽지에서 말하려고 했던 자로부터 천리안으로 감시를 당하고 있다는 사실을 순간 깨닭았다." +
 							"  당신이 알지 못하는 제 3의 인물이 있다는 확신이 강해짐에 따라 더욱 더 긴장 할 수 밖에 없었다.  하지만 더 이상의 변화는 일어나지 않았다.", SpecialEventType.None);
 
 							SetBit(15);
 						}
-						else if (specialEvent == SpecialEventType.BattleTrollKing) {
+						else if (specialEvent == SpecialEventType.BattleTrollKing)
+						{
 							mBattleEvent = BattleEvent.TrollKing;
 
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.BattleTroll1) {
+						else if (specialEvent == SpecialEventType.BattleTroll1)
+						{
 							mBattleEvent = BattleEvent.Troll1;
 							StartBattle(false);
 						}
@@ -2000,9 +2101,11 @@ namespace MysticUWP
 							mBattleEvent = BattleEvent.Troll5;
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.KillPhysicist) {
+						else if (specialEvent == SpecialEventType.KillPhysicist)
+						{
 							Lore murderPlayer = mPlayerList.Count > 1 ? mPlayerList[mPlayerList.Count - 1] : null;
-							if (murderPlayer != null) {
+							if (murderPlayer != null)
+							{
 								Talk(new string[] {
 									$" 그때 당신 옆에 있던 {murderPlayer.NameSubjectBJosa} 검을 들어 그를 내리쳤다.",
 									" 순간적으로 일어난 일이라 아무도 손을 쓸 수가 없었다. 그리고 일행들에게 말했다.",
@@ -2014,7 +2117,8 @@ namespace MysticUWP
 								SetBit(78);
 							}
 						}
-						else if (specialEvent == SpecialEventType.KillPhysicist2) {
+						else if (specialEvent == SpecialEventType.KillPhysicist2)
+						{
 							Dialog(new string[] {
 								" 당신은 그래도 아쉬운 마음에 한 마디를 던졌다.",
 								"",
@@ -2066,7 +2170,8 @@ namespace MysticUWP
 								"그냥 살려 준다"
 							});
 						}
-						else if (specialEvent == SpecialEventType.MeetBecrux) {
+						else if (specialEvent == SpecialEventType.MeetBecrux)
+						{
 							Ask(" 나는 베스퍼성에서 베크룩스라고 불리던 사람이오.  나는 단독으로 트롤킹을 잡기위해 여기로 잠입했다가  적의 숫자에 밀려서 포로로 잡혀버렸소." +
 							" 일대일의 대결이라면 자신이 있었는데 적의 수가 워낙 많아서 이런 곳까지 잡혀오게 되었던거요.  나는 이 일로  더욱 타종족에 대한 미움이 커져 버렸소." +
 							" 나는 당신들에게 진정으로 부탁하나 하겠소.  나를 당신의 일행에 넣어 주시오.", MenuMode.JoinBercux, new string[] {
@@ -2074,13 +2179,16 @@ namespace MysticUWP
 								"미안하지만 그런 어렵겠소"
 							});
 						}
-						else if (specialEvent == SpecialEventType.LearnKoboldWriting) {
+						else if (specialEvent == SpecialEventType.LearnKoboldWriting)
+						{
 							InvokeAnimation(AnimationType.CompleteLearnKoboldWriting);
 						}
-						else if (specialEvent == SpecialEventType.BattleExitKoboldKing) {
+						else if (specialEvent == SpecialEventType.BattleExitKoboldKing)
+						{
 							BattleExitKobldKing();
 						}
-						else if (specialEvent == SpecialEventType.BattleKoboldAlter) {
+						else if (specialEvent == SpecialEventType.BattleKoboldAlter)
+						{
 							mBattleEvent = BattleEvent.KoboldAlter;
 							StartBattle(false);
 						}
@@ -2089,7 +2197,8 @@ namespace MysticUWP
 							specialEvent == SpecialEventType.BattleTreasureBox3 ||
 							specialEvent == SpecialEventType.BattleTreasureBox4)
 						{
-							switch (specialEvent) {
+							switch (specialEvent)
+							{
 								case SpecialEventType.BattleTreasureBox1:
 									mBattleEvent = BattleEvent.TreasureBox1;
 									break;
@@ -2106,11 +2215,13 @@ namespace MysticUWP
 
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.BattleKoboldSoldier) {
+						else if (specialEvent == SpecialEventType.BattleKoboldSoldier)
+						{
 							mBattleEvent = BattleEvent.KoboldSoldier;
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.BattleKoboldSoldier2) {
+						else if (specialEvent == SpecialEventType.BattleKoboldSoldier2)
+						{
 							mBattleEvent = BattleEvent.KoboldSoldier2;
 							StartBattle(false);
 						}
@@ -2119,19 +2230,23 @@ namespace MysticUWP
 							mBattleEvent = BattleEvent.KoboldSecurity;
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.BattleKoboldGuardian) {
+						else if (specialEvent == SpecialEventType.BattleKoboldGuardian)
+						{
 							mBattleEvent = BattleEvent.KoboldGuardian;
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.BattleKoboldSummoner) {
+						else if (specialEvent == SpecialEventType.BattleKoboldSummoner)
+						{
 							mBattleEvent = BattleEvent.KoboldSummoner;
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.BattleKoboldKing) {
+						else if (specialEvent == SpecialEventType.BattleKoboldKing)
+						{
 							mBattleEvent = BattleEvent.KoboldKing;
 							StartBattle(false);
 						}
-						else if (specialEvent == SpecialEventType.AskTreasureboxQuestion1) {
+						else if (specialEvent == SpecialEventType.AskTreasureboxQuestion1)
+						{
 							mAllPass = true;
 
 							var options = ShuffleOptions(new string[] {
@@ -2141,7 +2256,8 @@ namespace MysticUWP
 								"알비레오"
 							});
 
-							for (var i = 0; i < options.Length; i++) {
+							for (var i = 0; i < options.Length; i++)
+							{
 								if (options[i] == "알비레오")
 								{
 									mAnswerID = i;
@@ -2152,7 +2268,8 @@ namespace MysticUWP
 							Ask($"[color={RGB.White}] 1편 <또 다른 지식의 성전>과 2편 <다크 메이지 실리안 카미너스>에  모두 출현했던 인물이 아닌 것은 누구인가?[/color]",
 							MenuMode.Answer1_1, options);
 						}
-						else if (specialEvent == SpecialEventType.AskTreasureboxQuestion2) {
+						else if (specialEvent == SpecialEventType.AskTreasureboxQuestion2)
+						{
 							mAllPass = true;
 
 							var argument = mRand.Next(100) + 1;
@@ -2197,14 +2314,16 @@ namespace MysticUWP
 								"아니다"
 							});
 						}
-						else if (specialEvent == SpecialEventType.OpenTreasureBox) {
+						else if (specialEvent == SpecialEventType.OpenTreasureBox)
+						{
 							if ((mParty.Etc[30] & (1 << 4)) > 0)
 							{
 								if (!GetBit(151))
 									OpenTreasureBox();
 							}
 						}
-						else if (specialEvent == SpecialEventType.PlusExperience) {
+						else if (specialEvent == SpecialEventType.PlusExperience)
+						{
 							Dialog($"[color={RGB.LightCyan}] [[ 경험치 + 500,000 ][/color]", true);
 
 							foreach (var player in mPlayerList)
@@ -2215,12 +2334,147 @@ namespace MysticUWP
 
 							SetBit(206);
 						}
-						else if (specialEvent == SpecialEventType.SendValiantToUranos) {
+						else if (specialEvent == SpecialEventType.SendValiantToUranos)
+						{
 							InvokeAnimation(AnimationType.SendValiantToUranos);
 						}
+						else if (specialEvent == SpecialEventType.CaptureMermaid)
+						{
+							Ask(new string[] {
+								$"[color={RGB.LightBlue}] 제발 살려주세요. 그냥 장난친것 뿐이예요.[/color]",
+								$"[color={RGB.LightBlue}] 만약 살려 주시면  당신에게  드라코니안족의 글을 가르쳐 드릴께요.[/color]"
+							}, MenuMode.KillMermaid, new string[] {
+								"인어를 놓아준다",
+								"죽여 버린다"
+							});
+						}
+						else if (specialEvent == SpecialEventType.BattleVampire)
+						{
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 8; i++)
+								JoinEnemy(3);
+
+							DisplayEnemy();
+							HideMap();
+
+							mBattleEvent = BattleEvent.Vampire;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleDracula)
+						{
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 5; i++)
+								JoinEnemy(13);
+
+							DisplayEnemy();
+							HideMap();
+
+							mBattleEvent = BattleEvent.Dracula;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.OpenTomb)
+						{
+							Ask(new string[] {
+								" 당신이 바닥을 밀어내자  바닥이 스르르 밀려나며 좁은 지하계단이 나타났다." +
+								"  계단의 입구에는 스산한 기운이 맴돌고 있었고  자세히 다시 보니 뚜렸하게 이런 글자가 새겨져 있었다.",
+								$"[color={RGB.LightRed}]'이곳으로 발을 디딘 자는 드라콘 제왕의 저주를 받게 될 것이다.'[/color]"
+							}, MenuMode.EnterTomb, new string[] {
+								"지하계단으로 내려간다",
+								"다시 바닥을 원위치 시킨다"
+							});
+						}
+						else if (specialEvent == SpecialEventType.RefuseJoinEnterTomb)
+						{
+							Ask($"[color={RGB.LightBlue}] 우리들의 목적은 따로 있는데 일부러 이런 모험을 할 필요가 없지 않은가?  우리들은  모두 여기에 있겠네." +
+							"  게다가 계단에 쓰여 있는  이글도 마음에 걸린다네. 정말 가고 싶다면 자네 혼자서 가게나. 우리는 여기서 기다릴테니.[/color]", MenuMode.ForceEnterTomb, new string[] {
+								"혼자라도 지하무덤으로 간다",
+								"대원들의 의견대로 그만 둔다"
+							});
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconian1 ||
+							specialEvent == SpecialEventType.BattleDraconian2 ||
+							specialEvent == SpecialEventType.BattleDraconian4 ||
+							specialEvent == SpecialEventType.BattleDraconian5 ||
+							specialEvent == SpecialEventType.BattleDraconian6 ||
+							specialEvent == SpecialEventType.BattleDraconian8 ||
+							specialEvent == SpecialEventType.BattleDraconian9 ||
+							specialEvent == SpecialEventType.BattleDraconian10 ||
+							specialEvent == SpecialEventType.BattleDraconian11 ||
+							specialEvent == SpecialEventType.BattleDraconian12 ||
+							specialEvent == SpecialEventType.BattleDraconian13)
+						{
+
+							var menuMode = MenuMode.None;
+							switch (specialEvent)
+							{
+								case SpecialEventType.BattleDraconian1:
+									menuMode = MenuMode.BattleDraconian1;
+									break;
+								case SpecialEventType.BattleDraconian2:
+									menuMode = MenuMode.BattleDraconian2;
+									break;
+								case SpecialEventType.BattleDraconian4:
+									menuMode = MenuMode.BattleDraconian4;
+									break;
+								case SpecialEventType.BattleDraconian5:
+									menuMode = MenuMode.BattleDraconian5;
+									break;
+								case SpecialEventType.BattleDraconian6:
+									menuMode = MenuMode.BattleDraconian6;
+									break;
+								case SpecialEventType.BattleDraconian8:
+									menuMode = MenuMode.BattleDraconian8;
+									break;
+								case SpecialEventType.BattleDraconian9:
+									menuMode = MenuMode.BattleDraconian9;
+									break;
+								case SpecialEventType.BattleDraconian10:
+									menuMode = MenuMode.BattleDraconian10;
+									break;
+								case SpecialEventType.BattleDraconian11:
+									menuMode = MenuMode.BattleDraconian11;
+									break;
+								case SpecialEventType.BattleDraconian12:
+									menuMode = MenuMode.BattleDraconian12;
+									break;
+								case SpecialEventType.BattleDraconian13:
+									menuMode = MenuMode.BattleDraconian13;
+									break;
+							}
+
+							Ask(" 당신 앞에 있는 드라코니안족을  당신은 어떻게 할 것인가를 선택하시오.", menuMode, new string[] {
+								"죽여 버린다",
+								"그냥 살려 준다"
+							});
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconian3 ||
+							specialEvent == SpecialEventType.BattleDraconian7)
+						{
+
+							var battleEvent = BattleEvent.None;
+							switch (specialEvent)
+							{
+								case SpecialEventType.BattleDraconian3:
+									battleEvent = BattleEvent.Draconian3;
+									break;
+								case SpecialEventType.BattleDraconian7:
+									battleEvent = BattleEvent.Draconian7;
+									break;
+							}
+
+							BattleDraconian(battleEvent);
+						}
+						else if (specialEvent == SpecialEventType.SteelBoy)
+						{
+							Dialog(" 제 이름이 뭐냐구요 ? 저는 쇠돌이에요.");
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconianEntrance2) {
+							BattleDraconianEntrance2();
+						}
 					}
-
-
+					
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
 					args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.GamepadLeftThumbstickLeft || args.VirtualKey == VirtualKey.GamepadDPadLeft ||
 					args.VirtualKey == VirtualKey.Right || args.VirtualKey == VirtualKey.GamepadLeftThumbstickRight || args.VirtualKey == VirtualKey.GamepadDPadRight ||
@@ -5145,6 +5399,11 @@ namespace MysticUWP
 								}
 
 								await RefreshGame();
+
+								if (mMapName == "Ground5") {
+									if (GetBit(6))
+										UpdateTileInfo(14, 30, 53);
+								}
 							}
 							else
 							{
@@ -6089,6 +6348,133 @@ namespace MysticUWP
 												UpdateTileInfo(7, 13, 35);
 											break;
 										}
+									case "DracTown":
+										mMapName = mTryEnterMap;
+
+										await RefreshGame();
+
+										if (GetBit(111))
+											UpdateTileInfo(23, 97, 44);
+
+										if (GetBit(112))
+											UpdateTileInfo(23, 91, 44);
+
+										if (GetBit(113))
+											UpdateTileInfo(24, 80, 44);
+
+										if (GetBit(114))
+											UpdateTileInfo(33, 99, 44);
+
+										if (GetBit(115))
+											UpdateTileInfo(35, 92, 44);
+
+										if (GetBit(116))
+											UpdateTileInfo(41, 83, 44);
+
+										if (GetBit(117))
+											UpdateTileInfo(32, 81, 44);
+
+										if (GetBit(118))
+											UpdateTileInfo(40, 69, 44);
+
+										if (GetBit(119))
+											UpdateTileInfo(31, 21, 44);
+
+										if (GetBit(120))
+											UpdateTileInfo(39, 32, 44);
+
+										if (GetBit(121))
+											UpdateTileInfo(15, 18, 44);
+
+										if (GetBit(122))
+											UpdateTileInfo(15, 34, 44);
+
+										if (GetBit(123))
+											UpdateTileInfo(14, 47, 44);
+
+										if (GetBit(47))
+											UpdateTileInfo(14, 56, 44);
+
+										if (GetBit(104))
+											UpdateTileInfo(76, 72, 44);
+
+										if (GetBit(105))
+											UpdateTileInfo(66, 65, 44);
+
+										if (GetBit(106))
+											UpdateTileInfo(66, 72, 44);
+
+										if (GetBit(107))
+											UpdateTileInfo(61, 70, 44);
+
+										if (GetBit(108))
+											UpdateTileInfo(66, 87, 44);
+
+										if (GetBit(109))
+											UpdateTileInfo(61, 78, 44);
+
+										if (GetBit(110))
+											UpdateTileInfo(64, 63, 44);
+
+										if (GetBit(103))
+										{
+											UpdateTileInfo(13, 104, 44);
+											UpdateTileInfo(14, 105, 44);
+										}
+
+										if (GetBit(102))
+										{
+											for (var y = 58; y < 61; y++)
+											{
+												for (var x = 46; x < 48; x++)
+													UpdateTileInfo(x, y, 44);
+											}
+										}
+
+										if (GetBit(101)) {
+											for (var x = 23; x < 27; x++)
+												UpdateTileInfo(x, 53, 44);
+										}
+
+										if (GetBit(100)) {
+											for (var y = 58; y < 61; y++)
+												UpdateTileInfo(83, y, 44);
+										}
+
+										if (GetBit(99)) {
+											for (var x = 76; x < 49; x++)
+												UpdateTileInfo(x, 87, 44);
+										}
+
+										if (GetBit(98)) {
+											for (var x = 58; x < 61; x++)
+												UpdateTileInfo(x, 47, 44);
+										}
+
+										if (GetBit(97)) {
+											for (var x = 72; x < 75; x++)
+												UpdateTileInfo(x, 39, 44);
+										}
+
+										if (GetBit(96)) {
+											for (var x = 93; x < 96; x++)
+												UpdateTileInfo(x, 36, 44);
+										}
+
+										if (GetBit(95)) {
+											UpdateTileInfo(101, 19, 44);
+											UpdateTileInfo(101, 20, 42);
+											UpdateTileInfo(100, 20, 44);
+											UpdateTileInfo(102, 20, 44);
+										}
+
+										break;
+									case "Imperium":
+										mMapName = mTryEnterMap;
+
+										await RefreshGame();
+
+										break;
 								}
 							}
 							else
@@ -6121,6 +6507,7 @@ namespace MysticUWP
 							var saveData = new SaveData()
 							{
 								PlayerList = mPlayerList,
+								BackupPlayerList = mBackupPlayerList,
 								AssistPlayer = mAssistPlayer,
 								Party = mParty,
 								MapHeader = mMapHeader,
@@ -7684,6 +8071,137 @@ namespace MysticUWP
 								Dialog($"[color={RGB.LightMagenta}] 하지만 그분은 벌써 몇 백년 전에 돌아가셨습니다. 지금은 그분의 말씀만 남아 우리들을 올바르게 지도하고 계십니다.[/color]");
 							}
 						}
+						else if (menuMode == MenuMode.KillMermaid) {
+							SetBit(29);
+							if (mMenuMode == 0)
+							{
+								Dialog(new string[] {
+									$"[color={RGB.LightBlue}] 그 인어는 당신에게 금빛의 가루를 뿌렸다.[/color]",
+									$"[color={RGB.LightBlue}] 그러자 당신은 약간의 어지러움을 느꼈다.[/color]"
+								});
+
+								SetBit(14);
+							}
+							else
+								Dialog(" 당신은 그 인어를 죽여 버렸다.");
+						}
+						else if (menuMode == MenuMode.EnterTomb) {
+							if (mMenuMode == 0) {
+								Lore friend = null;
+								if (mPlayerList.Count > 1)
+									friend = mPlayerList[mPlayerList.Count - 1];
+								
+								if (friend != null) {
+									Talk(new string[] {
+										" 당신이 일행들을 데리고 지하계단으로 내려가려 하자 당신을 저지시키는 사람이 있었다.",
+										$" 그는 바로 {friend.NameSubjectCJosa}였다.",
+										" 그는 말을 했다."
+									}, SpecialEventType.RefuseJoinEnterTomb);
+								}
+								else {
+									SetBit(30);
+
+									mMapName = mMapHeader.EnterMap;
+									mXAxis = mMapHeader.EnterX - 1;
+									mYAxis = mMapHeader.EnterY - 1;
+
+									await RefreshGame();
+								}
+							}
+							else {
+								Dialog(" 당신이 바닥을 끌어 당기자 다시 스르르 밀려와서 원위치 되었다.");
+							}
+						}
+						else if (menuMode == MenuMode.ForceEnterTomb) {
+							if (menuMode == 0) {
+								SetBit(30);
+
+								if (mBackupPlayerList == null)
+									mBackupPlayerList = new List<Lore>();
+								else
+									mBackupPlayerList.Clear();
+
+								while (mPlayerList.Count > 1) {
+									mBackupPlayerList.Add(mPlayerList[1]);
+									mPlayerList.RemoveAt(1);
+								}
+
+
+								mMapName = mMapHeader.EnterMap;
+								mXAxis = mMapHeader.EnterX - 1;
+								mYAxis = mMapHeader.EnterY - 1;
+
+								await RefreshGame();
+							}
+							else {
+								Dialog(" 당신은 다시 물러서서 바닥을 원위치 시켰다.");
+							}
+						}
+						else if (menuMode == MenuMode.BattleDraconian1 ||
+							menuMode == MenuMode.BattleDraconian2 ||
+							menuMode == MenuMode.BattleDraconian4 ||
+							menuMode == MenuMode.BattleDraconian5 ||
+							menuMode == MenuMode.BattleDraconian6 ||
+							menuMode == MenuMode.BattleDraconian8 ||
+							menuMode == MenuMode.BattleDraconian9 ||
+							menuMode == MenuMode.BattleDraconian10 ||
+							menuMode == MenuMode.BattleDraconian11 ||
+							menuMode == MenuMode.BattleDraconian12 ||
+							menuMode == MenuMode.BattleDraconian13) {
+							if (mMenuFocusID == 0) {
+								var battleEvent = BattleEvent.None;
+
+								switch (menuMode) {
+									case MenuMode.BattleDraconian1:
+										battleEvent = BattleEvent.Draconian1;
+										break;
+									case MenuMode.BattleDraconian2:
+										battleEvent = BattleEvent.Draconian2;
+										break;
+									case MenuMode.BattleDraconian4:
+										battleEvent = BattleEvent.Draconian4;
+										break;
+									case MenuMode.BattleDraconian5:
+										battleEvent = BattleEvent.Draconian5;
+										break;
+									case MenuMode.BattleDraconian6:
+										battleEvent = BattleEvent.Draconian6;
+										break;
+									case MenuMode.BattleDraconian8:
+										battleEvent = BattleEvent.Draconian8;
+										break;
+									case MenuMode.BattleDraconian9:
+										battleEvent = BattleEvent.Draconian9;
+										break;
+									case MenuMode.BattleDraconian10:
+										battleEvent = BattleEvent.Draconian10;
+										break;
+									case MenuMode.BattleDraconian11:
+										battleEvent = BattleEvent.Draconian11;
+										break;
+									case MenuMode.BattleDraconian12:
+										battleEvent = BattleEvent.Draconian12;
+										break;
+									case MenuMode.BattleDraconian13:
+										battleEvent = BattleEvent.Draconian13;
+										break;
+								}
+
+								BattleDraconian(battleEvent);
+							}
+						}
+						else if (menuMode == MenuMode.JoinDraconian) {
+							if (mMenuFocusID == 0)
+							{
+								JoinMemberFromEnemy(47);
+							}
+							else
+								ShowNoThanks();
+						}
+						else if (menuMode == MenuMode.BattleDraconianEntrance) {
+							if (mMenuFocusID == 0)
+								BattleDraconianEntrance();
+						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
 					//				{
@@ -8830,11 +9348,13 @@ namespace MysticUWP
 					triggered = false;
 			}
 			else if (mMapName == "Ancient") {
-				if ((mXAxis == 9 && mYAxis == 12) || (mXAxis == 10 && mYAxis == 12)) {
+				if ((mXAxis == 9 && mYAxis == 12) || (mXAxis == 10 && mYAxis == 12))
+				{
 					Dialog(" 당신은  무덤 앞으로 발을  내 디디려 했지만 어떤 힘에 의해 더 이상 들어 갈 수가 없었다.");
 					mYAxis++;
 				}
-				else if ((mXAxis == 9 && mYAxis == 11) || (mXAxis == 10 && mYAxis == 11)) {
+				else if ((mXAxis == 9 && mYAxis == 11) || (mXAxis == 10 && mYAxis == 11))
+				{
 					Dialog(new string[] {
 						"",
 						"",
@@ -8851,10 +9371,119 @@ namespace MysticUWP
 						ContinueText.Visibility = Visibility.Visible;
 					}
 				}
-				else if (4 <= mXAxis && mXAxis <= 15 && 5 <= mYAxis && mYAxis <= 24) {
+				else if (4 <= mXAxis && mXAxis <= 15 && 5 <= mYAxis && mYAxis <= 24)
+				{
 					ShowExitMenu();
 				}
+				else
+					triggered = false;
 			}
+			else if (mMapName == "Ground5") {
+				Dialog(new string[] {
+					" 당신은 잠을 자고있는 어떤 은둔자를 보았다. 그는 당신의 기척에 잠을 깨었는지  눈을 뜨고 당신을 바라 보았다. 그리고는 말을 시작했다.",
+					""
+				});
+
+				if (GetBit(14))
+				{
+					if (GetBit(13))
+						Dialog(" 이제 당신은 드라코니안의 말을 들을 수 있을 것입니다.", true);
+					else
+					{
+						Dialog(" 나에게는 당신이  뭘 원하는지 훤히 보이는군요. 당신은 지금 드라코니안의 말을 배우려 하고있죠?", true);
+
+						if (mParty.Etc[4] > 0)
+						{
+							Dialog(" 그럼 가르쳐 드리죠.  이건 제가 발명한 자동통역기인데 귀속에다 넣을면  드라코니안의 말을 들을 수 있을 것입니다.", true);
+							SetBit(13);
+						}
+						else
+							Dialog(" 하지만 귀찮아서 가르쳐 주고 싶지 않군요.", true);
+					}
+				}
+				else
+					Dialog(" 혹시 당신 지금 드라코니안의 글을 배우려 하지 않습니까? 그렇다면 이 대륙 전체를 뒤져서 금빛의 인어를 찾아 보십시오.", true);
+			}
+			else if (mMapName == "DracTown") {
+				if (mXAxis == 4)
+				{
+					ShowExitMenu();
+				}
+				else if (mXAxis == 64 && mYAxis == 100 && !GetBit(28))
+				{
+					Talk(" 갑자기 호수 밑에서 누군가가 당신의 발을 잡고 호수 밑으로 끌어 내리려 했다.  하지만 당신의 물 위를 걷는 마법때문에 당신은 전혀 끌려 들어가지 않았다." +
+					" 도리어 당신이 정체 불명의 손을 끌어 올려 물 밖으로 들어 올렸다. 놀랍게도 당신이 물 밖으로 끌어 올린 것은 금빛의 인어였다. 그녀는 겁에 질려 당신에게 애원했다.", SpecialEventType.CaptureMermaid);
+				}
+				else if (mXAxis == 75 && mYAxis == 72 && !GetBit(104))
+				{
+					SetBit(104);
+
+					Dialog($"[color={RGB.LightCyan}] [[ 화살 + 400 ][/color]");
+
+					if (mParty.Arrow + 400 < 65_535)
+						mParty.Arrow += 400;
+					else
+						mParty.Arrow = 65_535;
+
+					UpdateTileInfo(76, 72, 44);
+				}
+				else if (mXAxis == 67 && mYAxis == 65 && !GetBit(105))
+				{
+					Talk(" 당신이 보물상자를 열자 갑자기 흡혈귀가 튀어나왔다.", SpecialEventType.BattleVampire);
+				}
+				else if (mXAxis == 67 && mYAxis == 72 && !GetBit(106))
+				{
+					SetBit(106);
+
+					Dialog($"[color={RGB.LightCyan}] [[ 식량 + 255 ][/color]");
+
+					mParty.Food = 255;
+					UpdateTileInfo(66, 72, 44);
+				}
+				else if (mXAxis == 62 && mYAxis == 70 && !GetBit(107))
+				{
+					SetBit(107);
+
+					Dialog($"[color={RGB.LightCyan}] [[ 황금 + 200,000 ][/color]");
+
+					mParty.Gold += 200_000;
+					UpdateTileInfo(61, 70, 44);
+				}
+				else if (mXAxis == 67 && mYAxis == 87 && !GetBit(108))
+				{
+					SetBit(108);
+
+					Dialog($"[color={RGB.LightCyan}] [[ 소환의 크리스탈 + 1 ][/color]");
+
+					mParty.Crystal[5]++;
+					UpdateTileInfo(66, 87, 44);
+				}
+				else if (mXAxis == 62 && mYAxis == 78 && !GetBit(109))
+				{
+					Talk(" 당신이  보물상자를 열자  갑자기 드라큐라가 튀어나왔다.", SpecialEventType.BattleDracula);
+				}
+				else if (mXAxis == 63 && mYAxis == 63 && !GetBit(110))
+				{
+					SetBit(110);
+
+					Dialog($"[color={RGB.LightCyan}] [[ 한파의 크리스탈 + 1 ]/color]");
+
+					mParty.Crystal[1]++;
+					UpdateTileInfo(64, 63, 44);
+				}
+				else if (mXAxis == 96 && mYAxis == 99) {
+					Dialog($" 묘비에는 [color={RGB.White}]제 21대 드라콘 제왕의 묘[/color]라고 쓰여있었다.");
+				}
+				else if (mXAxis == 88 && mYAxis == 102) {
+					var message = $" 묘비에는 [color={RGB.White}]제 17대 드라콘 제왕의 지하 묘[/color]라고 쓰여 있었고  바로 밑에는 기묘하게 생긴 바닥이 있었다.";
+					if (GetBit(30))
+						Dialog(message);
+					else
+						Talk(message, SpecialEventType.OpenTomb);
+					
+				}
+			}
+			
 	
 			return triggered;
 		}
@@ -9920,6 +10549,238 @@ namespace MysticUWP
 					});
 				}
 			}
+			else if (mMapName == "DracTown") {
+				if (moveX == 23 && moveY == 97)
+				{
+					if (GetBit(13))
+						Talk(" 아니! 인간이 여길 들어오다니...", SpecialEventType.BattleDraconian1);
+					else
+						BattleDraconian(BattleEvent.Draconian1);
+
+				}
+				else if (moveX == 23 && moveY == 91)
+				{
+					if (GetBit(13))
+						Talk(" 음? 너는... 호모 사피엔스 종족이로군. 이처럼 하등한 포유류가  감히  드라코니안 종족의 영역을 침법하다니 놀랍군.", SpecialEventType.BattleDraconian2);
+					else
+						BattleDraconian(BattleEvent.Draconian2);
+				}
+				else if (moveX == 24 && moveY == 80) {
+					if (GetBit(13))
+						Talk(" 그래... 너 잘만났다. 한번 죽어봐라.", SpecialEventType.BattleDraconian3);
+					else
+						BattleDraconian(BattleEvent.Draconian3);
+				}
+				else if (moveX == 33 && moveY == 99) {
+					if (GetBit(13))
+						Talk(" 당신이 우리를 정벌하러 왔다는  말을 들었는데 뭔가 잘못 안 것은 아니오?" +
+						" 여태껏 우리 종족과 당신들은 아무런 접촉도 없었는데 악의를 품은채 이곳으로 올 이유가 없지 않소. 어짜피 당신은 우리들의 상대가 안되니  여기서 썩 물러 나시오.",
+						SpecialEventType.BattleDraconian4);
+					else
+						BattleDraconian(BattleEvent.Draconian4);
+				}
+				else if (moveX == 35 && moveY == 92)
+				{
+					if (GetBit(13))
+						Talk(new string[] {
+						" 우리 드라코니안족은 드래곤과 인간의 장점만을 모아 진화한 생명체로써 드라콘이라고 줄여 부르기도 하지." +
+						" 지능은 IQ 200에서 250 정도로 인간의 두배 정도이고 키도 평균 2m 30cm로 인간보다 크고  게다가 날개도 있어서 하늘을 나는 것도 가능하네." +
+						" 수명도 150 에서 200 세 정도라서 인간보다 발전 가능성도 뛰어나지.",
+						" 흐흐흐... 어때? 이래도 우리에게 대항하겠는가?"
+						}, SpecialEventType.BattleDraconian5);
+					else
+						BattleDraconian(BattleEvent.Draconian5);
+				}
+				else if (moveX == 41 && moveY == 83) {
+					if (GetBit(13))
+					{
+						Talk(" 우와~~ 말로만 듣던 인간을 직접 이렇게 보게 되다니... 정말 신기하게 생겼네.", SpecialEventType.BattleDraconian6);
+					}
+					else
+						BattleDraconian(BattleEvent.Draconian6);
+				}
+				else if (moveX == 32 && moveY == 81) {
+					if (GetBit(13))
+						Talk(" 콩알만한 것들이 겁도 없이 들어 오다니.  심심하던 차에 잘됐군. 싸움이나 걸어야지.", SpecialEventType.BattleDraconian7);
+					else
+						BattleDraconian(BattleEvent.Draconian7);
+				}
+				else if (moveX == 40 && moveY == 69) {
+					if (GetBit(13))
+						Talk(" 쩝쩝, 배고파.", SpecialEventType.BattleDraconian8);
+					else
+						BattleDraconian(BattleEvent.Draconian8);
+				}
+				else if (moveX == 31 && moveY == 21) {
+					if (GetBit(13))
+					{
+						Talk(" 나는 이곳 최고의 물리학자일세. 그리고 나의 이름은 아인슈타인이라네. 내가 어릴때 머리가 완전히 돌이었지." +
+						$"  그래서 항상 아이들이 나를 보며 [color={RGB.LightGreen}]\"Du bist ein Stein\"[/color]이라고 놀리곤했지. 거기서 나온 이름이 내 이름인 'Einstein'일세", SpecialEventType.BattleDraconian9);
+					}
+					else
+						BattleDraconian(BattleEvent.Draconian9);
+				}
+				else if (moveX == 39 && moveY == 32) {
+					if (GetBit(13))
+					{
+						Talk(" 만약, 당신이 자꾸 우리를 위협하겠다면 우리는 성의 서쪽 감옥에 있는 인간들을 모두 처형시켜 버릴테다.", SpecialEventType.BattleDraconian10);
+					}
+					else
+						BattleDraconian(BattleEvent.Draconian10);
+				}
+				else if (moveX == 15 && moveY == 18) {
+					if (GetBit(13))
+					{
+						Talk(" 나를 여기서 탈출 시켜 주시오.  그러면 우리 가문의 보물을 드리리다.", SpecialEventType.BattleDraconian11);
+					}
+					else
+						BattleDraconian(BattleEvent.Draconian11);
+				}
+				else if (moveX == 15 && moveY == 34) {
+					if (GetBit(13))
+					{
+						Talk(new string[] {
+							" 나도 나쁜 놈이지만  당신은 더 나쁜 놈이오. 왜 그렇냐고 물으면 웃지요.",
+							" 으하하하.. 낄낄.. 흐흐흐..."
+						}, SpecialEventType.BattleDraconian12);
+					}
+					else
+						BattleDraconian(BattleEvent.Draconian12);
+				}
+				else if (moveX == 14 && moveY == 47) {
+					if (GetBit(13))
+					{
+						Talk(" 위대한 프로그래머이시며 이 세계의 창시자이신 분과 타임워커 알비레오는  동일인물이라는 생각이 안드오?", SpecialEventType.BattleDraconian13);
+					}
+					else
+						BattleDraconian(BattleEvent.Draconian13);
+				}
+				else if (moveX == 14 && moveY == 56) {
+					Ask(" 나는 드라콘족의 통치체제에 반발하다가 이곳에 반역죄로 잡혀오게 되었소. 당신 역시 이곳의 체제를  전복 시키려는게  주목적인것 같은데, 우리 힘을 합해 보는게 어떻겠소.",
+					MenuMode.JoinDraconian, new string[] {
+						"그렇게 하지요",
+						"그건 안되겠소"
+					});
+				}
+				else if (moveX == 21 && moveY == 23) {
+					Talk(" 나는 마징가 Z 를 실제로 보았죠.  정말 무쇠팔, 무쇠다리, 로켓트주먹을 가지고 있더군요. 만약 전쟁이 일어나면 인천 앞바다가 갈라지며 출동한다고 들었어요. 그것뿐만 아니죠." +
+					"  잠실구장이 열리면서 메칸더 V 도 나오고 비룡폭포에서는  그렌다이져가  뉴크프리트와 합체하여 출격하고  육군본부에 보호망이 쳐지며 그레이트 마징가와 비너스 A 가 같이 나타나고" +
+					" 공군 본부에서 출동한 독수리 5 형제가 조국의 창공을 지키게 되죠. 물론 김박사가 만든 태권 V도 최후의 희망으로 버티고 있죠. 뭐,믿기지 않는다면 국방부 장관님께 직접 물어 보시죠.",
+					SpecialEventType.SteelBoy);
+				}
+				else if (moveX == 23 && moveY == 49) {
+					if (mParty.Etc[4] == 0)
+						Dialog(" 그는 당신을 슬쩍본 후 다시 자기 할 일만 하고 있었다.");
+					else {
+						Talk(" 당신은 지금 로드안에게 속고 있소.  그는 표면적인  선을 행하기 위해서  당신을 이용하고 있는 것이오.  당신이 드라코니안족을  적대시 할 이유가 없소." +
+						" 그들은 인간에게 아무런 피해도 간섭도 없이 살아왔소. 그들이 에인션트 이블을 숭상한다는 것이  정벌의 이유가 될 수는 없소." +
+						"  당신은 에인션트 이블을 진정으로 만나보기라도 했소?  당신은 위선자 로드안의 말만 믿고 에인션트 이블과 그의 추종자들을 배척하고 있는거란 말이오." +
+						"  당신은 어릴때부터 에인션트 이블과  악은 나쁘다고  사상교육을 받아왔던걸 아시오?" +
+						" 진리를 모른채 단지 위에서 가르치는대로 배우며  그것을 진실로 받아들이고 머리속에 새겼던게 바로 화근이었던 것이오.", SpecialEventType.None);
+					}
+				}
+				else if (moveX == 66 && moveY == 20) {
+					if (mParty.Etc[4] == 0)
+						Dialog(" 그는 당신을 보더니 외면해 버렸다.");
+					else if (0 <= mParty.Etc[23] && mParty.Etc[23] <= 1) {
+						Dialog(" 그는 당신을 힐끗 보더니 외면해 버렸다.");
+						mParty.Etc[23]++;
+					}
+					else if (mParty.Etc[23] == 2) {
+						if (GetBit(13)) {
+							Dialog(" 나는 드라코니안족의 대예언자요. 나에게는 당신의 미래가 보인다오.  그러나  그것은 너무나 무서운 것이기에 함부로 얘기할 수 없소.");
+							mParty.Etc[23]++;
+						}
+					}
+					else if (mParty.Etc[23] == 3) {
+						if (GetBit(13)) {
+							Dialog(" 좋소, 애기해 주겠소.  당신은 곧 에인션트 이블님을 만나게 될거요. 그리고 로드안을 배신하려는 선택을 할지도 모르는 순간이 다가올 것이오." +
+							"  그때의 선택은 당신의 결말을 크게 뒤흔들 것이오.");
+							mParty.Etc[23]++;
+						}
+					}
+					else
+						Dialog(" 그는 당신을 힐끗 보더니 외면해 버렸다.");
+				}
+				else if ((moveX == 13 && moveY == 104) || (moveX == 14 && moveY == 105)) {
+					if (GetBit(13))
+					{
+						Ask($"[color={RGB.LightMagenta}] 잠깐, 너희들은 누구냐? 이 안으로 들어갈 수 있는 것은 드라코니안족 뿐이다. 썩 물러나라.[/color]", MenuMode.BattleDraconianEntrance,
+						new string[] {
+							"적과 싸운다",
+							"그냥 물러선다"
+						});
+					}
+					else
+						BattleDraconianEntrance();
+				}
+				else if ((moveX == 46 && moveY == 60) || (moveX == 47 && moveY == 60)) {
+					if (GetBit(13))
+					{
+						Talk($"[color={RGB.LightMagenta}] 이곳은 너희같은 이방인은 절대 들어갈 수 없는 곳이다. 그래도 끝까지 들어가려 한다면 나와의 사생결단이 남았을뿐이다.[/color]", SpecialEventType.BattleDraconianEntrance2);
+					}
+					else
+						BattleDraconianEntrance2();
+				}
+				else if (moveX == 26 & moveY == 53) {
+					if (GetBit(13))
+					{
+						Talk($"[color={RGB.LightMagenta}] 오! 에인션트 이블님이시여! 그대의 이름으로 저들에게 패배를 명하소서.[/color]", SpecialEventType.BattleDraconianBoss1);
+					}
+					else
+						BattleDraconianBoss1();
+				}
+				else if (moveX == 83 && moveY == 58) {
+					if (GetBit(13)) {
+						Talk($"[color={RGB.LightMagenta}] 내가  광란자라고 불리는 이유를  너희들에게 보여주지. 자, 맛 좀 봐랏![/color]", SpecialEventType.BattleDraconianBoss2);
+					}
+					else
+						BattleDraconianBoss1();
+				}
+				else if (moveX == 78 && moveY == 87) {
+					if (GetBit(13))
+					{
+						Talk($"[color={RGB.LightMagenta}] 나는 너희들과 같은  보물 약탈자들을 제거하기 위해 보물창고 앞을 지키고 있는  프로스트 드라코니안이다." +
+						" 나의 냉기와 한파공격에는 아무 저항도 하지 못하고 나가 떨어질 것이다.[/color]", SpecialEventType.BattleFrostDraconian);
+					}
+					else
+						BattleFrostDraconian();
+				}
+				else if (moveX == 58 && moveY == 47) {
+					if (GetBit(13))
+					{
+						Talk($"[color={RGB.LightMagenta}] 멋모르고 날뛰고 있는 인간들아 들어라. 나는 성전사의 명예를 걸고  드라코니안족과 우리의 왕을 위해 싸울 것이다.[/color]", SpecialEventType.BattleDraconianHolyKnight);
+					}
+					else
+						BattleDraconianHolyKnight();
+				}
+				else if (moveX == 72 && moveY == 39) {
+					if (GetBit(13))
+					{
+						Talk($"[color={RGB.LightMagenta}] 네가 더 이상 이 안으로 들어갈 수 없는 이유는 바로 내가 있기 때문이다." +
+						"  내가 만든 나의 환상속에서 너는 스스로의 능력에 대한 비애를 느낄수 밖에 없을 것이다.[/color]", SpecialEventType.BattleDraconianMagician);
+					}
+					else
+						BattleDraconianMagician();
+				}
+				else if (moveX == 93 && moveY == 36) {
+					if (GetBit(13))
+					{
+						Talk($"[color={RGB.LightMagenta}] 나는 아키드라코니안이라고 하는 여기 최강의 용사이다.  또한  드라코니안킹의 방을 지키는 경호대장이다." +
+						"  너같은 자들은  나의 능력으로 충분히 제거해 버릴수 있다.[/color]", SpecialEventType.BattleDraconianGuardian);
+					}
+					else
+						BattleDraconianGuardian();
+				}
+				else if (moveX == 101 && moveY == 20 && !GetBit(95)) {
+					Talk(new string[] {
+					$"[color={RGB.LightMagenta}] 나는  네가 목표로하는  드라코니안족의 왕이다.  아마 이곳에 살아 남은 우리 종족의 전투사들은 거의 없을 것으로 안다." +
+					" 보이다시피 지금 너의 앞에는  나와 가드 드라코니안 3명 밖에는 없다.  너는 이 기회를 놓치지 않고 반드시  나를 쓰러뜨려서  드라코니안 종족을 멸망시키려 할 것이란건  알고 있다." +
+					"  하지만 지금 나의 편이 불리하다고  내가 진다는 것은 아니다.  나 역시 반드시 너희들을 패배 시켜서 우리 종족을 존속 시키려고 필사적이다.[/color]",
+					$"[color={RGB.LightMagenta}] 이제 나의 뜻을 알았을 것이라 믿는다.  그럼 이제 결전이다![/color]"
+					}, SpecialEventType.MeetDraconianKing);
+				}
+			}
 		}
 
 		private void ShowSign(int x, int y)
@@ -10066,6 +10927,7 @@ namespace MysticUWP
 				var payload = e.Parameter as Payload;
 				mPlayerList = new List<Lore>();
 				mPlayerList.Add(payload.Player);
+				mBackupPlayerList = new List<Lore>();
 				mParty = payload.Party;
 				mMapName = payload.MapName;
 
@@ -14588,6 +15450,7 @@ namespace MysticUWP
 
 			mParty = saveData.Party;
 			mPlayerList = saveData.PlayerList;
+			mBackupPlayerList = saveData.BackupPlayerList;
 			mAssistPlayer = saveData.AssistPlayer;
 			mMapHeader = saveData.MapHeader;
 			mMapName = mMapHeader.ID;
@@ -15448,6 +16311,47 @@ namespace MysticUWP
 			StartBattle(false);
 		}
 
+		private void BattleDraconian(BattleEvent battleEvent) {
+			mEncounterEnemyList.Clear();
+
+			JoinEnemy(47);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = battleEvent;
+			StartBattle();
+		}
+
+		private void BattleDraconianEntrance() {
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 4; i++)
+				JoinEnemy(48);
+			JoinEnemy(50);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.DraconianEntrance;
+			StartBattle();
+		}
+
+		private void BattleDraconianEntrance2()
+		{
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 7; i++)
+				JoinEnemy(48);
+			JoinEnemy(51);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.DraconianEntrance2;
+			StartBattle(false);
+		}
+
 		private void canvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
 		{
 			void AnimateTransition(int frame, int x, int y)
@@ -16144,7 +17048,27 @@ namespace MysticUWP
 			AskTreasureboxQuestion3,
 			AskTreasureboxQuestion4,
 			OpenTreasureBox,
-			PlusExperience
+			PlusExperience,
+			CaptureMermaid,
+			BattleVampire,
+			BattleDracula,
+			OpenTomb,
+			RefuseJoinEnterTomb,
+			BattleDraconian1,
+			BattleDraconian2,
+			BattleDraconian3,
+			BattleDraconian4,
+			BattleDraconian5,
+			BattleDraconian6,
+			BattleDraconian7,
+			BattleDraconian8,
+			BattleDraconian9,
+			BattleDraconian10,
+			BattleDraconian11,
+			BattleDraconian12,
+			BattleDraconian13,
+			SteelBoy,
+			BattleDraconianEntrance2
 		}
 
 		private enum BattleEvent
@@ -16201,7 +17125,24 @@ namespace MysticUWP
 			KoboldGuardian,
 			KoboldSummoner,
 			KoboldKing,
-			DraconianBeliever
+			DraconianBeliever,
+			Vampire,
+			Dracula,
+			Draconian1,
+			Draconian2,
+			Draconian3,
+			Draconian4,
+			Draconian5,
+			Draconian6,
+			Draconian7,
+			Draconian8,
+			Draconian9,
+			Draconian10,
+			Draconian11,
+			Draconian12,
+			Draconian13,
+			DraconianEntrance,
+			DraconianEntrance2
 		}
 
 		private enum BattleTurn
@@ -16415,7 +17356,23 @@ namespace MysticUWP
 			Answer4_3,
 			Answer4_4,
 			Answer4_5,
-			MeetAncientEvil
+			MeetAncientEvil,
+			KillMermaid,
+			EnterTomb,
+			ForceEnterTomb,
+			BattleDraconian1,
+			BattleDraconian2,
+			BattleDraconian4,
+			BattleDraconian5,
+			BattleDraconian6,
+			BattleDraconian8,
+			BattleDraconian9,
+			BattleDraconian10,
+			BattleDraconian11,
+			BattleDraconian12,
+			BattleDraconian13,
+			JoinDraconian,
+			BattleDraconianEntrance
 		}
 	}
 }

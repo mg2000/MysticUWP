@@ -14,6 +14,11 @@ namespace MysticUWP
 			set;
 		}
 
+		public List<Lore> BackupPlayerList {
+			get;
+			set;
+		}
+
 		public Lore AssistPlayer
 		{
 			get;
