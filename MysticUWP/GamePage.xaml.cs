@@ -979,8 +979,8 @@ namespace MysticUWP
 						else if (battleEvent == BattleEvent.VesperTroll1)
 						{
 							Dialog(new string[] {
-							" 당신이 적들을 물리치자 동굴속에서 날렵하게 생긴 트롤이 걸어 나왔다.",
-							""
+								" 당신이 적들을 물리치자 동굴속에서 날렵하게 생긴 트롤이 걸어 나왔다.",
+								""
 							});
 
 							if (GetBit(9))
@@ -1246,11 +1246,6 @@ namespace MysticUWP
 						else if (battleEvent == BattleEvent.Draconian2)
 						{
 							SetBit(112);
-							UpdateTileInfo(23, 97, 44);
-						}
-						else if (battleEvent == BattleEvent.Draconian3)
-						{
-							SetBit(113);
 							UpdateTileInfo(23, 91, 44);
 						}
 						else if (battleEvent == BattleEvent.Draconian3)
@@ -1320,7 +1315,37 @@ namespace MysticUWP
 									UpdateTileInfo(x, y, 44);
 							}
 						}
-						
+						else if (battleEvent == BattleEvent.DraconianBoss1) {
+							SetBit(101);
+							for (var x = 23; x < 27; x++)
+								UpdateTileInfo(x, 53, 44);
+						}
+						else if (battleEvent == BattleEvent.DraconianBoss2) {
+							SetBit(100);
+							for (var y = 58; y < 61; y++)
+								UpdateTileInfo(83, y, 44);
+						}
+						else if (battleEvent == BattleEvent.FrostDraconian) {
+							SetBit(99);
+							for (var x = 76; x < 79; x++)
+								UpdateTileInfo(x, 87, 44);
+						}
+						else if (battleEvent == BattleEvent.DraconianHolyKnight) {
+							SetBit(98);
+							for (var x = 58; x < 61; x++)
+								UpdateTileInfo(x, 47, 44);
+						}
+						else if (battleEvent == BattleEvent.DraconianMagician) {
+							SetBit(97);
+							for (var x = 72; x < 75; x++)
+								UpdateTileInfo(x, 39, 44);
+						}
+						else if (battleEvent == BattleEvent.DraconianGuardian) {
+							SetBit(96);
+							for (var x = 93; x < 96; x++)
+								UpdateTileInfo(x, 36, 44);
+						}
+
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
 
@@ -2470,8 +2495,36 @@ namespace MysticUWP
 						{
 							Dialog(" 제 이름이 뭐냐구요 ? 저는 쇠돌이에요.");
 						}
-						else if (specialEvent == SpecialEventType.BattleDraconianEntrance2) {
+						else if (specialEvent == SpecialEventType.BattleDraconianEntrance2)
+						{
 							BattleDraconianEntrance2();
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconianBoss1)
+						{
+							BattleDraconianBoss1();
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconianBoss2)
+						{
+							BattleDraconianBoss2();
+						}
+						else if (specialEvent == SpecialEventType.BattleFrostDraconian)
+						{
+							BattleFrostDraconian();
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconianHolyKnight)
+						{
+							BattleDraconianHolyKnight();
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconianMagician)
+						{
+							BattleDraconianMagician();
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconianGuardian)
+						{
+							BattleDraconianGuardian();
+						}
+						else if (specialEvent == SpecialEventType.MeetDraconianKing) {
+							
 						}
 					}
 					
@@ -8086,7 +8139,7 @@ namespace MysticUWP
 								Dialog(" 당신은 그 인어를 죽여 버렸다.");
 						}
 						else if (menuMode == MenuMode.EnterTomb) {
-							if (mMenuMode == 0) {
+							if (mMenuFocusID == 0) {
 								Lore friend = null;
 								if (mPlayerList.Count > 1)
 									friend = mPlayerList[mPlayerList.Count - 1];
@@ -8113,7 +8166,7 @@ namespace MysticUWP
 							}
 						}
 						else if (menuMode == MenuMode.ForceEnterTomb) {
-							if (menuMode == 0) {
+							if (mMenuFocusID == 0) {
 								SetBit(30);
 
 								if (mBackupPlayerList == null)
@@ -8126,6 +8179,7 @@ namespace MysticUWP
 									mPlayerList.RemoveAt(1);
 								}
 
+								DisplayPlayerInfo();
 
 								mMapName = mMapHeader.EnterMap;
 								mXAxis = mMapHeader.EnterX - 1;
@@ -8194,6 +8248,7 @@ namespace MysticUWP
 							if (mMenuFocusID == 0)
 							{
 								JoinMemberFromEnemy(47);
+								UpdateTileInfo(14, 56, 44);
 							}
 							else
 								ShowNoThanks();
@@ -9387,18 +9442,18 @@ namespace MysticUWP
 				if (GetBit(14))
 				{
 					if (GetBit(13))
-						Dialog(" 이제 당신은 드라코니안의 말을 들을 수 있을 것입니다.", true);
+						Dialog($"[color={RGB.LightBlue}] 이제 당신은 드라코니안의 말을 들을 수 있을 것입니다.[/color]", true);
 					else
 					{
-						Dialog(" 나에게는 당신이  뭘 원하는지 훤히 보이는군요. 당신은 지금 드라코니안의 말을 배우려 하고있죠?", true);
+						Dialog($"[color={RGB.LightBlue}] 나에게는 당신이  뭘 원하는지 훤히 보이는군요. 당신은 지금 드라코니안의 말을 배우려 하고있죠?[/color]", true);
 
 						if (mParty.Etc[4] > 0)
 						{
-							Dialog(" 그럼 가르쳐 드리죠.  이건 제가 발명한 자동통역기인데 귀속에다 넣을면  드라코니안의 말을 들을 수 있을 것입니다.", true);
+							Dialog($"[color={RGB.LightBlue}] 그럼 가르쳐 드리죠.  이건 제가 발명한 자동통역기인데 귀속에다 넣을면  드라코니안의 말을 들을 수 있을 것입니다.[/color]", true);
 							SetBit(13);
 						}
 						else
-							Dialog(" 하지만 귀찮아서 가르쳐 주고 싶지 않군요.", true);
+							Dialog($"[color={RGB.LightBlue}] 하지만 귀찮아서 가르쳐 주고 싶지 않군요.[/color]", true);
 					}
 				}
 				else
@@ -10735,7 +10790,7 @@ namespace MysticUWP
 						Talk($"[color={RGB.LightMagenta}] 내가  광란자라고 불리는 이유를  너희들에게 보여주지. 자, 맛 좀 봐랏![/color]", SpecialEventType.BattleDraconianBoss2);
 					}
 					else
-						BattleDraconianBoss1();
+						BattleDraconianBoss2();
 				}
 				else if (moveX == 78 && moveY == 87) {
 					if (GetBit(13))
@@ -10916,6 +10971,15 @@ namespace MysticUWP
 						"     용암을 건너겠다",
 						"     건널 필요는 없다"
 					});
+				}
+			}
+			else if (mMapName == "DracTown") {
+				if (x == 91 && y == 93) {
+					Dialog(new string[] {
+						"",
+						"",
+						$"[color={RGB.White}]     이곳은 신성한 드라코니안 묘지이므로 함부로 회손 시키지 마시오[/color]"
+					}, true);
 				}
 			}
 		}
@@ -16352,6 +16416,99 @@ namespace MysticUWP
 			StartBattle(false);
 		}
 
+		private void BattleDraconianBoss1() {
+			mEncounterEnemyList.Clear();
+			
+			for (var i = 0; i < 4; i++)
+				JoinEnemy(48);
+			for (var i = 0; i < 2; i++)
+				JoinEnemy(49);
+			JoinEnemy(46);
+			JoinEnemy(52);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.DraconianBoss1;
+			StartBattle(false);
+		}
+
+		private void BattleDraconianBoss2()
+		{
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 7; i++)
+				JoinEnemy(52);
+			JoinEnemy(53);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.DraconianBoss2;
+			StartBattle(false);
+		}
+
+		private void BattleFrostDraconian()
+		{
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 7; i++)
+				JoinEnemy(46);
+			JoinEnemy(54);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.FrostDraconian;
+			StartBattle(false);
+		}
+
+		private void BattleDraconianHolyKnight()
+		{
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 2; i++)
+				JoinEnemy(50);
+			JoinEnemy(55);
+			JoinEnemy(51);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.DraconianHolyKnight;
+			StartBattle(false);
+		}
+
+		private void BattleDraconianMagician()
+		{
+			mEncounterEnemyList.Clear();
+
+			JoinEnemy(56);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.DraconianMagician;
+			StartBattle(false);
+		}
+
+		private void BattleDraconianGuardian()
+		{
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 4; i++)
+				JoinEnemy(52);
+			for (var i = 0; i < 3; i++)
+				JoinEnemy(50);
+			JoinEnemy(57);
+			
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.DraconianGuardian;
+			StartBattle(false);
+		}
+
 		private void canvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
 		{
 			void AnimateTransition(int frame, int x, int y)
@@ -16615,10 +16772,12 @@ namespace MysticUWP
 					else if (tileIdx == 54)
 						tileIdx = 15;
 				}
-				else if (mMapName == "Hut" && tileIdx == 53) {
+				else if (mMapName == "Hut" && tileIdx == 53)
+				{
 					tileIdx = 44;
 				}
-				else if (mMapName == "Ancient") {
+				else if (mMapName == "Ancient")
+				{
 					if (tileIdx == 53)
 						tileIdx = 44;
 					else if (tileIdx == 22)
@@ -16637,11 +16796,33 @@ namespace MysticUWP
 						tileIdx = 17;
 					}
 				}
+				else if (mMapName == "DracTown")
+				{
+					if (tileIdx == 19)
+						tileIdx = 24;
+					else if (tileIdx == 49 || tileIdx == 52 || tileIdx == 53)
+						tileIdx = 44;
+					else if (tileIdx == 8) {
+						mapIdx = 56 * 2;
+						tileIdx = 16;
+					}
+					else if (tileIdx == 9)
+					{
+						mapIdx = 56 * 2;
+						tileIdx = 17;
+					}
+					else if (tileIdx == 14)
+					{
+						mapIdx = 56 * 2;
+						tileIdx = 19;
+					}
+				}
 
 
 				if (mSpecialEvent == SpecialEventType.Penetration)
 				{
-					if ((mMapHeader.TileType == PositionType.Den || mMapHeader.TileType == PositionType.Keep) && tileIdx == 52)
+					if (((mMapHeader.TileType == PositionType.Den || mMapHeader.TileType == PositionType.Keep) && tileIdx == 52) ||
+						(mMapHeader.TileType == PositionType.Ground && tileIdx == 20))
 						tileIdx = 0;
 				}
 				else if (tileIdx == 0)
@@ -16772,8 +16953,10 @@ namespace MysticUWP
 							break;
 					}
 				}
-				else if (mMapName == "TrolTown") {
-					switch (oriTileIdx) {
+				else if (mMapName == "TrolTown")
+				{
+					switch (oriTileIdx)
+					{
 						case 53:
 							mDecorateTiles.Draw(sb, 4, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
 							break;
@@ -16782,13 +16965,30 @@ namespace MysticUWP
 							break;
 					}
 				}
-				else if (mMapName == "Hut") {
+				else if (mMapName == "Hut")
+				{
 					if (oriTileIdx == 53)
 						mDecorateTiles.Draw(sb, 4, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
 				}
-				else if (mMapName == "Ancient") {
+				else if (mMapName == "Ancient")
+				{
 					if (oriTileIdx == 53)
 						mDecorateTiles.Draw(sb, 5, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mMapName == "DracTown")
+				{
+					switch (oriTileIdx)
+					{
+						case 53:
+							mDecorateTiles.Draw(sb, 6, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+							break;
+						case 52:
+							mDecorateTiles.Draw(sb, 7, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+							break;
+						case 49:
+							mDecorateTiles.Draw(sb, 5, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
+							break;
+					}
 				}
 			}
 		}
@@ -17068,7 +17268,14 @@ namespace MysticUWP
 			BattleDraconian12,
 			BattleDraconian13,
 			SteelBoy,
-			BattleDraconianEntrance2
+			BattleDraconianEntrance2,
+			BattleDraconianBoss1,
+			BattleDraconianBoss2,
+			BattleFrostDraconian,
+			BattleDraconianHolyKnight,
+			BattleDraconianMagician,
+			BattleDraconianGuardian,
+			MeetDraconianKing
 		}
 
 		private enum BattleEvent
@@ -17142,7 +17349,13 @@ namespace MysticUWP
 			Draconian12,
 			Draconian13,
 			DraconianEntrance,
-			DraconianEntrance2
+			DraconianEntrance2,
+			DraconianBoss1,
+			DraconianBoss2,
+			FrostDraconian,
+			DraconianHolyKnight,
+			DraconianMagician,
+			DraconianGuardian
 		}
 
 		private enum BattleTurn
