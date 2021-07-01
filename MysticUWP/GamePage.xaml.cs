@@ -9526,16 +9526,51 @@ namespace MysticUWP
 					mParty.Crystal[1]++;
 					UpdateTileInfo(64, 63, 44);
 				}
-				else if (mXAxis == 96 && mYAxis == 99) {
+				else if (mXAxis == 96 && mYAxis == 99)
+				{
 					Dialog($" 묘비에는 [color={RGB.White}]제 21대 드라콘 제왕의 묘[/color]라고 쓰여있었다.");
 				}
-				else if (mXAxis == 88 && mYAxis == 102) {
+				else if (mXAxis == 88 && mYAxis == 102)
+				{
 					var message = $" 묘비에는 [color={RGB.White}]제 17대 드라콘 제왕의 지하 묘[/color]라고 쓰여 있었고  바로 밑에는 기묘하게 생긴 바닥이 있었다.";
 					if (GetBit(30))
 						Dialog(message);
 					else
 						Talk(message, SpecialEventType.OpenTomb);
-					
+
+				}
+				else
+					triggered = false;
+			}
+			else if (mMapName == "Tomb") {
+				if (mXAxis == 82 && mYAxis == 9)
+					UpdateTileInfo(38, 30, 44);
+				else if (mXAxis == 18 && mYAxis == 34 && !GetBit(124)) {
+					SetBit(124);
+					Dialog($"[color={RGB.LightCyan}] [[ 플래티움 갑옷 + 1 ][/color]");
+					if (mParty.Backpack[5, 9] < 255)
+						mParty.Backpack[5, 9]++;
+				}
+				else if (mXAxis == 83 && mYAxis == 14 && !GetBit(125)) {
+					SetBit(125);
+					Dialog($"[color={RGB.LightCyan}] [[ 황금 + 100,000 ][/color]");
+					mParty.Gold += 100_000;
+				}
+				else if (mXAxis == 86 && mYAxis == 14 && !GetBit(126)) {
+					SetBit(126);
+					Dialog($"[color={RGB.LightCyan}] [[ 황금 + 50,000 ][/color]");
+					mParty.Gold += 50_000;
+				}
+				else if (mXAxis == 83 && mYAxis == 25 && !GetBit(127)) {
+					Talk(" 당신이  보물상자를 열자  갑자기 저승사자가 튀어나왔다.", SpecialEventType.BattleMessengerOfDeath);
+				}
+				else if (mXAxis == 86 && mYAxis == 25 && !GetBit(128)) {
+					Talk(" 당신이  보물상자를 열자  갑자기 켈베로스가 튀어나왔다.", SpecialEventType.BattleKerberos);
+				}
+				else if (mXAxis == 84 && mYAxis == 20 && !GetBit(129)) {
+					Talk(" 당신이 괸 앞에 섰을때 무언가 묘한 분위기가 당신의 전신을 스치고 지나갔다.  잠시후 관의 뚜껑이 스르르 열리기 시작했다." +
+					"  당신은 무의식적으로 한 걸음 뒤로 물러났다. 곧이어 관속에서는  에테르화된 드라코니안의 형체가 일어났다. 그리고 말을 하기 시작했다.",
+					SpecialEventType.BattleDraconianOldKing);
 				}
 			}
 			
@@ -17275,7 +17310,10 @@ namespace MysticUWP
 			BattleDraconianHolyKnight,
 			BattleDraconianMagician,
 			BattleDraconianGuardian,
-			MeetDraconianKing
+			MeetDraconianKing,
+			BattleMessengerOfDeath,
+			BattleKerberos,
+			BattleDraconianOldKing
 		}
 
 		private enum BattleEvent
