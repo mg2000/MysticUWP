@@ -1353,6 +1353,25 @@ namespace MysticUWP
 							SetBit(129);
 							mParty.Crystal[4]++;
 						}
+						else if (battleEvent == BattleEvent.DraconianKing) {
+							SetBit(95);
+							UpdateTileInfo(101, 19, 44);
+							UpdateTileInfo(101, 20, 42);
+							UpdateTileInfo(100, 20, 44);
+							UpdateTileInfo(102, 20, 44);
+
+							Talk(new string[] {
+								" 당신은 마지막 적인  드라코니안족의 왕을 처치했다.  기쁨을 감추지 못한채 돌아 나오려고 할때 갑자기 난데없는 암흑이  성 전체를 뒤덮기 시작했다." +
+								"  그와 동시에 정체불명의 목소리가 어디에선가 들려왔다.",
+								"",
+								$"[color={RGB.LightMagenta}] 나는  드라코니안족의 수호령이다.  너희들은 너무나 큰 실수를 나에게 저질렀다." +
+								" 나는 죽어간  드라코니안족의 복수를 위해  너희들을 이 세상에서 소멸시켜 버리려한다. 너희들은 나의 상대가 전혀되지 않는다. 이쯤에서 작별인사나 해두는게 좋을 것이다.[/color]"
+							}, SpecialEventType.BattleDraconianSpirit);
+						}
+						else if (battleEvent == BattleEvent.DraconianSpirit) {
+							SetBit(6);
+							Dialog($"[color={RGB.White}] 당신은 드라코니안족을 멸망 시켰다.[/color]");
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1385,14 +1404,16 @@ namespace MysticUWP
 							mXAxis = mMapHeader.StartX;
 							mYAxis = mMapHeader.StartY;
 						}
-						else if (battleEvent == BattleEvent.ExitKoboldKing) {
+						else if (battleEvent == BattleEvent.ExitKoboldKing)
+						{
 							mMapName = mMapHeader.ExitMap;
 							mXAxis = mMapHeader.ExitX;
 							mYAxis = mMapHeader.ExitY;
 
 							await RefreshGame();
 
-							if (GetBit(86)) {
+							if (GetBit(86))
+							{
 								Dialog(new string[] {
 									" 당신이 성 밖으로 탈출하자  허공에서 로드안의 음성이 들려왔다.",
 									"",
@@ -1403,7 +1424,8 @@ namespace MysticUWP
 								SetBit(5);
 							}
 						}
-						else if (battleEvent == BattleEvent.KoboldAlter) {
+						else if (battleEvent == BattleEvent.KoboldAlter)
+						{
 							mYAxis++;
 						}
 						else if (battleEvent == BattleEvent.TreasureBox1)
@@ -1426,26 +1448,45 @@ namespace MysticUWP
 						{
 							mXAxis++;
 						}
-						else if (battleEvent == BattleEvent.KoboldSoldier2) {
+						else if (battleEvent == BattleEvent.KoboldSoldier2)
+						{
 							mXAxis--;
 						}
-						else if (battleEvent == BattleEvent.KoboldSecurity) {
+						else if (battleEvent == BattleEvent.KoboldSecurity)
+						{
 							mXAxis++;
 						}
-						else if (battleEvent == BattleEvent.KoboldGuardian) {
+						else if (battleEvent == BattleEvent.KoboldGuardian)
+						{
 							mYAxis++;
 						}
 						else if (battleEvent == BattleEvent.KoboldSummoner)
 						{
 							mYAxis--;
 						}
-						else if (battleEvent == BattleEvent.KoboldKing) {
+						else if (battleEvent == BattleEvent.KoboldKing)
+						{
 							mBattleEvent = BattleEvent.KoboldKing;
 							Talk(" 당신은 코볼트킹에게서 도망치려 했지만 그가 만든 결계를 벗어 날 수가 없었다.", SpecialEventType.BackToBattleMode);
 
 							return;
 						}
-						else if (battleEvent == BattleEvent.DraconianOldKing) {
+						else if (battleEvent == BattleEvent.DraconianOldKing)
+						{
+							mBattleCommandQueue.Clear();
+							BattleMode();
+
+							return;
+						}
+						else if (battleEvent == BattleEvent.DraconianKing)
+						{
+							mBattleCommandQueue.Clear();
+							BattleMode();
+
+							return;
+						}
+						else if (battleEvent == BattleEvent.DraconianSpirit)
+						{
 							mBattleCommandQueue.Clear();
 							BattleMode();
 
@@ -2586,7 +2627,32 @@ namespace MysticUWP
 							mBattleEvent = BattleEvent.DraconianOldKing;
 							StartBattle(false);
 						}
-						
+						else if (specialEvent == SpecialEventType.BattleDraconianKing) {
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 3; i++)
+								JoinEnemy(49);
+							JoinEnemy(58);
+
+							DisplayEnemy();
+							HideMap();
+
+							mBattleEvent = BattleEvent.DraconianKing;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconianSpirit) {
+							mEncounterEnemyList.Clear();
+
+							var enemy = JoinEnemy(58);
+							enemy.Name = "드라콘 수호령";
+							enemy.SpecialCastLevel |= 0x80;
+
+							DisplayEnemy();
+							HideMap();
+
+							mBattleEvent = BattleEvent.DraconianSpirit;
+							StartBattle(false);
+						}
 					}
 					
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -17204,6 +17270,16 @@ namespace MysticUWP
 						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 						oriTileIdx = 44;
 					}
+					else if (column == playerX - 1 && row == playerY - 1 && mAnimationFrame >= 2)
+					{
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+						oriTileIdx = 44;
+					}
+					else if (column == playerX - 1 && row == playerY && mAnimationFrame >= 2)
+					{
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+						oriTileIdx = 53;
+					}
 					else
 						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				}
@@ -17566,7 +17642,8 @@ namespace MysticUWP
 			BattleKerberos,
 			BattleDraconianOldKing,
 			BattleDraconianOldKing2,
-			BattleDraconianKing
+			BattleDraconianKing,
+			BattleDraconianSpirit
 		}
 
 		private enum BattleEvent
@@ -17649,7 +17726,9 @@ namespace MysticUWP
 			DraconianGuardian,
 			MessengerOfDeath,
 			Kerberos,
-			DraconianOldKing
+			DraconianOldKing,
+			DraconianKing,
+			DraconianSpirit
 		}
 
 		private enum BattleTurn
