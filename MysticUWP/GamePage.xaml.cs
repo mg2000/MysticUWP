@@ -4,14 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Gaming.XboxLive.Storage;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -20,10 +17,7 @@ using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -430,6 +424,9 @@ namespace MysticUWP
 								else if (x == 14 && y == 30)
 									ShowEnterMenu("Imperium");
 							}
+							else if (mMapName == "Tomb") {
+								ShowExitMenu();
+							}
 						}
 
 						if (mMapHeader.TileType == PositionType.Town)
@@ -542,7 +539,7 @@ namespace MysticUWP
 							}
 							else if (GetTileInfo(x, y) == 53)
 							{
-								if (mMapName == "TrolTown")
+								if (mMapName == "TrolTown" || mMapName == "Tomb")
 									TalkMode(x, y);
 								else
 									ShowSign(x, y);
@@ -1345,6 +1342,17 @@ namespace MysticUWP
 							for (var x = 93; x < 96; x++)
 								UpdateTileInfo(x, 36, 44);
 						}
+						else if (battleEvent == BattleEvent.MessengerOfDeath) {
+							SetBit(127);
+						}
+						else if (battleEvent == BattleEvent.Kerberos) {
+							SetBit(128);
+						}
+						else if (battleEvent == BattleEvent.DraconianOldKing) {
+							Dialog($"[color={RGB.LightCyan}] [[ 영혼의 크리스탈 + 1 ][/color]");
+							SetBit(129);
+							mParty.Crystal[4]++;
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1434,6 +1442,12 @@ namespace MysticUWP
 						else if (battleEvent == BattleEvent.KoboldKing) {
 							mBattleEvent = BattleEvent.KoboldKing;
 							Talk(" 당신은 코볼트킹에게서 도망치려 했지만 그가 만든 결계를 벗어 날 수가 없었다.", SpecialEventType.BackToBattleMode);
+
+							return;
+						}
+						else if (battleEvent == BattleEvent.DraconianOldKing) {
+							mBattleCommandQueue.Clear();
+							BattleMode();
 
 							return;
 						}
@@ -2524,8 +2538,55 @@ namespace MysticUWP
 							BattleDraconianGuardian();
 						}
 						else if (specialEvent == SpecialEventType.MeetDraconianKing) {
-							
+							InvokeAnimation(AnimationType.TranformDraconianKing);
 						}
+						else if (specialEvent == SpecialEventType.BattleMessengerOfDeath) {
+							mEncounterEnemyList.Clear();
+
+							var enemy = JoinEnemy(0);
+							enemy.Level = 30;
+							enemy.HP = enemy.Endurance * enemy.Level * 10;
+
+							DisplayEnemy();
+							HideMap();
+
+							mBattleEvent = BattleEvent.MessengerOfDeath;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleKerberos) {
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 5; i++)
+							{
+								var enemy = JoinEnemy(11);
+								enemy.Level = 15;
+								enemy.HP = enemy.Endurance * enemy.Level * 10;
+							}
+
+							DisplayEnemy();
+							HideMap();
+
+							mBattleEvent = BattleEvent.Kerberos;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconianOldKing) {
+							mEncounterEnemyList.Clear();
+
+							var enemy = JoinEnemy(57);
+							enemy.Name = "17대 드라콘제왕";
+							enemy.SpecialCastLevel |= 0x80;
+
+							DisplayEnemy();
+							HideMap();
+
+							Talk($"[color={RGB.LightMagenta}] 100년만에 도굴꾼이 또 이곳에 나타났군.  너도 역시 내가 가지고 있는  영혼의 크리스탈을 훔칠 목적으로 여기에 온 것임에 틀림없다." +
+							" 하지만 너도 별 수없이  이 앞의 해골과 같은 운명이 될것이다.[/color]", SpecialEventType.BattleDraconianOldKing2);
+						}
+						else if (specialEvent == SpecialEventType.BattleDraconianOldKing2) {
+							mBattleEvent = BattleEvent.DraconianOldKing;
+							StartBattle(false);
+						}
+						
 					}
 					
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -5443,6 +5504,12 @@ namespace MysticUWP
 
 									mMapName = "Ground4";
 								}
+								else if (mMapName == "Tomb") {
+									mXAxis = mMapHeader.ExitX;
+									mYAxis = mMapHeader.ExitY;
+
+									mMapName = mMapHeader.ExitMap;
+								}
 								else
 								{
 									mXAxis = mMapHeader.ExitX;
@@ -5456,6 +5523,137 @@ namespace MysticUWP
 								if (mMapName == "Ground5") {
 									if (GetBit(6))
 										UpdateTileInfo(14, 30, 53);
+								}
+								else if (mMapName == "DracTown") {
+									if (GetBit(111))
+										UpdateTileInfo(23, 97, 44);
+
+									if (GetBit(112))
+										UpdateTileInfo(23, 91, 44);
+
+									if (GetBit(113))
+										UpdateTileInfo(24, 80, 44);
+
+									if (GetBit(114))
+										UpdateTileInfo(33, 99, 44);
+
+									if (GetBit(115))
+										UpdateTileInfo(35, 92, 44);
+
+									if (GetBit(116))
+										UpdateTileInfo(41, 83, 44);
+
+									if (GetBit(117))
+										UpdateTileInfo(32, 81, 44);
+
+									if (GetBit(118))
+										UpdateTileInfo(40, 69, 44);
+
+									if (GetBit(119))
+										UpdateTileInfo(31, 21, 44);
+
+									if (GetBit(120))
+										UpdateTileInfo(39, 32, 44);
+
+									if (GetBit(121))
+										UpdateTileInfo(15, 18, 44);
+
+									if (GetBit(122))
+										UpdateTileInfo(15, 34, 44);
+
+									if (GetBit(123))
+										UpdateTileInfo(14, 47, 44);
+
+									if (GetBit(47))
+										UpdateTileInfo(14, 56, 44);
+
+									if (GetBit(104))
+										UpdateTileInfo(76, 72, 44);
+
+									if (GetBit(105))
+										UpdateTileInfo(66, 65, 44);
+
+									if (GetBit(106))
+										UpdateTileInfo(66, 72, 44);
+
+									if (GetBit(107))
+										UpdateTileInfo(61, 70, 44);
+
+									if (GetBit(108))
+										UpdateTileInfo(66, 87, 44);
+
+									if (GetBit(109))
+										UpdateTileInfo(61, 78, 44);
+
+									if (GetBit(110))
+										UpdateTileInfo(64, 63, 44);
+
+									if (GetBit(103))
+									{
+										UpdateTileInfo(13, 104, 44);
+										UpdateTileInfo(14, 105, 44);
+									}
+
+									if (GetBit(102))
+									{
+										for (var y = 58; y < 61; y++)
+										{
+											for (var x = 46; x < 48; x++)
+												UpdateTileInfo(x, y, 44);
+										}
+									}
+
+									if (GetBit(101))
+									{
+										for (var x = 23; x < 27; x++)
+											UpdateTileInfo(x, 53, 44);
+									}
+
+									if (GetBit(100))
+									{
+										for (var y = 58; y < 61; y++)
+											UpdateTileInfo(83, y, 44);
+									}
+
+									if (GetBit(99))
+									{
+										for (var x = 76; x < 49; x++)
+											UpdateTileInfo(x, 87, 44);
+									}
+
+									if (GetBit(98))
+									{
+										for (var x = 58; x < 61; x++)
+											UpdateTileInfo(x, 47, 44);
+									}
+
+									if (GetBit(97))
+									{
+										for (var x = 72; x < 75; x++)
+											UpdateTileInfo(x, 39, 44);
+									}
+
+									if (GetBit(96))
+									{
+										for (var x = 93; x < 96; x++)
+											UpdateTileInfo(x, 36, 44);
+									}
+
+									if (GetBit(95))
+									{
+										UpdateTileInfo(101, 19, 44);
+										UpdateTileInfo(101, 20, 42);
+										UpdateTileInfo(100, 20, 44);
+										UpdateTileInfo(102, 20, 44);
+									}
+
+									foreach (var player in mBackupPlayerList) {
+										mPlayerList.Add(player);
+									}
+
+									mBackupPlayerList.Clear();
+
+									DisplayPlayerInfo();
 								}
 							}
 							else
@@ -9521,7 +9719,7 @@ namespace MysticUWP
 				{
 					SetBit(110);
 
-					Dialog($"[color={RGB.LightCyan}] [[ 한파의 크리스탈 + 1 ]/color]");
+					Dialog($"[color={RGB.LightCyan}] [[ 한파의 크리스탈 + 1 ][/color]");
 
 					mParty.Crystal[1]++;
 					UpdateTileInfo(64, 63, 44);
@@ -10869,6 +11067,11 @@ namespace MysticUWP
 					"  하지만 지금 나의 편이 불리하다고  내가 진다는 것은 아니다.  나 역시 반드시 너희들을 패배 시켜서 우리 종족을 존속 시키려고 필사적이다.[/color]",
 					$"[color={RGB.LightMagenta}] 이제 나의 뜻을 알았을 것이라 믿는다.  그럼 이제 결전이다![/color]"
 					}, SpecialEventType.MeetDraconianKing);
+				}
+			}
+			else if (mMapName == "Tomb") {
+				if ((moveX == 88 && moveY == 19) || (moveX == 87 && moveY == 20)) {
+					Dialog(" 당신은 여기서 뼈만 남은 인간의 해골을 보았다.  아마도 오래전에 여기를 도굴하려다가 갇혔던 것같다.");
 				}
 			}
 		}
@@ -15869,6 +16072,16 @@ namespace MysticUWP
 					AnimateTransition();
 				else if (mAnimationEvent == AnimationType.LandUranos)
 					AnimateFadeInOut();
+				else if (mAnimationEvent == AnimationType.TranformDraconianKing) {
+					mAnimationFrame = 1;
+					Task.Delay(500).Wait();
+					mAnimationFrame = 2;
+					Task.Delay(200).Wait();
+					mAnimationFrame = 3;
+					Task.Delay(300).Wait();
+					mAnimationFrame = 4;
+					Task.Delay(1500).Wait();
+				}
 			});
 
 			await animationTask;
@@ -16267,6 +16480,11 @@ namespace MysticUWP
 				await RefreshGame();
 
 				InvokeAnimation(AnimationType.LandUranos);
+			}
+			else if (mAnimationEvent == AnimationType.TranformDraconianKing) {
+				ClearDialog();
+				mSpecialEvent = SpecialEventType.BattleDraconianKing;
+				ContinueText.Visibility = Visibility.Visible;
 			}
 			else
 			{
@@ -16852,6 +17070,25 @@ namespace MysticUWP
 						tileIdx = 19;
 					}
 				}
+				else if (mMapName == "Tomb") {
+					if (tileIdx == 37) {
+						mapIdx = 56 * 2;
+						tileIdx = 16;
+					}
+					else if (tileIdx == 38)
+					{
+						mapIdx = 56 * 2;
+						tileIdx = 17;
+					}
+					else if (tileIdx == 54) {
+						mapIdx = 56 * 2;
+						tileIdx = 14;
+					}
+					else if (tileIdx == 53) {
+						mapIdx = 0;
+						tileIdx = 48;
+					}
+				}
 
 
 				if (mSpecialEvent == SpecialEventType.Penetration)
@@ -16953,6 +17190,20 @@ namespace MysticUWP
 				{
 					if (column == playerX - (mAnimationFrame + 1) && row == playerY)
 						mMapTiles.Draw(sb, 53 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.TranformDraconianKing && mAnimationEvent > 0) {
+					if (column == playerX && row == playerY - 3 && mAnimationFrame >= 1)
+					{
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+						oriTileIdx = 53;
+					}
+					else if (column == playerX && row == playerY - 2 && mAnimationFrame >= 1)
+					{
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+						oriTileIdx = 44;
+					}
 					else
 						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				}
@@ -17313,7 +17564,9 @@ namespace MysticUWP
 			MeetDraconianKing,
 			BattleMessengerOfDeath,
 			BattleKerberos,
-			BattleDraconianOldKing
+			BattleDraconianOldKing,
+			BattleDraconianOldKing2,
+			BattleDraconianKing
 		}
 
 		private enum BattleEvent
@@ -17393,7 +17646,10 @@ namespace MysticUWP
 			FrostDraconian,
 			DraconianHolyKnight,
 			DraconianMagician,
-			DraconianGuardian
+			DraconianGuardian,
+			MessengerOfDeath,
+			Kerberos,
+			DraconianOldKing
 		}
 
 		private enum BattleTurn
@@ -17455,7 +17711,8 @@ namespace MysticUWP
 			CompleteLearnKoboldWriting,
 			TurnOffTorch,
 			SendValiantToUranos,
-			LandUranos
+			LandUranos,
+			TranformDraconianKing
 		}
 
 		private enum SpinnerType
