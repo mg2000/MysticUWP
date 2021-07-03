@@ -1381,6 +1381,57 @@ namespace MysticUWP
 							SetBit(6);
 							Dialog($"[color={RGB.White}] 당신은 드라코니안족을 멸망 시켰다.[/color]");
 						}
+						else if (battleEvent == BattleEvent.Rebellion1) {
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 7; i++)
+								JoinEnemy(63);
+							JoinEnemy(64);
+
+							DisplayEnemy();
+							HideMap();
+
+							mBattleEvent = BattleEvent.Rebellion2;
+							return;
+						}
+						else if (battleEvent == BattleEvent.Rebellion2) {
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 4; i++)
+								JoinEnemy(63);
+							for (var i = 0; i < 3; i++)
+								JoinEnemy(64);
+							JoinEnemy(65);
+
+							DisplayEnemy();
+							HideMap();
+
+							mBattleEvent = BattleEvent.Rebellion3;
+							return;
+						}
+						else if (battleEvent == BattleEvent.Rebellion3) {
+							SetBit(33);
+							mParty.Etc[19] = 9;
+
+							Dialog(" 하지만  카미너스는  배리언트 피플즈의 남은 주민들을 데리고  성을 버린채  게이트를 통해 도망가 버렸다.");
+						}
+						else if (battleEvent == BattleEvent.OldLordAhn1) {
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 3; i++)
+								JoinEnemy(70);
+							JoinEnemy(71);
+							JoinEnemy(73);
+
+							DisplayEnemy();
+							HideMap();
+
+							mBattleEvent = BattleEvent.OldLordAhn2;
+							return;
+						}
+						else if (battleEvent == BattleEvent.OldLordAhn2) {
+							Talk($"[color={RGB.White}] 당신은 드디어 숙적 로드안을 물리쳤다.[/color]", SpecialEventType.End3);
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1495,6 +1546,22 @@ namespace MysticUWP
 							return;
 						}
 						else if (battleEvent == BattleEvent.DraconianSpirit)
+						{
+							mBattleCommandQueue.Clear();
+							BattleMode();
+
+							return;
+						}
+						else if (battleEvent == BattleEvent.Rebellion1 ||
+							battleEvent == BattleEvent.Rebellion2 ||
+							battleEvent == BattleEvent.Rebellion3) {
+							mBattleCommandQueue.Clear();
+							BattleMode();
+
+							return;
+						}
+						else if (battleEvent == BattleEvent.OldLordAhn1 ||
+							battleEvent == BattleEvent.OldLordAhn2)
 						{
 							mBattleCommandQueue.Clear();
 							BattleMode();
@@ -2665,6 +2732,55 @@ namespace MysticUWP
 						else if (specialEvent == SpecialEventType.TeleportCastleLore) {
 							TeleportCastleLore();
 						}
+						else if (specialEvent == SpecialEventType.FindShelter) {
+							mMapName = "Ground1";
+
+							await RefreshGame();
+
+							mWatchYear = mParty.Year;
+							mWatchDay = mParty.Day;
+							mWatchHour = mParty.Hour;
+							mWatchMin = mParty.Min;
+							mWatchSec = mParty.Sec;
+
+							mTimeWatch = true;
+							mTimeEvent = 3;
+
+							mWatchMin += 90;
+							if (mWatchMin > 59)
+							{
+								mWatchMin -= 60;
+								mWatchHour++;
+								if (mWatchHour > 23) {
+									mWatchHour -= 24;
+									mWatchDay++;
+
+									if (mWatchDay > 359) {
+										mWatchDay -= 360;
+										mWatchYear++;
+									}
+								}
+							}
+
+							mXAxis = 79;
+							mYAxis = 79;
+						}
+						else if (specialEvent == SpecialEventType.BattleOldLordAhn) {
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 3; i++)
+								JoinEnemy(68);
+							for (var i = 0; i < 3; i++)
+								JoinEnemy(67);
+							JoinEnemy(69);
+
+							mBattleEvent = BattleEvent.OldLordAhn1;
+							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.SendNecromancer) {
+							Talk(" 네크로만서로 변한 당신은 공간의 틈을 통해 다른 공간으로 빠져 버렸다.  그리고 로어 세계의 평화가 너무 오래 유지될 때  당신은 운명에 의해 이 세계로 내려 올 것이다.", SpecialEventType.SendNecromancer2);	
+						}
+						//else if (specialEvent == SpecialEventType.EndCookie1) 
 					}
 					
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -3274,7 +3390,7 @@ namespace MysticUWP
 					else if (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadB)
 					{
 						// 닫을 수 없는 메뉴
-						if (mMenuMode == MenuMode.BattleStart || mMenuMode == MenuMode.BattleCommand || mMenuMode == MenuMode.MeetPollux)
+						if (mMenuMode == MenuMode.BattleStart || mMenuMode == MenuMode.BattleCommand || mMenuMode == MenuMode.MeetPollux || mMenuMode == MenuMode.ChooseBetrayLordAhn)
 							return;
 
 						AppendText("");
@@ -5588,6 +5704,12 @@ namespace MysticUWP
 									mYAxis = mMapHeader.ExitY;
 
 									mMapName = mMapHeader.ExitMap;
+								}
+								else if (mMapName == "Dome") {
+									Talk($"[color={RGB.LightBlue}] 당신이 발견한 이 장소는  분명 배리언트 피플즈의 사람들을 로드안의 시각범위에 벗어나게 하기에  충분한 곳일겁니다." +
+									"  당신은 정말 훌륭한 일을 해내셨습니다.  제가  곧 당신을 지상으로 이동 시켜 드리겠습니다. 그리고 저는  몇 년 정도 휴식을 취하려 합니다." +
+									"  저의 영적 에너지를  마을을 건설하고 사람들을 이동 시키는데 써버려서 에너지 충전 기간이 필요합니다. 여태껏 당신의 도움들 정말 고마왔습니다." +
+									" 계속 자신이 결심한 의지대로 꿋꿋하게 나아가십시요.  저는 이제 뒷일을 모두 당신에게 맡기겠습니다.  당신이라면 분명히 해낼거라 믿습니다. 그럼, 안녕히...[/color]", SpecialEventType.FindShelter);
 								}
 								else
 								{
@@ -8546,6 +8668,62 @@ namespace MysticUWP
 								mParty.Etc[19] = 6;
 							}
 						}
+						else if (menuMode == MenuMode.ChooseBetrayLordAhn) {
+							if (mMenuFocusID == 0) {
+								SetBit(33);
+								mParty.Etc[24] = 2;
+
+								Dialog(" 우리 성의 사람들은 당신의 용기 있는 결단에 찬사를 보내고 있소. 정말 장한 일이오.");
+
+								mWatchYear = mParty.Year;
+								mWatchDay = mParty.Day;
+								mWatchHour = mParty.Hour;
+								mWatchMin = mParty.Min;
+								mWatchSec = mParty.Sec;
+
+								mTimeWatch = true;
+								mTimeEvent = 0;
+
+								mWatchMin += 10;
+								if (mWatchMin > 59) {
+									mWatchMin -= 60;
+									mWatchHour++;
+
+									if (mWatchHour > 23) {
+										mWatchHour -= 24;
+										mWatchDay++;
+
+										if (mWatchDay > 359) {
+											mWatchDay -= 360;
+
+											mWatchYear++;
+										}
+									}
+								}
+
+								mBackupPlayerList.Clear();
+								while (mPlayerList.Count > 1) {
+									mBackupPlayerList.Add(mPlayerList[1]);
+									mPlayerList.RemoveAt(1);
+								}
+
+								DisplayPlayerInfo();
+
+
+							}
+							else {
+								mParty.Etc[24] = 1;
+
+								for (var i = 0; i < 8; i++)
+									JoinEnemy(63);
+
+								DisplayEnemy();
+								HideMap();
+
+								mBattleEvent = BattleEvent.Rebellion1;
+								StartBattle(false);
+							}
+						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
 					//				{
@@ -10089,6 +10267,17 @@ namespace MysticUWP
 					DisplayPlayerInfo();
 				}
 			}
+			else if (mMapName == "Dome") {
+				if ((4 <= mXAxis && mXAxis <= 45) || (5 <= mYAxis && mYAxis <= 94))
+					ShowExitMenu();
+			}
+			else if (mMapName == "Light") {
+				if (mYAxis == 69)
+					ShowExitMenu();
+				else if (mYAxis == 42 && !GetBit(33)) {
+					InvokeAnimation(AnimationType.MeetCaminus);
+				}
+			}
 			
 	
 			return triggered;
@@ -11483,6 +11672,100 @@ namespace MysticUWP
 					" 인간의 입장에서 생각할 때는 물론 당신은 영웅이죠. 하지만 모든 종족의 관점에서 본 당신은 비정한 정복자의 꼭두각시일뿐이예요." +
 					" 나의 말을 깊이 새기고, 머지않은 미래에 있을 중요한 선택에 현명한 판단을 하기 바라겠어요."
 					}, SpecialEventType.None);
+				}
+			}
+			else if (mMapName == "Dome") {
+				if (moveX == 25 && moveY == 13) {
+					Dialog(" 저는 카미너스라는 그때 그 사람입니다. 우리는  이 마을을  '빛의 지붕'이라고 명명했습니다. '빛'은 정의를 뜻하고 '지붕'은 그것을 지키는 것 또는 지키는 사람이란 뜻입니다." +
+					"  즉, 정의를 지키는 사람들의 마을이란 뜻입니다.");
+				}
+				else if (moveX == 12 && moveY == 26) {
+					Dialog(" 당신은 우리들의 생명의 은인입니다. 또한 새로운 로드안이 되실  충분한 가능성을 갖고 계신분입니다.");
+				}
+				else if (moveX == 21 && moveY == 34) {
+					Dialog(" 당신의 용기있는 결단에 정말 감격했습니다.");
+				}
+				else if (moveX == 38 && moveY == 28) {
+					Dialog(" 당신과 에인션트 이블이 정말 진정한 선의 수호자입니다.");
+				}
+				else if (moveX == 18 && moveY == 53) {
+					Dialog(" 당신은 비록 과거에 로드안의 심복으로써  큰 실수를 저질렀지만 이제는 명실공히 이런 난세의 구세주입니다.");
+				}
+				else if (moveX == 29 && moveY == 62) {
+					Dialog(" 우리들은 투표로 이곳의 지도자를 선출했습니다. 그는 바로 우리들을 일어서게한 용감한 사람, 바로 카미너스씨입니다.");
+				}
+				else if (moveX == 18 && moveY == 72) {
+					Dialog(" 이곳 사람들은  모두 당신에게 고마와하고 있고  당신이 우리가 못다한 일을 해줄거라 믿고 있습니다.");
+				}
+				else if (moveX == 37 && moveY == 40) {
+					if (!GetBit(202)) {
+						Dialog($" 당신의 용기에대한  나의 작은 정성이오.  자 이걸 받으시오. 우리 조상 대대로 내려오던 [color={RGB.LightCyan}]에보니 크리스탈[/color]이란거요.");
+						mParty.Crystal[3]++;
+						SetBit(202);
+					}
+					else {
+						Dialog(" 상당히 귀한 물건이니 조심해서 간직하시오.");
+					}
+					
+				}
+			}
+			else if (mMapName == "Dark") {
+				if ((moveX == 86 && moveY == 72) || (moveX == 93 && moveY == 67) || (moveX == 90 && moveY == 64))
+					ShowGroceryMenu();
+				else if ((moveX == 7 && moveY == 70) || (moveX == 13 && moveY == 68) || (moveX == 13 && moveY == 68))
+					ShowWeaponShopMenu();
+				else if ((moveX == 85 && moveY == 11) || (moveX == 86 && moveY == 13))
+					ShowHospitalMenu();
+				else if (moveX == 8 && moveY == 63)
+					ShowMedicineStoreMenu();
+				else if ((moveX == 20 && moveY == 11) || (moveX == 24 && moveY == 12))
+					ShowClassTrainingMenu();
+				else if (moveX == 27 && moveY == 11)
+					ShowExpStoreMenu();
+				else if (moveX == 18 && moveY == 52)
+					Dialog($"[color={RGB.Yellow}] 이 세계의 창시자는 안영기님이시며 그는 위대한 프로그래머입니다.[/color]");
+				else if (moveX == 12 && moveY == 54)
+					Dialog(" 이십 몇년 전에  이곳은  네크로만서란 자에 의해 큰 혼란이 있었습니다.");
+				else if (moveX == 23 && moveY == 49)
+					Dialog(" 안녕하시오.");
+				else if ((moveX == 12 && moveY == 26) || (moveX == 17 && moveY == 26))
+					Dialog(" 여기는 코리아 위스키가 제일 잘 팔립니다.");
+				else if (moveX == 20 && moveY == 32)
+					Dialog(" 요즈음은 너무 할 일이 없어서 따분합니다.");
+				else if (moveX == 17 && moveY == 32)
+					Dialog(" 당신  정말 이상한 차림이군요.  거의 100년 전에나 입던 옷인데...");
+				else if (moveX == 12 && moveY == 31)
+					Dialog(" 킥킥.. 정말 우스운 복장을 하고 있군요.");
+				else if (moveX == 17 && moveY == 37)
+					Dialog(" 요새는 너무 따분한 세상의 연속이에요.");
+				else if ((moveX == 49 && moveY == 10) || (moveX == 52 && moveY == 10))
+				{
+					Dialog(" 여태껏 근 20년간  아무도 이곳에 갇히지 않았죠. 그래서 저는 너무 할 일이 없습니다.");
+				}
+				else if (moveX == 71 && moveY == 77)
+					Dialog(" 여기는 로어성의 묘지입니다. 함부로 들어가지 마십시요.");
+				else if (moveX == 76 && moveY == 45)
+					Dialog(" 메너스는 폐광이 된지 50년이 넘었죠.");
+				else if (moveX == 82 && moveY == 58)
+					Dialog(" 라스트디치는 주민 등록을 마친 자만이 들어 갈 수있죠.");
+				else if (moveX == 82 && moveY == 24)
+					Dialog(" 20년 전에 알비레오라는 사람이 이상한 예언서를 남겼죠. 거기서 다크 메이지라는 사람이 나타난다고 했었는데 실제로는 나타나지 않았어요.");
+				else if (moveX == 67 && moveY == 60)
+					Dialog(" 당신들의 옷은 정말 특이하군요. 100년전 사람 같아요.");
+				else if ((moveX == 49 && moveY == 50) || (moveX == 51 && moveY == 50))
+					Dialog(" 안녕하시오.");
+				else if (47 <= mXAxis && mXAxis <= 53 && 30 <= mYAxis && mYAxis <= 36)
+					Dialog(" ...");
+				else if (moveX == 50 && moveY == 27) {
+					Talk(new string[] {
+						$"[color={RGB.Brown}] 로드안!! 당신은 나를 기억하겠소?  100년전 쯤에  나를 이용하여  무고한 네 종족을 멸망시키게 만들었던것도 말이오.[/color]",
+						"",
+						" 당신의 말이 채 끝나기도 전에  로드안은 다급하게 외쳤다.",
+						"",
+						$"[color={RGB.LightBlue}] 경호원, 경호원 !![/color]",
+						"",
+						" 순간 몇명의 용사가 주위에서 나와 로드안을 감쌌다."
+					}, SpecialEventType.BattleOldLordAhn);
 				}
 			}
 		}
@@ -16915,6 +17198,20 @@ namespace MysticUWP
 				mSpecialEvent = SpecialEventType.BattleDraconianKing;
 				ContinueText.Visibility = Visibility.Visible;
 			}
+			else if (mAnimationEvent == AnimationType.MeetCaminus) {
+				Ask(new string[] {
+					" 나는 이번 반란을 지휘하고 있는 카미너스라는 사람이오. 몇일 전에 우리 성에 에인션트 이블의 의지가 다녀갔소. 그리고 이 세상의 진실을 어렴풋이 알게 되었소." +
+					"  우리는 항상 로드안이 말하는 것을 그대로 믿어왔소. 그건 여태껏 알려진 그의 명성 때문이었다오.  하지만 이제는 예외가 있다는걸 깨닭게 되었소.",
+					" 당신은 그의 명령대로 오크, 트롤, 코볼트, 드라코니안 이 네종족을 제거하여 인간을 이롭게 한건 사실이오. 당신 또한 그 일을 자랑스럽게 생각할지도 모르오." +
+					"  하지만  우리의 입장에서 볼때 그렇다는 것이지, 절대로 다른 종족의 입장에서는 당신이 한 일이 정의를 위한 것이 아니라오." +
+					"  실제로 잘못은 우리가 했으면서 도리어 그들에게 잘못을 덮어 씌워서  그들을 해한 것이지않소. 당신이 에인션트 이블을 만났다는 말을 들었소." +
+					" 그렇다면 우리가 지금 하려는 일을 이해할거요.  우리들은 당신이 우리의 편에 서서 로드안을 응징해 주기를 바라고 있소.",
+					" 자, 선택은 당신에게 있소."
+				}, MenuMode.ChooseBetrayLordAhn, new string[] {
+					"로드안을 배신한다",
+					"로드안의 말대로 이들을 벌한다"
+				});
+			}
 			else
 			{
 				mAnimationEvent = AnimationType.None;
@@ -17914,6 +18211,7 @@ namespace MysticUWP
 			TransformProtagonist3,
 			TransformProtagonist4,
 			SendNecromancer,
+			SendNecromancer2,
 			FollowSolider,
 			LordAhnMission,
 			LeaveSoldier,
@@ -18015,7 +18313,10 @@ namespace MysticUWP
 			BattleDraconianKing,
 			BattleDraconianSpirit,
 			TeleportCastleLore,
-			MeetAhnYoungKi
+			MeetAhnYoungKi,
+			FindShelter,
+			BattleOldLordAhn,
+			End3
 		}
 
 		private enum BattleEvent
@@ -18100,7 +18401,12 @@ namespace MysticUWP
 			Kerberos,
 			DraconianOldKing,
 			DraconianKing,
-			DraconianSpirit
+			DraconianSpirit,
+			Rebellion1,
+			Rebellion2,
+			Rebellion3,
+			OldLordAhn1,
+			OldLordAhn2,
 		}
 
 		private enum BattleTurn
@@ -18163,7 +18469,8 @@ namespace MysticUWP
 			TurnOffTorch,
 			SendValiantToUranos,
 			LandUranos,
-			TranformDraconianKing
+			TranformDraconianKing,
+			MeetCaminus
 		}
 
 		private enum SpinnerType
@@ -18333,6 +18640,7 @@ namespace MysticUWP
 			JoinDraconian,
 			BattleDraconianEntrance,
 			TeleportCastleLore,
+			ChooseBetrayLordAhn
 		}
 	}
 }
