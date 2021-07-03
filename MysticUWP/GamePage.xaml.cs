@@ -266,6 +266,7 @@ namespace MysticUWP
 			mEnterTypeMap["Hut"] = "오두막집";
 			mEnterTypeMap["DracTown"] = "드라코니안 마을";
 			mEnterTypeMap["Imperium"] = "임페리엄 마이너성";
+			mEnterTypeMap["HdsGate"] = "하데스 게이트";
 
 			gamePageKeyDownEvent = async (sender, args) =>
 			{
@@ -426,6 +427,14 @@ namespace MysticUWP
 							}
 							else if (mMapName == "Tomb") {
 								ShowExitMenu();
+							}
+							else if (mMapName == "HdsGate") {
+								if (x == 20 && y == 32) {
+									if (mParty.Etc[24] == 2)
+										ShowEnterMenu("UnderGrd");
+									else
+										Dialog($"[color={RGB.LightMagenta}] 지하 세계의 입구에서 무언가 강한 힘이 뿜어져 나와 당신을 밀쳐내 버렸다.[/color]");
+								}
 							}
 						}
 
@@ -2652,6 +2661,9 @@ namespace MysticUWP
 
 							mBattleEvent = BattleEvent.DraconianSpirit;
 							StartBattle(false);
+						}
+						else if (specialEvent == SpecialEventType.TeleportCastleLore) {
+							TeleportCastleLore();
 						}
 					}
 					
@@ -5494,6 +5506,7 @@ namespace MysticUWP
 						{
 							if (mMenuFocusID == 0)
 							{
+								var prevMapName = mMapName;
 								if (mMapName == "Vesper")
 								{
 									if (mXAxis == 4)
@@ -6786,7 +6799,7 @@ namespace MysticUWP
 										}
 
 										break;
-									case "Imperium":
+									default:
 										mMapName = mTryEnterMap;
 
 										await RefreshGame();
@@ -8521,6 +8534,18 @@ namespace MysticUWP
 							if (mMenuFocusID == 0)
 								BattleDraconianEntrance();
 						}
+						else if (menuMode == MenuMode.TeleportCastleLore) {
+							if (mMenuFocusID == 0) {
+								mXAxis = mMapHeader.EnterX;
+								mYAxis = mMapHeader.EnterY;
+
+								mMapName = mMapHeader.EnterMap;
+
+								await RefreshGame();
+
+								mParty.Etc[19] = 6;
+							}
+						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
 					//				{
@@ -8795,6 +8820,12 @@ namespace MysticUWP
 					});
 
 					SetBit(51);
+				}
+				else if (mXAxis == 83 && mYAxis == 85) {
+					if (mParty.Year <= 699)
+						ShowEnterMenu("HdsGate");
+					else
+						triggered = false;
 				}
 				else
 					triggered = false;
@@ -9837,6 +9868,227 @@ namespace MysticUWP
 					SpecialEventType.BattleDraconianOldKing);
 				}
 			}
+			else if (mMapName == "Imperium") {
+				if (mYAxis == 44)
+				{
+					ShowExitMenu();
+				}
+				else if (mXAxis == 27 && mYAxis == 16)
+				{
+					Dialog($"[color={RGB.Yellow}] You  ask  Young-Kie  how to play this game easilly." +
+					" Young-Kie's smile makes you uneasy, as uneasy as  staring down the sources of game programs. \" It's really very simple, \" he  laughs." +
+					"\" This game's  secret  code is ascii #197. \"[/color]");
+				}
+				else if (mXAxis == 24 && mYAxis == 23)
+				{
+					if (!GetBit(31))
+					{
+						Talk(new string[] {
+							$" 드디어 {mPlayerList[0].Name}님이 여기에 당도 하셨군요.",
+							$" 저의 소개를 하자면 바로 그 에인션트 이블입니다. 저의 육체는 벌써 오래전에 사라지고 없습니다. 저는 로드안과는 달리 그저 평범한 인간이었으니까요." +
+							"  지금은  나의 의지만이 남아 반신반인의 경지에서  이렇게 이곳에 존재하고 있습니다. 그럼 본론으로 들어가겠습니다.",
+							" 저는 예전에 로드안에게, 선을 위해서라면 나의 이름을 이용하여  악을 비난해도 좋다고 약속했었습니다." +
+							"  그래서 로어 세계에서  어떠한 안좋은 일이 생기더라도  저의 소행이었노라고 치부해버리며  로드안은 자신의 지위를 유지할 수 있었습니다." +
+							"  하지만 로드안은 해가 갈수록 자신의 위치를 지키기 위해서  저의 이름을 이용한다는 느낌이 와닿기 시작했습니다." +
+							" 원래의 그는 전혀 그럴 사람이 아니었는데  너무나 큰 명성과 지위에 올라있다보니  로어성의 성주라는 직책이 그를 자신만을 생각하는 현실주의자로 바꾸어 버린 것입니다." +
+							"  선의 대표자로서의 그는 항상 주위를 환기 시킬만한  선행을 찾기 시작했고  결국은 남에게 보이기 위한 선을 행하기 시작했습니다." +
+							"  그리고  급기야 이번같은 큰 실수를  저지르고야 말았습니다.  로드안은 인간을 너무 생각하는 마음에서 인간의 영역을 늘려주기 원했고  그 결과는 타종족에 대한 침범으로 이어졌습니다." +
+							"  이건 분명 로드안의 잘못된 행동이며 거의 돌이킬 수 없는 결과를 낳고야 말았습니다.  지금의 그는 권력과 명예의 노예가 되어  광적으로 이 일을 강행하고 있습니다." +
+							" 그리고 이 일이 다 끝나더라도 더 큰 명예를 얻기위해 선행을 빙자한 다른 일을 또 꾸밀 것입니다.",
+							" 만약 저의 말이 맞다는게 확인되면 부디 저의 편에 서서 저를 도와주십시요. 저는 당신과 같은 분의 도움이 크게 필요합니다."
+						}, SpecialEventType.TeleportCastleLore);
+						SetBit(31);
+					}
+					else
+						TeleportCastleLore();
+				}
+				else
+					triggered = false;
+			}
+			else if (mMapName == "HdsGate") {
+				if (mXAxis == 24 && mYAxis == 29) {
+					int tileA, tileB;
+
+					if (GetTileInfo(19, 26) == 40) {
+						tileA = 40;
+						tileB = 41;
+
+						Dialog(" 당신은 레버를 왼쪽으로 당겼다.");
+					}
+					else {
+						tileA = 41;
+						tileB = 40;
+
+						Dialog(" 당신은 레버를 오른쪽으로 당겼다.");
+					}
+
+					UpdateTileInfo(19, 26, tileB);
+					UpdateTileInfo(21, 27, tileB);
+					UpdateTileInfo(20, 28, tileA);
+					UpdateTileInfo(22, 30, tileA);
+					UpdateTileInfo(14, 31, tileA);
+					UpdateTileInfo(15, 32, tileB);
+					UpdateTileInfo(118, 33, tileB);
+					UpdateTileInfo(16, 34, tileA);
+					UpdateTileInfo(23, 32, tileB);
+					UpdateTileInfo(27, 32, tileA);
+					UpdateTileInfo(24, 34, tileB);
+					UpdateTileInfo(26, 34, tileA);
+					UpdateTileInfo(21, 35, tileA);
+					UpdateTileInfo(22, 38, tileA);
+				}
+				else if (mXAxis == 22 && mYAxis == 18) {
+					int tileA, tileB;
+
+					if (GetTileInfo(19, 28) == 40)
+					{
+						tileA = 40;
+						tileB = 41;
+
+						Dialog(" 당신은 레버를 왼쪽으로 당겼다.");
+					}
+					else
+					{
+						tileA = 41;
+						tileB = 40;
+
+						Dialog(" 당신은 레버를 오른쪽으로 당겼다.");
+					}
+
+					UpdateTileInfo(22, 26, tileA);
+					UpdateTileInfo(19, 28, tileB);
+					UpdateTileInfo(21, 28, tileB);
+					UpdateTileInfo(20, 30, tileA);
+					UpdateTileInfo(15, 31, tileA);
+					UpdateTileInfo(17, 32, tileA);
+					UpdateTileInfo(15, 33, tileB);
+					UpdateTileInfo(18, 34, tileA);
+					UpdateTileInfo(24, 31, tileB);
+					UpdateTileInfo(26, 32, tileB);
+					UpdateTileInfo(23, 33, tileA);
+					UpdateTileInfo(25, 33, tileA);
+					UpdateTileInfo(21, 36, tileA);
+					UpdateTileInfo(19, 37, tileA);
+				}
+				else if (mXAxis == 22 && mYAxis == 18)
+				{
+					int tileA, tileB;
+
+					if (GetTileInfo(19, 28) == 40)
+					{
+						tileA = 40;
+						tileB = 41;
+
+						Dialog(" 당신은 레버를 왼쪽으로 당겼다.");
+					}
+					else
+					{
+						tileA = 41;
+						tileB = 40;
+
+						Dialog(" 당신은 레버를 오른쪽으로 당겼다.");
+					}
+
+					UpdateTileInfo(22, 26, tileA);
+					UpdateTileInfo(19, 28, tileB);
+					UpdateTileInfo(21, 28, tileB);
+					UpdateTileInfo(20, 30, tileA);
+					UpdateTileInfo(15, 31, tileA);
+					UpdateTileInfo(17, 32, tileA);
+					UpdateTileInfo(15, 33, tileB);
+					UpdateTileInfo(18, 34, tileA);
+					UpdateTileInfo(24, 31, tileB);
+					UpdateTileInfo(26, 32, tileB);
+					UpdateTileInfo(23, 33, tileA);
+					UpdateTileInfo(25, 33, tileA);
+					UpdateTileInfo(21, 36, tileA);
+					UpdateTileInfo(19, 37, tileA);
+				}
+				else if (mXAxis == 26 && mYAxis == 14)
+				{
+					int tileA, tileB;
+
+					if (GetTileInfo(20, 27) == 40)
+					{
+						tileA = 40;
+						tileB = 41;
+
+						Dialog(" 당신은 레버를 왼쪽으로 당겼다.");
+					}
+					else
+					{
+						tileA = 41;
+						tileB = 40;
+
+						Dialog(" 당신은 레버를 오른쪽으로 당겼다.");
+					}
+
+					UpdateTileInfo(21, 26, tileA);
+					UpdateTileInfo(20, 27, tileB);
+					UpdateTileInfo(22, 28, tileA);
+					UpdateTileInfo(19, 30, tileB);
+					UpdateTileInfo(17, 31, tileA);
+					UpdateTileInfo(18, 32, tileA);
+					UpdateTileInfo(16, 33, tileB);
+					UpdateTileInfo(14, 34, tileA);
+					UpdateTileInfo(23, 31, tileB);
+					UpdateTileInfo(26, 31, tileB);
+					UpdateTileInfo(25, 32, tileA);
+					UpdateTileInfo(23, 34, tileB);
+					UpdateTileInfo(27, 34, tileA);
+					UpdateTileInfo(22, 36, tileA);
+					UpdateTileInfo(20, 39, tileA);
+				}
+				else if (mXAxis == 26 && mYAxis == 18)
+				{
+					int tileA, tileB;
+
+					if (GetTileInfo(19, 27) == 40)
+					{
+						tileA = 40;
+						tileB = 41;
+
+						Dialog(" 당신은 레버를 왼쪽으로 당겼다.");
+					}
+					else
+					{
+						tileA = 41;
+						tileB = 40;
+
+						Dialog(" 당신은 레버를 오른쪽으로 당겼다.");
+					}
+
+					UpdateTileInfo(19, 27, tileB);
+					UpdateTileInfo(20, 29, tileB);
+					UpdateTileInfo(22, 29, tileB);
+					UpdateTileInfo(21, 30, tileA);
+					UpdateTileInfo(16, 31, tileA);
+					UpdateTileInfo(14, 32, tileA);
+					UpdateTileInfo(14, 33, tileB);
+					UpdateTileInfo(17, 34, tileB);
+					UpdateTileInfo(24, 30, tileA);
+					UpdateTileInfo(27, 33, tileA);
+					UpdateTileInfo(25, 34, tileB);
+					UpdateTileInfo(20, 37, tileB);
+					UpdateTileInfo(21, 38, tileB);
+				}
+				else if (mMapHeader.Layer[mXAxis + mYAxis * mMapHeader.Width] == GetTileInfo(mXAxis, mYAxis)) {
+					ShowGameOver(new string[] { $"[color={RGB.LightRed}] 당신이 물 속으로 발을 디디자  순식간에 온몸이 타버렸다.[/color]" });
+
+					foreach (var player in mPlayerList) {
+						player.HP = 0;
+						player.Dead = 1;
+					}
+
+					if (mAssistPlayer != null)
+					{
+						mAssistPlayer.HP = 0;
+						mAssistPlayer.Dead = 1;
+					}
+
+					DisplayPlayerInfo();
+				}
+			}
 			
 	
 			return triggered;
@@ -9853,6 +10105,12 @@ namespace MysticUWP
 			return options;
 		}
 
+		private void TeleportCastleLore() {
+			Ask(" 지금 당신을 로어성 앞으로 공간이동 시켜 드리겠습니다.  거기서 저와 로드안의 진위를 확인해 주시기 바랍니다.", MenuMode.TeleportCastleLore, new string[] {
+				"공간이동을 한다",
+				"공간이동을 하지않는다"
+			});
+		}
 
 		private void BattleTreasureBox(SpecialEventType specialEvent) {
 			mEncounterEnemyList.Clear();
@@ -11140,6 +11398,93 @@ namespace MysticUWP
 					Dialog(" 당신은 여기서 뼈만 남은 인간의 해골을 보았다.  아마도 오래전에 여기를 도굴하려다가 갇혔던 것같다.");
 				}
 			}
+			else if (mMapName == "Imperium") {
+				if (moveX == 8 && moveY == 6)
+				{
+					Dialog(" 예전에는 로어성 주민과도  교역 했었다고 하는데  몇 백년 전부터는 무슨 이유인지는 몰라도 왕래가 완전히 끊겨 버렸어요.");
+				}
+				else if (moveX == 7 && moveY == 34)
+				{
+					Dialog(" 이 성의 중앙에는  에인션트 이블님의 의지가 잠들어 있습니다.");
+				}
+				else if (moveX == 44 && moveY == 34)
+				{
+					Dialog(" 이곳의 도서관은 색다른 내용의 보고라오.");
+				}
+				else if (moveX == 23 && moveY == 38)
+				{
+					Dialog(" 당신은 못 보던 사람이군요. 아마 여행자인것 같은데 우리 성에 온 것을 환영하오.");
+				}
+				else if (moveX == 25 && moveY == 38)
+				{
+					Dialog(" 여기는  에인션트 이블님의  자비로써 세워진 '임페리엄 마이너성'입니다.");
+				}
+				else if ((moveX == 15 && moveY == 27) || (moveX == 17 && moveY == 26))
+					ShowGroceryMenu();
+				else if ((moveX == 31 && moveY == 26) || (moveX == 33 && moveY == 28))
+					ShowHospitalMenu();
+				else if (moveX == 17 && moveY == 17) {
+					Talk(new string[] {
+						$" 안녕하시오, {mPlayerList[0].Name}.",
+						$" 나는  나의 게임속의 버그를 찾거나 난이도를 조절하기 위해서  항상 게임속을 떠도는 이 게임의 제작자 [color={RGB.Yellow}]안 영기[/color]라는 사람이오." +
+						" 때로는 로어성의 병사로  때로는  다른 종족의 주민으로 계속 변장하며 이곳 저곳을 떠돌아 다닌다오.",
+						" 당신은 벌써 이 게임의 반 이상을 했군요. 나는 당신에게 많은 것을 바라지는 않는다오." +
+						" 다만, 내가 이 게임을 통해 말하고자하는 현실적인 주제를  알아 주었으면 하는 바램이 있을뿐이라오."
+					}, SpecialEventType.MeetAhnYoungKi);
+				}
+				else if (moveX == 15 && moveY == 19) {
+					Dialog(" 안 영기님이 그러시던데  '또 다른 지식의 성전'은 원래 멀티 엔딩이 아니었고" +
+					"  '다크 메이지 실리안 카미너스'는  군입대 시간이 급박해서 멀티 엔딩을 만들지 못했다고 하는데  이번 게임은 확실한 멀티 엔딩이라더군요.");
+				}
+				else if (moveX == 32 && moveY == 17) {
+					Dialog(" 저는  예언자로서의 능력을 키우는 중입니다. 저의 예언 능력은 아직 미숙하지만  당신의 미래가 조금은 옅보입니다." +
+					"  당신은 머지않아 중요한 선택의 순간을 맞게 될 것입니다. 그때의 선택에 따라  당신은 큰 운명의 산맥을 넘어야 할 것입니다.");
+				}
+				else if (moveX == 32 && moveY == 19) {
+					Dialog(" 이곳에는  안 영기님이 만든 게임들이 보관되어 있습니다." +
+					"  첫번째로 만든 '3D 건담'이라는 시뮬레이션 게임의 APPLE SOFT BASIC 과 65C02 기계어 소스 프로그램부터" +
+					"  13번째 게임인 '또 다른 지식의 성전'과  16번째 게임인 '다크 메이지 실리안 카미너스', 또 17번째 게임인 '비전 속으로'와 같은 게임이 소스와 함께 보관되어 있습니다.");
+				}
+				else if ((moveX == 21 && moveY == 16) || (moveX == 27 && moveY == 17)) {
+					Dialog(" 죄송합니다.  프로그래밍 시간 관계상 제작자가 저희 가게를 프로그래밍 하지 못했군요. 그래서 저희 가게는 운영되지 않습니다.");
+				}
+				else if (moveX == 23 && moveY == 28) {
+					Dialog(" 이 안은 '비전의 지식'이라는 신전이오. 에인션트 이블님의 의지가 잠든 곳이기도 하지요.");
+				}
+				else if (moveX == 25 && moveY == 28) {
+					Dialog(" 이 안의 두 사람은 에인션트 이블님의 의지를 깨닳은 사람들이지요.  당신에게  결코 거짓말 따위는 하지 않을 거예요.");
+				}
+				else if (moveX == 21 && moveY == 23) {
+					Talk(" 에인션트 이블님은  예전에 아주 덕이 높은 현자였었지요.  또한 로드안과도 무척 친한 사이였어요. 수백년전에 로드안이 선이라는 전제를 걸고 이 세계를 통치 했었지요." +
+					" 로드안의 훌륭한 정치에  모든 대륙은 평화를 누리게 되었고 그게 너무 만연된 나머지  현재의 평화를 아주 당연시 해버리고는 그것을 지키려는 생각은 접어둔채" +
+					"  항상 남에 의해 평화를 보장 받으려는 사상이 팽배해졌죠." +
+					"  후손들은 급기야  자신의 조상이 흘린  피의 보답으로  이렇게 평화로운 세상이 생겨났다는 것을 까맣게 잊어버리기 시작했고 마침내 로드안은 그런 사람들에게 경각심을 부추겨 보자는 의도로" +
+					"  새로운 개념을 도입했죠.  그것이 바로 그대들이 '악'이라고 배운 것들이예요.  그때 로드안의 추상적인 '악'의 개념을  구체적인 '악'으로 만들기 위해 그 상징이 되어줄 사람을  수소문했죠." +
+					"  로드안의 친구 대부분은  그의 뜻에 찬성헀지만  아무도 자신이 '악'을 대표하는 그런 역을 맡아  남들로부터 비난받고 저주받는 역을 하려고는 하지 않았죠." +
+					" 그때 나타난 사람이 바로 에인션트 이블님이예요.  그분은 여태껏 지녔던 훌륭한 명성들을 버려둔채 악의 집대성으로 군림했지요. 본명 또한 버리고 지금의 이름을 사용하며  로드안의 일에 적극 동참했어요." +
+					" 그의 존재 때문에  로어 세계의 사람들은  악으로부터 자신과 가족을 지키기 위해  스스로 선을 자각하고 현재의 평화에 감사하며  그 평화를 유지하려 노력하는 자세를 가지게 된거죠." +
+					"  로드안은 사람들의 경각심을 더 부추기기 위해  지금 에인션트 이블이 여러 곳에서 이런 저런 구체적인 악행을 일삼고 있다고 거짓으로 소문을 퍼트리기 시작했고" +
+					"  어릴때부터 교육과정에 그런 사상을 심어 넣어  어른이 되어서도 선을 지켜야 한다는 개념이 없어지지 않도록 해왔어요.", SpecialEventType.None);
+				}
+				else if (moveX == 26 && moveY == 25) {
+					Talk(new string[] {
+					" 로드안은 선에 대한 너무 강한 집착 때문에 중대한 실수를 저질렀죠. 바로 당신을 시켜서 오크, 트롤, 코볼트, 드라코니안  이  네 종족을 멸망시킨게 그 실수예요." +
+					"  로드안은 인간을 이롭게 하고자 아프로디테 테라의 트롤족을 몰아내고  그곳에 베스퍼성이란 전초기지를 건설했죠." +
+					" 그곳은 인간에게 대단히 유용한 자원을 조달했고 그로인해 로드안의 평은 상당히 높아졌어요." +
+					" 그리고 최근에는 다시 마지막 남은 트롤성을 공격하여 아프로디테 테라를 완전히 인간의 것으로 만들자는 계획을 세우고 베스퍼성의 주민들에게 명령했죠." +
+					" 베스퍼성 사람들은 헤로인이란 마약을 트롤성으로 반입해서  트롤주민들에게 팔았어요. 즉, 수입도 올리고 트롤족을 마약 중독자로 만들어 마약 공급원인 베스퍼성 주민들에게 복종하게 하려는 의도였어요." +
+					" 또한 베스퍼성의 강경파 세력은 수시로 트롤족의 동굴에 침입하여 그들을 괴롭히기 시작했고 마침내 대대적인 침략을 시작했지요." +
+					"  트롤성을 침략한 이들은 정말 잔혹한 수법으로  트롤의 희생자를 처리하여 그들의 사기를 떨어뜨리려 했지만 결국 효과는 반대로 나타나서 더욱 더 트롤족을 분노에 떨게 했죠." +
+					" 그리고는 도리어 그들에게 야습을 당해서 베스퍼성은 삽시간에 아수라장이 되고  급기야 모든 주민이 희생을 당하게 되었던 거예요.",
+					" 이 일이 있은 후 로드안은 로어성의 주민들에게 편파적으로 소식을 알렸죠.  자신의 잘못은 은폐한채  베스퍼성이 당한 결과만을 바탕으로 트롤족에 대한 적개심을 부추겼죠." +
+					"  그리고 그것을  다른 종족에 까지 확산시켜  지금에까지 이르렀던 거예요. 당신이 한 일 때문에 인간은 로어 세계에 있는 5개의 대륙 모두를  손에 넣게 되었죠." +
+					"  악에 대한 정벌이란  거창한 목표 뒤에는 인간의 영토를 넓히겠다는 정복자의 야욕이 숨어있엇다는 것을 알아야 될거예요." +
+					"  그 야욕 때문에  죄없는  수많은 타종족 주민들이 악인으로 몰려 비참한 최후를 맞이하게된 것을 당신도 인정하지요?",
+					" 인간의 입장에서 생각할 때는 물론 당신은 영웅이죠. 하지만 모든 종족의 관점에서 본 당신은 비정한 정복자의 꼭두각시일뿐이예요." +
+					" 나의 말을 깊이 새기고, 머지않은 미래에 있을 중요한 선택에 현명한 판단을 하기 바라겠어요."
+					}, SpecialEventType.None);
+				}
+			}
 		}
 
 		private void ShowSign(int x, int y)
@@ -11283,6 +11628,24 @@ namespace MysticUWP
 						"",
 						"",
 						$"[color={RGB.White}]     이곳은 신성한 드라코니안 묘지이므로 함부로 회손 시키지 마시오[/color]"
+					}, true);
+				}
+			}
+			else if (mMapName == "Imperium") {
+				if ((x == 23 && y == 18) || (x == 25 && y == 18)) {
+					Dialog(new string[] {
+						"",
+						"",
+						$"[color={RGB.LightCyan}]                크리스탈 가게[/color]",
+						$"[color={RGB.White}]                Crystal  Shop[/color]",
+						"      ( 국제화시대에 부응하기 위해 썼음 )"
+					}, true);
+				}
+				else if (x == 33 && y == 22) {
+					Dialog(new string[] {
+						"",
+						"",
+						$"[color={RGB.LightCyan}]                도서관[/color]"
 					}, true);
 				}
 			}
@@ -16954,6 +17317,8 @@ namespace MysticUWP
 					{
 						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (mAnimationFrame - 1)), Vector4.One);
 					}
+					else if (mSpecialEvent == SpecialEventType.MeetAhnYoungKi)
+						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(17, 17), Vector4.One);
 				}
 			}
 
@@ -17155,8 +17520,7 @@ namespace MysticUWP
 						tileIdx = 48;
 					}
 				}
-
-
+				
 				if (mSpecialEvent == SpecialEventType.Penetration)
 				{
 					if (((mMapHeader.TileType == PositionType.Den || mMapHeader.TileType == PositionType.Keep) && tileIdx == 52) ||
@@ -17280,6 +17644,12 @@ namespace MysticUWP
 						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 						oriTileIdx = 53;
 					}
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mSpecialEvent == SpecialEventType.MeetAhnYoungKi) {
+					if (column == 17 && row == 17)
+						mMapTiles.Draw(sb, 47 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 					else
 						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				}
@@ -17643,7 +18013,9 @@ namespace MysticUWP
 			BattleDraconianOldKing,
 			BattleDraconianOldKing2,
 			BattleDraconianKing,
-			BattleDraconianSpirit
+			BattleDraconianSpirit,
+			TeleportCastleLore,
+			MeetAhnYoungKi
 		}
 
 		private enum BattleEvent
@@ -17959,7 +18331,8 @@ namespace MysticUWP
 			BattleDraconian12,
 			BattleDraconian13,
 			JoinDraconian,
-			BattleDraconianEntrance
+			BattleDraconianEntrance,
+			TeleportCastleLore,
 		}
 	}
 }
