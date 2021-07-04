@@ -2873,11 +2873,12 @@ namespace MysticUWP
 					{
 						"일행의 상황을 본다",
 						"개인의 상황을 본다",
+						"일행이 가진 물품을 확인",
 						"일행의 건강 상태를 본다",
 						"마법을 사용한다",
 						"초능력을 사용한다",
+						"무기 장착 및 해제",
 						"여기서 쉰다",
-						"물품을 서로 교환한다",
 						"물품을 사용한다",
 						"게임 선택 상황"
 					});
@@ -3913,7 +3914,10 @@ namespace MysticUWP
 								AppendText(new string[] { "능력을 보고 싶은 인물을 선택하시오" });
 								ShowCharacterMenu(MenuMode.ViewCharacter);
 							}
-							else if (mMenuFocusID == 2)
+							else if (mMenuFocusID == 2) {
+
+							}
+							else if (mMenuFocusID == 3)
 							{
 								AppendText("");
 								DialogText.Visibility = Visibility.Collapsed;
@@ -3931,31 +3935,24 @@ namespace MysticUWP
 								StatHealthPanel.Visibility = Visibility.Visible;
 								ContinueText.Visibility = Visibility.Visible;
 							}
-							else if (mMenuFocusID == 3)
+							else if (mMenuFocusID == 4)
 							{
 								ShowCharacterMenu(MenuMode.CastSpell, false);
 							}
-							else if (mMenuFocusID == 4)
+							else if (mMenuFocusID == 5)
 							{
 								ShowCharacterMenu(MenuMode.Extrasense, false);
 							}
-							else if (mMenuFocusID == 5)
+							else if (mMenuFocusID == 6) {
+
+							}
+							else if (mMenuFocusID == 7)
 							{
 								Rest();
 							}
-							else if (mMenuFocusID == 6)
-							{
-								AppendText("서로 바꿀 물품을 고르시오");
-
-								ShowMenu(MenuMode.ExchangeItem, new string[] {
-									"사용중인 무기",
-									"사용중인 방패",
-									"사용중인 갑옷"
-								});
-							}
-							else if (mMenuFocusID == 7)
-								ShowCharacterMenu(MenuMode.UseItemPlayer, false);
 							else if (mMenuFocusID == 8)
+								ShowCharacterMenu(MenuMode.UseItemPlayer, false);
+							else if (mMenuFocusID == 9)
 							{
 								AppendText(new string[] { "게임 선택 상황" });
 
@@ -17244,17 +17241,45 @@ namespace MysticUWP
 			EnableFloatingWaterText.Text = CheckEnable(1);
 			EnableFloatingSwampText.Text = CheckEnable(2);
 
-			HPPotionText.Text = mParty.Item[0].ToString();
-			SPPotionText.Text = mParty.Item[1].ToString();
-			AntidoteText.Text = mParty.Item[2].ToString();
-			ConsciousText.Text = mParty.Item[3].ToString();
-			RevivalText.Text = mParty.Item[4].ToString();
+			if (GetBit(8))
+				OrcWritingText.Text = "가능";
+			else
+				OrcWritingText.Text = "불가";
 
-			SummonScrollText.Text = mParty.Item[5].ToString();
-			BigTorchText.Text = mParty.Item[6].ToString();
-			CrystalText.Text = mParty.Item[7].ToString();
-			FlyingBootsText.Text = mParty.Item[8].ToString();
-			TransportationMarbleText.Text = mParty.Item[9].ToString();
+			if (GetBit(7))
+				OrcSpeakingText.Text = "가능";
+			else
+				OrcSpeakingText.Text = "불가";
+
+			if (GetBit(10))
+				TrollWritingText.Text = "가능";
+			else
+				TrollWritingText.Text = "불가";
+
+			if (GetBit(9))
+				TrollSpeakingText.Text = "가능";
+			else
+				TrollSpeakingText.Text = "불가";
+
+			if (GetBit(12))
+				KoboldWritingText.Text = "가능";
+			else
+				KoboldWritingText.Text = "불가";
+
+			if (GetBit(11))
+				KoboldSpeakingText.Text = "가능";
+			else
+				KoboldSpeakingText.Text = "불가";
+
+			if (GetBit(14))
+				DraconianWritingText.Text = "가능";
+			else
+				DraconianWritingText.Text = "불가";
+
+			if (GetBit(13))
+				DraconianSpeakingText.Text = "가능";
+			else
+				DraconianSpeakingText.Text = "불가";
 
 			DateText.Text = $"{mParty.Year}년 {mParty.Day / 30 + 1}월 {mParty.Day % 30 + 1}일";
 			TimeText.Text = $"{mParty.Hour}시 {mParty.Min}분";
