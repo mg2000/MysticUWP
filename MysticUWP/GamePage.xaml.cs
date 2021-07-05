@@ -1363,6 +1363,8 @@ namespace MysticUWP
 							mParty.Crystal[4]++;
 						}
 						else if (battleEvent == BattleEvent.DraconianKing) {
+							mAnimationEvent = AnimationType.None;
+
 							SetBit(95);
 							UpdateTileInfo(101, 19, 44);
 							UpdateTileInfo(101, 20, 42);
@@ -1392,6 +1394,7 @@ namespace MysticUWP
 							HideMap();
 
 							mBattleEvent = BattleEvent.Rebellion2;
+							StartBattle(false);
 							return;
 						}
 						else if (battleEvent == BattleEvent.Rebellion2) {
@@ -1407,6 +1410,7 @@ namespace MysticUWP
 							HideMap();
 
 							mBattleEvent = BattleEvent.Rebellion3;
+							StartBattle(false);
 							return;
 						}
 						else if (battleEvent == BattleEvent.Rebellion3) {
@@ -2801,16 +2805,12 @@ namespace MysticUWP
 					{
 						ClearDialog();
 
-						var remainDialog = new List<string>();
-						remainDialog.AddRange(mRemainDialog);
-						mRemainDialog.Clear();
-
 						var added = true;
-						while (added && remainDialog.Count > 0)
+						while (added && mRemainDialog.Count > 0)
 						{
-							added = AppendText(remainDialog[0], true);
+							added = AppendText(mRemainDialog[0], true);
 							if (added)
-								remainDialog.RemoveAt(0);
+								mRemainDialog.RemoveAt(0);
 						}
 
 						if (mRemainDialog.Count > 0 || mBattleTurn != BattleTurn.None)
@@ -6479,8 +6479,8 @@ namespace MysticUWP
 
 											await RefreshGame();
 
-											mXAxis = startX - 1;
-											mYAxis = startY - 1;
+											mXAxis = startX;
+											mYAxis = startY;
 										}
 										break;
 									case "LoreGate":
@@ -8662,7 +8662,7 @@ namespace MysticUWP
 
 								await RefreshGame();
 
-								mParty.Etc[19] = 6;
+								mParty.Etc[19] = 7;
 							}
 						}
 						else if (menuMode == MenuMode.ChooseBetrayLordAhn) {
@@ -11641,23 +11641,25 @@ namespace MysticUWP
 					Dialog(" 이 안의 두 사람은 에인션트 이블님의 의지를 깨닳은 사람들이지요.  당신에게  결코 거짓말 따위는 하지 않을 거예요.");
 				}
 				else if (moveX == 21 && moveY == 23) {
-					Talk(" 에인션트 이블님은  예전에 아주 덕이 높은 현자였었지요.  또한 로드안과도 무척 친한 사이였어요. 수백년전에 로드안이 선이라는 전제를 걸고 이 세계를 통치 했었지요." +
+					Talk(new string[] {
+					" 에인션트 이블님은  예전에 아주 덕이 높은 현자였었지요.  또한 로드안과도 무척 친한 사이였어요. 수백년전에 로드안이 선이라는 전제를 걸고 이 세계를 통치 했었지요." +
 					" 로드안의 훌륭한 정치에  모든 대륙은 평화를 누리게 되었고 그게 너무 만연된 나머지  현재의 평화를 아주 당연시 해버리고는 그것을 지키려는 생각은 접어둔채" +
 					"  항상 남에 의해 평화를 보장 받으려는 사상이 팽배해졌죠." +
 					"  후손들은 급기야  자신의 조상이 흘린  피의 보답으로  이렇게 평화로운 세상이 생겨났다는 것을 까맣게 잊어버리기 시작했고 마침내 로드안은 그런 사람들에게 경각심을 부추겨 보자는 의도로" +
-					"  새로운 개념을 도입했죠.  그것이 바로 그대들이 '악'이라고 배운 것들이예요.  그때 로드안의 추상적인 '악'의 개념을  구체적인 '악'으로 만들기 위해 그 상징이 되어줄 사람을  수소문했죠." +
+					"  새로운 개념을 도입했죠.  그것이 바로 그대들이 '악'이라고 배운 것들이예요.  그때 로드안의 추상적인 '악'의 개념을  구체적인 '악'으로 만들기 위해 그 상징이 되어줄 사람을  수소문했죠.",
 					"  로드안의 친구 대부분은  그의 뜻에 찬성헀지만  아무도 자신이 '악'을 대표하는 그런 역을 맡아  남들로부터 비난받고 저주받는 역을 하려고는 하지 않았죠." +
 					" 그때 나타난 사람이 바로 에인션트 이블님이예요.  그분은 여태껏 지녔던 훌륭한 명성들을 버려둔채 악의 집대성으로 군림했지요. 본명 또한 버리고 지금의 이름을 사용하며  로드안의 일에 적극 동참했어요." +
 					" 그의 존재 때문에  로어 세계의 사람들은  악으로부터 자신과 가족을 지키기 위해  스스로 선을 자각하고 현재의 평화에 감사하며  그 평화를 유지하려 노력하는 자세를 가지게 된거죠." +
 					"  로드안은 사람들의 경각심을 더 부추기기 위해  지금 에인션트 이블이 여러 곳에서 이런 저런 구체적인 악행을 일삼고 있다고 거짓으로 소문을 퍼트리기 시작했고" +
-					"  어릴때부터 교육과정에 그런 사상을 심어 넣어  어른이 되어서도 선을 지켜야 한다는 개념이 없어지지 않도록 해왔어요.", SpecialEventType.None);
+					"  어릴때부터 교육과정에 그런 사상을 심어 넣어  어른이 되어서도 선을 지켜야 한다는 개념이 없어지지 않도록 해왔어요."
+					}, SpecialEventType.None);
 				}
 				else if (moveX == 26 && moveY == 25) {
 					Talk(new string[] {
 					" 로드안은 선에 대한 너무 강한 집착 때문에 중대한 실수를 저질렀죠. 바로 당신을 시켜서 오크, 트롤, 코볼트, 드라코니안  이  네 종족을 멸망시킨게 그 실수예요." +
 					"  로드안은 인간을 이롭게 하고자 아프로디테 테라의 트롤족을 몰아내고  그곳에 베스퍼성이란 전초기지를 건설했죠." +
 					" 그곳은 인간에게 대단히 유용한 자원을 조달했고 그로인해 로드안의 평은 상당히 높아졌어요." +
-					" 그리고 최근에는 다시 마지막 남은 트롤성을 공격하여 아프로디테 테라를 완전히 인간의 것으로 만들자는 계획을 세우고 베스퍼성의 주민들에게 명령했죠." +
+					" 그리고 최근에는 다시 마지막 남은 트롤성을 공격하여 아프로디테 테라를 완전히 인간의 것으로 만들자는 계획을 세우고 베스퍼성의 주민들에게 명령했죠.",
 					" 베스퍼성 사람들은 헤로인이란 마약을 트롤성으로 반입해서  트롤주민들에게 팔았어요. 즉, 수입도 올리고 트롤족을 마약 중독자로 만들어 마약 공급원인 베스퍼성 주민들에게 복종하게 하려는 의도였어요." +
 					" 또한 베스퍼성의 강경파 세력은 수시로 트롤족의 동굴에 침입하여 그들을 괴롭히기 시작했고 마침내 대대적인 침략을 시작했지요." +
 					"  트롤성을 침략한 이들은 정말 잔혹한 수법으로  트롤의 희생자를 처리하여 그들의 사기를 떨어뜨리려 했지만 결국 효과는 반대로 나타나서 더욱 더 트롤족을 분노에 떨게 했죠." +
@@ -16790,6 +16792,14 @@ namespace MysticUWP
 					Task.Delay(300).Wait();
 					mAnimationFrame = 4;
 					Task.Delay(1500).Wait();
+					mAnimationFrame = 5;
+				}
+				else if (mAnimationEvent == AnimationType.MeetCaminus) {
+					for (var i = 1; i <= 5; i++) {
+						mAnimationFrame = i;
+						if (i < 5)
+							Task.Delay(500).Wait();
+					}
 				}
 			});
 
@@ -17572,6 +17582,14 @@ namespace MysticUWP
 
 			using (var sb = args.DrawingSession.CreateSpriteBatch(CanvasSpriteSortMode.None, CanvasImageInterpolation.NearestNeighbor, CanvasSpriteOptions.ClampToSourceRect))
 			{
+				Vector4 GetTint(int x, int y)
+				{
+					if ((!mEbony || mParty.Etc[0] > 0 || mMoonLight) && ((mMapHeader.Layer[x + y * mMapHeader.Width] & 0x80) == 0) && (playerX - mXWide > x || x > playerX + mXWide || playerY - mYWide > y || y > playerY + mYWide))
+						return new Vector4(0.1f, 0.1f, 0.6f, 1);
+					else
+						return Vector4.One;
+				}
+
 				lock (mapLock)
 				{
 					for (int i = 0; i < mMapHeader.Layer.Length; ++i)
@@ -17579,6 +17597,16 @@ namespace MysticUWP
 						DrawTile(sb, mMapHeader.Layer, i, playerX, playerY);
 					}
 				}
+
+				//Vector4 tint;
+				//if (fadeOut)
+				//	tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
+				//else if (fadeIn)
+				//	tint = new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1);
+				//else if (!mEbony || mParty.Etc[0] > 0 || mMoonLight)
+				//	tint = new Vector4(0.1f, 0.1f, 0.6f, 1);
+				//else
+				//	tint = Vector4.One;
 
 				if (mCharacterTiles != null && mFace >= 0)
 				{
@@ -17595,52 +17623,73 @@ namespace MysticUWP
 						{
 							if (mEbony && mMoonLight && mXWide == 0 && mYWide == 0 && mParty.Etc[0] == 0)
 								mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(0.1f, 0.1f, 0.6f, 1));
-							else							
+							else
 								mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
 						}
 					}
 
 					if (mAnimationEvent == AnimationType.CaptureProtagonist && mAnimationFrame > 0)
-					{
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + (6 - mAnimationFrame)), Vector4.One);
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + (6 - mAnimationFrame)), Vector4.One);
+					{	
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + (6 - mAnimationFrame)), GetTint(24, mYAxis + (6 - mAnimationFrame)));
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + (6 - mAnimationFrame)), GetTint(25, mYAxis + (6 - mAnimationFrame)));
 					}
-					else if (mAnimationEvent == AnimationType.GotoCourt) {
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + 1), Vector4.One);
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + 1), Vector4.One);
+					else if (mAnimationEvent == AnimationType.GotoCourt)
+					{
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + 1), GetTint(24, mYAxis + 1));
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + 1), GetTint(25, mYAxis + 1));
 					}
 					else if (mAnimationEvent == AnimationType.GotoCourt2 && mAnimationFrame > 0)
 					{
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (6 - mAnimationFrame)), Vector4.One);
-						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (6 - mAnimationFrame)), Vector4.One);
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis + (6 - mAnimationFrame)), Vector4.One);
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (6 - mAnimationFrame)), GetTint(49, mYAxis + (6 - mAnimationFrame)));
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (6 - mAnimationFrame)), GetTint(50, mYAxis + (6 - mAnimationFrame)));
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis + (6 - mAnimationFrame)), GetTint(51, mYAxis + (6 - mAnimationFrame)));
 					}
 					else if (mAnimationEvent == AnimationType.SubmitProof && mAnimationFrame > 0)
 					{
 						if (mAnimationFrame <= 3)
-							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis - mAnimationFrame), Vector4.One);
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, playerY - mAnimationFrame), GetTint(49, playerY - mAnimationFrame));
 						else
-							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis - 3 + (mAnimationFrame - 3)), Vector4.One);
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), Vector4.One);
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, playerY - 3 + (mAnimationFrame - 3)), GetTint(49, playerY - 3 + (mAnimationFrame - 3)));
+
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), GetTint(51, mYAxis));
 					}
 					else if (mAnimationEvent == AnimationType.GotoJail)
 					{
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis), Vector4.One);
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), Vector4.One);
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis), GetTint(49, mYAxis));
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), GetTint(51, mYAxis));
 					}
-					else if (mAnimationEvent == AnimationType.FollowSoldier) 
-						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX + (mAnimationFrame - 1), playerY), Vector4.One);
+					else if (mAnimationEvent == AnimationType.FollowSoldier)
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX + (mAnimationFrame - 1), playerY), GetTint(playerX + (mAnimationFrame - 1), playerY));
 					else if (mAnimationEvent == AnimationType.FollowSoldier2 && mAnimationFrame >= 118)
 					{
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (123 - mAnimationFrame)), Vector4.One);
-						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (123 - mAnimationFrame)), Vector4.One);
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (123 - mAnimationFrame)), GetTint(49, mYAxis + (123 - mAnimationFrame)));
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (123 - mAnimationFrame)), GetTint(50, mYAxis + (123 - mAnimationFrame)));
 					}
 					else if (mAnimationEvent == AnimationType.LeaveSoldier && mAnimationFrame > 0)
 					{
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (mAnimationFrame - 1)), Vector4.One);
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (mAnimationFrame - 1)), GetTint(49, mYAxis + (mAnimationFrame - 1)));
+					}
+					else if (mAnimationEvent == AnimationType.TranformDraconianKing && mAnimationFrame == 4)
+					{
+						mCharacterTiles.Draw(sb, 12, mCharacterTiles.SpriteSize * new Vector2(mXAxis, mYAxis - 1), GetTint(mXAxis, mYAxis - 1));
+					}
+					else if (mAnimationEvent == AnimationType.TranformDraconianKing && mAnimationFrame >= 5)
+					{
+						mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mXAxis - 1, mYAxis - 2), GetTint(mXAxis - 1, mYAxis - 2));
+						mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mXAxis - 1, mYAxis - 1), GetTint(mXAxis - 1, mYAxis - 1));
+						mCharacterTiles.Draw(sb, 16, mCharacterTiles.SpriteSize * new Vector2(mXAxis, mYAxis - 2), GetTint(mXAxis, mYAxis - 2));
+						mCharacterTiles.Draw(sb, 17, mCharacterTiles.SpriteSize * new Vector2(mXAxis, mYAxis - 1), GetTint(mXAxis, mYAxis - 1));
+						mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mXAxis + 1, mYAxis - 2), GetTint(mXAxis + 1, mYAxis - 2));
+						mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mXAxis + 1, mYAxis - 1), GetTint(mXAxis + 1, mYAxis - 1));
 					}
 					else if (mSpecialEvent == SpecialEventType.MeetAhnYoungKi)
-						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(17, 17), Vector4.One);
+						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(17, 17), GetTint(17, 17));
+				}
+
+				if (mDecorateTiles != null) {
+					if (mAnimationEvent == AnimationType.MeetCaminus && mAnimationFrame > 0) {
+						mDecorateTiles.Draw(sb, 8, mDecorateTiles.SpriteSize * new Vector2(playerX, playerY - (6 - mAnimationFrame)), GetTint(playerX, playerY - (6 - mAnimationFrame)));
+					}
 				}
 			}
 
@@ -17965,6 +18014,20 @@ namespace MysticUWP
 					{
 						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 						oriTileIdx = 53;
+					}
+					else if (column == playerX + 1 && row == playerY - 1 && mAnimationFrame >= 3)
+					{
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+						oriTileIdx = 44;
+					}
+					else if (column == playerX + 1 && row == playerY && mAnimationFrame >= 3)
+					{
+						mMapTiles.Draw(sb, 44 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+						oriTileIdx = 53;
+					}
+					else if (column == playerX && row == playerY - 1 && mAnimationFrame >= 4)
+					{
+						mMapTiles.Draw(sb, 42 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 					}
 					else
 						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
