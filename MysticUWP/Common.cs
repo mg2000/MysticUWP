@@ -185,7 +185,7 @@ namespace MysticUWP
 
 		public static string GetMagicName(int playerClass, int magic)
 		{
-			if (0 <= playerClass && playerClass <= 6 && 1 <= magic && magic <= 10)
+			if (0 <= playerClass && playerClass <= 7 && 1 <= magic && magic <= 10)
 				return mMagicNames[playerClass, magic - 1];
 			else
 				return "알수 없는 마법";

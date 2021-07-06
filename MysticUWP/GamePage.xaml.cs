@@ -174,6 +174,10 @@ namespace MysticUWP
 		private int mAnswerID;
 		private bool mAllPass = true;
 
+		private MapHeader mCrystalMap = null;
+		private int mCrystalX;
+		private int mCrystalY;
+
 		public GamePage()
 		{
 			this.InitializeComponent();
@@ -2784,6 +2788,57 @@ namespace MysticUWP
 						else if (specialEvent == SpecialEventType.SendNecromancer) {
 							Talk(" 네크로만서로 변한 당신은 공간의 틈을 통해 다른 공간으로 빠져 버렸다.  그리고 로어 세계의 평화가 너무 오래 유지될 때  당신은 운명에 의해 이 세계로 내려 올 것이다.", SpecialEventType.SendNecromancer2);	
 						}
+						else if (specialEvent == SpecialEventType.UseCromaticCrystal) {
+							Talk($"[color={RGB.LightBlue}] 역시  당신은 제가 생각했던대로 정말 훌륭하십니다.  당신이 찾은 이곳이라면 아마 베리언트 피플즈의 사람들이 숨기에는 충분할 것입니다." +
+							"  잠깐만 기다려 주십시오.  저의 염력으로 도시를 건설해 보겠습니다.", SpecialEventType.BuildDome);
+						}
+						else if (specialEvent == SpecialEventType.BuildDome) {
+							mMapName = "Dome";
+
+							await RefreshGame();
+
+							for (var y = 0; y < mMapHeader.Height; y++) {
+								for (var x = 0; x < mMapHeader.Width; x++) {
+									if (mRand.Next(10) == 0)
+										mMapHeader.Layer[x + y * mMapHeader.Width] = 45;
+									else
+										mMapHeader.Layer[x + y * mMapHeader.Width] = 47;
+								}
+							}
+
+							mXAxis = 24;
+							mYAxis = 49;
+
+							mWatchYear = mParty.Year;
+							mWatchDay = mParty.Day;
+							mWatchHour = mParty.Hour;
+							mWatchMin = mParty.Min;
+							mWatchSec = mParty.Sec;
+
+							mTimeWatch = true;
+							mTimeEvent = 0;
+
+							mWatchMin += 20;
+							if (mWatchMin > 59) {
+								mWatchMin -= 60;
+
+								mWatchHour++;
+								if (mWatchHour > 23) {
+									mWatchHour -= 24;
+
+									mWatchDay++;
+									if (mWatchDay > 359) {
+										mWatchDay -= 360;
+
+										mWatchYear++;
+									}
+								}
+							}
+						}
+						else if (specialEvent == SpecialEventType.ExitCrystal) {
+							mCrystalMap = null;
+							InvokeAnimation(AnimationType.ExitCrystal);
+						}
 						//else if (specialEvent == SpecialEventType.EndCookie1) 
 					}
 					
@@ -3336,6 +3391,56 @@ namespace MysticUWP
 						}
 					}
 
+					void UseCrystal(bool battle) {
+						mUsableItemIDList.Clear();
+						var crystalNameList = new List<string>();
+						
+						if (battle)
+						{
+							for (var i = 0; i < 7; i++)
+							{
+								if (mParty.Crystal[i] > 0)
+								{
+									crystalNameList.Add(Common.GetMagicName(7, i + 1));
+									mUsableItemIDList.Add(i);
+								}
+							}
+
+							if (mUsableItemIDList.Count > 0)
+							{
+								Ask(new string[] {
+									$"[color={RGB.LightRed}]크리스탈을 사용 ----[/color]",
+									"",
+									$"[color={RGB.LightCyan}]당신이 사용할 크리스탈을 고르시오.[/color]"
+								}, MenuMode.BattleChooseCrystal, crystalNameList.ToArray());
+							}
+							else
+								BattleMode();
+						}
+						else
+						{
+							for (var i = 5; i < 9; i++)
+							{
+								if (mParty.Crystal[i] > 0)
+								{
+									crystalNameList.Add(Common.GetMagicName(7, i + 1));
+									mUsableItemIDList.Add(i);
+								}
+							}
+
+							if (mUsableItemIDList.Count > 0)
+							{
+								Ask(new string[] {
+									$"[color={RGB.LightRed}]크리스탈을 사용 ----[/color]",
+									"",
+									$"[color={RGB.LightCyan}]당신이 사용할 크리스탈을 고르시오.[/color]"
+								}, MenuMode.ChooseCrystal, crystalNameList.ToArray());
+							}
+							else
+								AppendText("가지고 있는 아이템이 없습니다.");
+						}
+					}
+
 					void AfterJoinFriendEvent() {
 						AddNextTimeEvent(4, 30);
 					}
@@ -3411,8 +3516,8 @@ namespace MysticUWP
 							menuMode == MenuMode.ChooseBattleCureSpell ||
 							menuMode == MenuMode.CastESP ||
 							menuMode == MenuMode.CastSummon ||
-							menuMode == MenuMode.ChooseItemType ||
-							menuMode == MenuMode.ChooseCrystal)
+							menuMode == MenuMode.BattleChooseItemType ||
+							menuMode == MenuMode.BattleChooseCrystal)
 							{
 								BattleMode();
 							}
@@ -3896,6 +4001,47 @@ namespace MysticUWP
 								return false;
 						}
 
+						void UseEnergyCrystal(bool battle) {
+							foreach (var player in mPlayerList)
+							{
+								if (player.Dead == 0)
+								{
+									player.Unconscious = 0;
+									player.HP = player.Endurance * player.Level * 10;
+								}
+								else
+								{
+									player.Dead = 0;
+									player.Unconscious = 0;
+									player.HP = 1;
+								}
+							}
+
+							if (mAssistPlayer != null)
+							{
+								if (mAssistPlayer.Dead == 0)
+								{
+									mAssistPlayer.Unconscious = 0;
+									mAssistPlayer.HP = mAssistPlayer.Endurance * mAssistPlayer.Level * 10;
+								}
+								else
+								{
+									mAssistPlayer.Dead = 0;
+									mAssistPlayer.Unconscious = 0;
+									mAssistPlayer.HP = 1;
+								}
+							}
+
+
+							var message = " 에너지 크리스탈은 강한 에너지를  우리 대원들의 몸속으로  방출하였고  그 에너지를 취한 대원들은 모두 원래의 기운을 되찾았다.";
+							if (battle)
+								Talk(message, SpecialEventType.NextToBattleMode);
+							else
+								Dialog(message);
+
+							mParty.Crystal[6]--;
+						}
+
 						var menuMode = HideMenu();
 						ClearDialog();
 
@@ -3914,7 +4060,8 @@ namespace MysticUWP
 								AppendText(new string[] { "능력을 보고 싶은 인물을 선택하시오" });
 								ShowCharacterMenu(MenuMode.ViewCharacter);
 							}
-							else if (mMenuFocusID == 2) {
+							else if (mMenuFocusID == 2)
+							{
 
 							}
 							else if (mMenuFocusID == 3)
@@ -3943,7 +4090,8 @@ namespace MysticUWP
 							{
 								ShowCharacterMenu(MenuMode.Extrasense, false);
 							}
-							else if (mMenuFocusID == 6) {
+							else if (mMenuFocusID == 6)
+							{
 
 							}
 							else if (mMenuFocusID == 7)
@@ -3951,7 +4099,12 @@ namespace MysticUWP
 								Rest();
 							}
 							else if (mMenuFocusID == 8)
-								ShowCharacterMenu(MenuMode.UseItemPlayer, false);
+							{
+								ShowMenu(MenuMode.ChooseItemType, new string[] {
+									"약초나 약물을 사용한다",
+									"크리스탈을 사용한다"
+								});
+							}
 							else if (mMenuFocusID == 9)
 							{
 								AppendText(new string[] { "게임 선택 상황" });
@@ -6109,7 +6262,7 @@ namespace MysticUWP
 
 								if (hasCrystal)
 								{
-									ShowMenu(MenuMode.ChooseItemType, new string[] {
+									ShowMenu(MenuMode.BattleChooseItemType, new string[] {
 										"약초나 약물을 사용한다",
 										"크리스탈을 사용한다"
 									});
@@ -6219,16 +6372,16 @@ namespace MysticUWP
 								var player = mPlayerList[mBattlePlayerID];
 
 								var availCount = 0;
-								if (player.ESPMagic > 19)
-									availCount = 1;
-								else if (player.ESPMagic > 29)
-									availCount = 2;
-								else if (player.ESPMagic > 79)
-									availCount = 3;
+								if (player.ESPMagic > 99)
+									availCount = 5;
 								else if (player.ESPMagic > 89)
 									availCount = 4;
-								else if (player.ESPMagic > 99)
-									availCount = 5;
+								else if (player.ESPMagic > 79)
+									availCount = 3;
+								else if (player.ESPMagic > 29)
+									availCount = 2;
+								else if (player.ESPMagic > 19)
+									availCount = 1;
 
 								if (availCount == 0)
 									BattleMode();
@@ -6285,28 +6438,144 @@ namespace MysticUWP
 
 							ShowCureResult(true);
 						}
-						else if (menuMode == MenuMode.ChooseItemType)
+						else if (menuMode == MenuMode.ChooseItemType) {
+							if (mMenuFocusID == 0)
+								ShowCharacterMenu(MenuMode.UseItemPlayer);
+							else
+								UseCrystal(false);
+						}
+						else if (menuMode == MenuMode.BattleChooseItemType)
 						{
 							if (mMenuFocusID == 0)
 								UseItem(mPlayerList[mBattlePlayerID], true);
 							else
 							{
 								mItemUsePlayer = mPlayerList[mBattlePlayerID];
-								mUsableItemIDList.Clear();
-								var crystalNameList = new List<string>();
-								for (var i = 0; i < 7; i++)
-								{
-									if (mParty.Crystal[i] > 0)
-									{
-										crystalNameList.Add(Common.GetMagicName(7, i + 1));
-										mUsableItemIDList.Add(i);
-									}
-								}
-
-								Ask("당신이 사용할 크리스탈을 고르시오.", MenuMode.ChooseCrystal, crystalNameList.ToArray());
+								UseCrystal(true);
 							}
 						}
-						else if (menuMode == MenuMode.ChooseCrystal)
+						else if (menuMode == MenuMode.ChooseCrystal) {
+							var crystalID = mUsableItemIDList[mMenuFocusID];
+
+							if (crystalID == 5) {
+								mAssistPlayer = new Lore()
+								{
+									Gender = GenderType.Neutral,
+									Class = 0,
+									Level = 30,
+									Poison = 0,
+									Unconscious = 0,
+									Dead = 0,
+									SP = 0,
+									Experience = 0,
+									PotentialExperience = 0,
+									Shield = 0,
+									ShiPower = 0,
+									Armor = 0,
+									SwordSkill = 0,
+									AxeSkill = 0,
+									SpearSkill = 0,
+									BowSkill = 0,
+									FistSkill = 0,
+									AttackMagic = 0,
+									PhenoMagic = 0,
+									CureMagic = 0,
+									ESPMagic = 0,
+									SummonMagic = 0,
+									SpecialMagic = 0,
+								};
+
+								switch (mRand.Next(5))
+								{
+									case 0:
+									case 1:
+										mAssistPlayer.Name = "크리스탈 드래곤";
+										mAssistPlayer.ClassType = ClassCategory.Dragon;
+										mAssistPlayer.Strength = 25;
+										mAssistPlayer.Mentality = 20;
+										mAssistPlayer.Concentration = 20;
+										mAssistPlayer.Endurance = 30;
+										mAssistPlayer.Resistance = 20;
+										mAssistPlayer.Agility = 0;
+										mAssistPlayer.Accuracy = 20;
+										mAssistPlayer.Luck = 20;
+										mAssistPlayer.Weapon = 49;
+										mAssistPlayer.WeaPower = 255;
+										mAssistPlayer.PotentialAC = 4;
+										break;
+									case 2:
+									case 3:
+										mAssistPlayer.Name = "크리스탈 고렘";
+										mAssistPlayer.ClassType = ClassCategory.Golem;
+										mAssistPlayer.Strength = 20;
+										mAssistPlayer.Mentality = 0;
+										mAssistPlayer.Concentration = 0;
+										mAssistPlayer.Endurance = 40;
+										mAssistPlayer.Resistance = 25;
+										mAssistPlayer.Agility = 0;
+										mAssistPlayer.Accuracy = 13;
+										mAssistPlayer.Luck = 0;
+										mAssistPlayer.Weapon = 0;
+										mAssistPlayer.WeaPower = 150;
+										mAssistPlayer.PotentialAC = 5;
+
+										break;
+									case 4:
+										mAssistPlayer.Name = "대천사장";
+										mAssistPlayer.ClassType = ClassCategory.Magic;
+										mAssistPlayer.Strength = 20;
+										mAssistPlayer.Mentality = 20;
+										mAssistPlayer.Concentration = 20;
+										mAssistPlayer.Endurance = 30;
+										mAssistPlayer.Resistance = 10;
+										mAssistPlayer.Agility = 20;
+										mAssistPlayer.Accuracy = 20;
+										mAssistPlayer.Luck = 20;
+										mAssistPlayer.Weapon = 44;
+										mAssistPlayer.WeaPower = 200;
+										mAssistPlayer.PotentialAC = 5;
+
+										break;
+								}
+
+								mAssistPlayer.AC = mAssistPlayer.PotentialAC;
+								mAssistPlayer.HP = mAssistPlayer.Endurance * mAssistPlayer.Level * 10;
+
+								mParty.Crystal[crystalID]--;
+							}
+							else if (crystalID == 6) {
+								UseEnergyCrystal(false);
+							}
+							else if (crystalID == 7) {
+								if (mMapName == "UnderGrd" && mXAxis == 45 && mYAxis == 47)
+								{
+									Talk(" 갑자기 당신의 위쪽에서 귀에 익은 음성이 들려왔다.  그 목소리의 주인공은 에인션트 이블이었다.", SpecialEventType.UseCromaticCrystal);
+								}
+								else
+									Dialog(" 크리스탈에는 아무런 반응이 없었다.");
+							}
+							else if (crystalID == 8) {
+								if (mMapHeader.TileType != PositionType.Ground) {
+									Dialog(" 크리스탈 볼은 주위가 트인곳에서만 작동합니다.");
+								}
+								else {
+									if (mParty.Etc[25] == 0)
+									{
+										if (mMapName == "Ground2" && mXAxis == 91 && mYAxis == 11)
+										{
+											mEncounterEnemyList.Clear();
+
+											JoinEnemy(59);
+
+											mBattleEvent = BattleEvent.OrcRevengeSpirit;
+										}
+										else
+											await ViewCrystal("Ground2", 91, 11);
+									}
+								}
+							}
+						}
+						else if (menuMode == MenuMode.BattleChooseCrystal)
 						{
 							var crystalID = mUsableItemIDList[mMenuFocusID];
 
@@ -6360,41 +6629,7 @@ namespace MysticUWP
 								AddBattleCommand();
 							}
 							else if (crystalID == 6)
-							{
-								foreach (var player in mPlayerList)
-								{
-									if (player.Dead == 0)
-									{
-										player.Unconscious = 0;
-										player.HP = player.Endurance * player.Level * 10;
-									}
-									else
-									{
-										player.Dead = 0;
-										player.Unconscious = 0;
-										player.HP = 1;
-									}
-								}
-
-								if (mAssistPlayer != null)
-								{
-									if (mAssistPlayer.Dead == 0)
-									{
-										mAssistPlayer.Unconscious = 0;
-										mAssistPlayer.HP = mAssistPlayer.Endurance * mAssistPlayer.Level * 10;
-									}
-									else
-									{
-										mAssistPlayer.Dead = 0;
-										mAssistPlayer.Unconscious = 0;
-										mAssistPlayer.HP = 1;
-									}
-
-									Talk(" 에너지 크리스탈은 강한 에너지를  우리 대원들의 몸속으로  방출하였고  그 에너지를 취한 대원들은 모두 원래의 기운을 되찾았다.", SpecialEventType.NextToBattleMode);
-
-									mParty.Crystal[6]--;
-								}
-							}
+								UseEnergyCrystal(true);
 						}
 						else if (menuMode == MenuMode.BattleLose)
 						{
@@ -8709,6 +8944,9 @@ namespace MysticUWP
 
 							}
 							else {
+								mAnimationEvent = AnimationType.None;
+								mAnimationFrame = 0;
+
 								mParty.Etc[24] = 1;
 
 								for (var i = 0; i < 8; i++)
@@ -10081,16 +10319,19 @@ namespace MysticUWP
 					triggered = false;
 			}
 			else if (mMapName == "HdsGate") {
-				if (mXAxis == 24 && mYAxis == 29) {
+				if (mXAxis == 24 && mYAxis == 29)
+				{
 					int tileA, tileB;
 
-					if (GetTileInfo(19, 26) == 40) {
+					if (GetTileInfo(19, 26) == 40)
+					{
 						tileA = 40;
 						tileB = 41;
 
 						Dialog(" 당신은 레버를 왼쪽으로 당겼다.");
 					}
-					else {
+					else
+					{
 						tileA = 41;
 						tileB = 40;
 
@@ -10112,7 +10353,8 @@ namespace MysticUWP
 					UpdateTileInfo(21, 35, tileA);
 					UpdateTileInfo(22, 38, tileA);
 				}
-				else if (mXAxis == 22 && mYAxis == 18) {
+				else if (mXAxis == 22 && mYAxis == 18)
+				{
 					int tileA, tileB;
 
 					if (GetTileInfo(19, 28) == 40)
@@ -10247,10 +10489,12 @@ namespace MysticUWP
 					UpdateTileInfo(20, 37, tileB);
 					UpdateTileInfo(21, 38, tileB);
 				}
-				else if (mMapHeader.Layer[mXAxis + mYAxis * mMapHeader.Width] == GetTileInfo(mXAxis, mYAxis)) {
+				else if (mMapHeader.Layer[mXAxis + mYAxis * mMapHeader.Width] == GetTileInfo(mXAxis, mYAxis))
+				{
 					ShowGameOver(new string[] { $"[color={RGB.LightRed}] 당신이 물 속으로 발을 디디자  순식간에 온몸이 타버렸다.[/color]" });
 
-					foreach (var player in mPlayerList) {
+					foreach (var player in mPlayerList)
+					{
 						player.HP = 0;
 						player.Dead = 1;
 					}
@@ -10263,6 +10507,8 @@ namespace MysticUWP
 
 					DisplayPlayerInfo();
 				}
+				else
+					triggered = false;
 			}
 			else if (mMapName == "Dome") {
 				if ((4 <= mXAxis && mXAxis <= 45) || (5 <= mYAxis && mYAxis <= 94))
@@ -10271,9 +10517,12 @@ namespace MysticUWP
 			else if (mMapName == "Light") {
 				if (mYAxis == 69)
 					ShowExitMenu();
-				else if (mYAxis == 42 && !GetBit(33)) {
+				else if (mYAxis == 42 && !GetBit(33))
+				{
 					InvokeAnimation(AnimationType.MeetCaminus);
 				}
+				else
+					triggered = false;
 			}
 			
 	
@@ -10700,6 +10949,9 @@ namespace MysticUWP
 						mParty.Etc[19]++;
 					}
 					else if (mParty.Etc[19] == 10) {
+						Dialog(" 내가 준 크리스탈 볼을 이용하여  네 종족의 원혼을 모두 그 안에 봉인시켜서 나에게 가져오시오. 꼭 부탁하오.");
+					}
+					else if (mParty.Etc[19] == 11) {
 						mXAxis = 50;
 						mYAxis = 30;
 
@@ -14241,7 +14493,7 @@ namespace MysticUWP
 								mAssistPlayer.Luck = 20;
 								mAssistPlayer.Weapon = 49;
 								mAssistPlayer.WeaPower = 255;
-								mAssistPlayer.PotentialAC = 2;
+								mAssistPlayer.PotentialAC = 4;
 								break;
 							case 1:
 							case 2:
@@ -15140,7 +15392,7 @@ namespace MysticUWP
 
 		private async void InitialFirstPlay()
 		{
-			await LoadMapData();
+			mMapHeader = await LoadMapData();
 			InitializeMap();
 
 			DisplayPlayerInfo();
@@ -15258,6 +15510,14 @@ namespace MysticUWP
 			UpdateView();
 
 			CheckTimeEvent();
+		}
+
+		private async Task ViewCrystal(string mapName, int x, int y) {
+			mCrystalX = x;
+			mCrystalY = y;
+			mCrystalMap = await LoadMapData(mapName);
+
+			InvokeAnimation(AnimationType.ViewCrystal);
 		}
 
 		private async void CheckTimeEvent() {
@@ -15897,90 +16157,93 @@ namespace MysticUWP
 			MapCanvas.Visibility = Visibility.Collapsed;
 
 			AppendText("");
-			await LoadMapData();
+			mMapHeader = await LoadMapData();
 			InitializeMap();
 
 			mLoading = false;
 		}
 
-		private async Task LoadMapData()
+		private async Task<MapHeader> LoadMapData(string mapName = "")
 		{
-			var mapFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/{mMapName.ToUpper()}.M"));
+			if (mapName == "")
+				mapName = mMapName.ToUpper();
+
+			var mapFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/{mapName.ToUpper()}.M"));
 			var stream = (await mapFile.OpenReadAsync()).AsStreamForRead();
 			var reader = new BinaryReader(stream);
 
-			lock (mapLock)
-			{
-				mMapHeader = new MapHeader();
+			
+			var mapHeader = new MapHeader();
 
-				var mapNameLen = reader.ReadByte();
-				mMapHeader.ID = Encoding.UTF8.GetString(reader.ReadBytes(mapNameLen));
+			var mapNameLen = reader.ReadByte();
+			mapHeader.ID = Encoding.UTF8.GetString(reader.ReadBytes(mapNameLen));
 
-				if (10 - mapNameLen > 0)
-					reader.ReadBytes(10 - mapNameLen);
+			if (10 - mapNameLen > 0)
+				reader.ReadBytes(10 - mapNameLen);
 				
-				mMapHeader.Width = reader.ReadByte();
-				mMapHeader.Height = reader.ReadByte();
+			mapHeader.Width = reader.ReadByte();
+			mapHeader.Height = reader.ReadByte();
 
-				switch (reader.ReadByte()) {
-					case 0:
-						mMapHeader.TileType = PositionType.Town;
-						break;
-					case 1:
-						mMapHeader.TileType = PositionType.Ground;
-						break;
-					case 2:
-						mMapHeader.TileType = PositionType.Den;
-						break;
-					default:
-						mMapHeader.TileType = PositionType.Keep;
-						break;
-				}
-
-				if (reader.ReadByte() == 0)
-					mMapHeader.Encounter = false;
-				else
-					mMapHeader.Encounter = true;
-
-
-				if (reader.ReadByte() == 0)
-					mMapHeader.Handicap = false;
-				else
-					mMapHeader.Handicap = true;
-
-				mMapHeader.StartX = reader.ReadByte() - 1;
-				mMapHeader.StartY = reader.ReadByte() - 1;
-
-				var exitMapNameLen = reader.ReadByte();
-				if (exitMapNameLen > 0)
-					mMapHeader.ExitMap = Encoding.UTF8.GetString(reader.ReadBytes(exitMapNameLen));
-				else
-					mMapHeader.ExitMap = "";
-
-				if (10 - exitMapNameLen > 0)
-					reader.ReadBytes(10 - exitMapNameLen);
-
-				mMapHeader.ExitX = reader.ReadByte() - 1;
-				mMapHeader.ExitY = reader.ReadByte() - 1;
-
-				var enterMapNameLen = reader.ReadByte();
-				if (enterMapNameLen > 0)
-					mMapHeader.EnterMap = Encoding.UTF8.GetString(reader.ReadBytes(enterMapNameLen));
-				else
-					mMapHeader.EnterMap = "";
-
-				if (10 - enterMapNameLen > 0)
-					reader.ReadBytes(10 - enterMapNameLen);
-
-				mMapHeader.EnterX = reader.ReadByte() - 1;
-				mMapHeader.EnterY = reader.ReadByte() - 1;
-				mMapHeader.Default = reader.ReadByte();
-				mMapHeader.HandicapBit = reader.ReadByte();
-
-				reader.ReadBytes(50);
-
-				mMapHeader.Layer = reader.ReadBytes(mMapHeader.Width * mMapHeader.Height);
+			switch (reader.ReadByte()) {
+				case 0:
+					mapHeader.TileType = PositionType.Town;
+					break;
+				case 1:
+					mapHeader.TileType = PositionType.Ground;
+					break;
+				case 2:
+					mapHeader.TileType = PositionType.Den;
+					break;
+				default:
+					mapHeader.TileType = PositionType.Keep;
+					break;
 			}
+
+			if (reader.ReadByte() == 0)
+				mapHeader.Encounter = false;
+			else
+				mapHeader.Encounter = true;
+
+
+			if (reader.ReadByte() == 0)
+				mapHeader.Handicap = false;
+			else
+				mapHeader.Handicap = true;
+
+			mapHeader.StartX = reader.ReadByte() - 1;
+			mapHeader.StartY = reader.ReadByte() - 1;
+
+			var exitMapNameLen = reader.ReadByte();
+			if (exitMapNameLen > 0)
+				mapHeader.ExitMap = Encoding.UTF8.GetString(reader.ReadBytes(exitMapNameLen));
+			else
+				mapHeader.ExitMap = "";
+
+			if (10 - exitMapNameLen > 0)
+				reader.ReadBytes(10 - exitMapNameLen);
+
+			mapHeader.ExitX = reader.ReadByte() - 1;
+			mapHeader.ExitY = reader.ReadByte() - 1;
+
+			var enterMapNameLen = reader.ReadByte();
+			if (enterMapNameLen > 0)
+				mapHeader.EnterMap = Encoding.UTF8.GetString(reader.ReadBytes(enterMapNameLen));
+			else
+				mapHeader.EnterMap = "";
+
+			if (10 - enterMapNameLen > 0)
+				reader.ReadBytes(10 - enterMapNameLen);
+
+			mapHeader.EnterX = reader.ReadByte() - 1;
+			mapHeader.EnterY = reader.ReadByte() - 1;
+			mapHeader.Default = reader.ReadByte();
+			mapHeader.HandicapBit = reader.ReadByte();
+
+			reader.ReadBytes(50);
+
+			mapHeader.Layer = reader.ReadBytes(mMapHeader.Width * mMapHeader.Height);
+
+			return mapHeader;
 		}
 
 		private void DisplayPlayerInfo()
@@ -16473,7 +16736,7 @@ namespace MysticUWP
 
 			if (saveData.MapHeader.Layer == null || saveData.MapHeader.Layer.Length == 0)
 			{
-				await LoadMapData();
+				mMapHeader = await LoadMapData();
 			}
 
 			mEncounter = saveData.Encounter;
@@ -16800,6 +17063,13 @@ namespace MysticUWP
 						if (i < 5)
 							Task.Delay(500).Wait();
 					}
+				}
+				else if (mAnimationEvent == AnimationType.ViewCrystal) {
+					AnimateFadeInOut();
+				}
+				else if (mAnimationEvent == AnimationType.ExitCrystal)
+				{
+					AnimateFadeInOut();
 				}
 			});
 
@@ -17219,6 +17489,12 @@ namespace MysticUWP
 					"로드안의 말대로 이들을 벌한다"
 				});
 			}
+			else if (mAnimationEvent == AnimationType.ViewCrystal) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				Talk(" 당신은 수정구슬을 통해 낯선 풍경을 보았다.", SpecialEventType.ExitCrystal);
+			}
 			else
 			{
 				mAnimationEvent = AnimationType.None;
@@ -17535,34 +17811,7 @@ namespace MysticUWP
 				}
 			}
 
-			var playerX = mXAxis;
-			var playerY = mYAxis;
-
-			var xOffset = 0;
-			var yOffset = 0;
-			if (mTelescopeXCount != 0)
-			{
-				if (mTelescopeXCount < 0)
-					xOffset = -(mTelescopePeriod - Math.Abs(mTelescopeXCount));
-				else
-					xOffset = mTelescopePeriod - Math.Abs(mTelescopeXCount);
-			}
-
-			if (mTelescopeYCount != 0)
-			{
-				if (mTelescopeYCount < 0)
-					yOffset = -(mTelescopePeriod - Math.Abs(mTelescopeYCount));
-				else
-					yOffset = mTelescopePeriod - Math.Abs(mTelescopeYCount);
-			}
-
-			var transform = Matrix3x2.Identity * Matrix3x2.CreateTranslation(-new Vector2(52 * (playerX - 4 + xOffset), 52 * (playerY - 5 + yOffset)));
-			args.DrawingSession.Transform = transform;
-
 			var size = sender.Size.ToVector2();
-
-			//var options = CanvasSpriteOptions.None;
-			//var interpolation = (CanvasImageInterpolation)Enum.Parse(typeof(CanvasImageInterpolation), InterpolationMode);
 			var interpolation = (CanvasImageInterpolation)Enum.Parse(typeof(CanvasImageInterpolation), CanvasImageInterpolation.HighQualityCubic.ToString());
 
 			var fadeIn = false;
@@ -17577,134 +17826,181 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.MoveGround2 ||
 				mAnimationEvent == AnimationType.MoveGround3 ||
 				mAnimationEvent == AnimationType.CompleteLearnKoboldWriting ||
-				mAnimationEvent == AnimationType.LandUranos)
+				mAnimationEvent == AnimationType.LandUranos ||
+				mAnimationEvent == AnimationType.ViewCrystal ||
+				mAnimationEvent == AnimationType.ExitCrystal)
 				fadeIn = true;
 
-			using (var sb = args.DrawingSession.CreateSpriteBatch(CanvasSpriteSortMode.None, CanvasImageInterpolation.NearestNeighbor, CanvasSpriteOptions.ClampToSourceRect))
+			var crystalMap = mCrystalMap;
+			if (mCrystalMap != null)
 			{
-				Vector4 GetTint(int x, int y)
+				var transform = Matrix3x2.Identity * Matrix3x2.CreateTranslation(-new Vector2(52 * (mCrystalX - 4), 52 * (mCrystalY - 5)));
+				args.DrawingSession.Transform = transform;
+
+				using (var sb = args.DrawingSession.CreateSpriteBatch(CanvasSpriteSortMode.None, CanvasImageInterpolation.NearestNeighbor, CanvasSpriteOptions.ClampToSourceRect))
 				{
-					if ((!mEbony || mParty.Etc[0] > 0 || mMoonLight) && ((mMapHeader.Layer[x + y * mMapHeader.Width] & 0x80) == 0) && (playerX - mXWide > x || x > playerX + mXWide || playerY - mYWide > y || y > playerY + mYWide))
-						return new Vector4(0.1f, 0.1f, 0.6f, 1);
-					else
-						return Vector4.One;
-				}
-
-				lock (mapLock)
-				{
-					for (int i = 0; i < mMapHeader.Layer.Length; ++i)
+					for (int i = 0; i < crystalMap.Layer.Length; ++i)
 					{
-						DrawTile(sb, mMapHeader.Layer, i, playerX, playerY);
-					}
-				}
-
-				//Vector4 tint;
-				//if (fadeOut)
-				//	tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
-				//else if (fadeIn)
-				//	tint = new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1);
-				//else if (!mEbony || mParty.Etc[0] > 0 || mMoonLight)
-				//	tint = new Vector4(0.1f, 0.1f, 0.6f, 1);
-				//else
-				//	tint = Vector4.One;
-
-				if (mCharacterTiles != null && mFace >= 0)
-				{
-					if (mAnimationEvent != AnimationType.GotoCourt2 && mAnimationEvent != AnimationType.FollowSoldier && mAnimationEvent != AnimationType.FollowSoldier2) {
-						if (fadeOut)
-						{
-							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1));
-						}
-						else if (fadeIn)
-						{
-							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1));
-						}
-						else if (!mEbony || mParty.Etc[0] > 0 || mMoonLight)
-						{
-							if (mEbony && mMoonLight && mXWide == 0 && mYWide == 0 && mParty.Etc[0] == 0)
-								mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(0.1f, 0.1f, 0.6f, 1));
-							else
-								mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
-						}
-					}
-
-					if (mAnimationEvent == AnimationType.CaptureProtagonist && mAnimationFrame > 0)
-					{	
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + (6 - mAnimationFrame)), GetTint(24, mYAxis + (6 - mAnimationFrame)));
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + (6 - mAnimationFrame)), GetTint(25, mYAxis + (6 - mAnimationFrame)));
-					}
-					else if (mAnimationEvent == AnimationType.GotoCourt)
-					{
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + 1), GetTint(24, mYAxis + 1));
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + 1), GetTint(25, mYAxis + 1));
-					}
-					else if (mAnimationEvent == AnimationType.GotoCourt2 && mAnimationFrame > 0)
-					{
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (6 - mAnimationFrame)), GetTint(49, mYAxis + (6 - mAnimationFrame)));
-						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (6 - mAnimationFrame)), GetTint(50, mYAxis + (6 - mAnimationFrame)));
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis + (6 - mAnimationFrame)), GetTint(51, mYAxis + (6 - mAnimationFrame)));
-					}
-					else if (mAnimationEvent == AnimationType.SubmitProof && mAnimationFrame > 0)
-					{
-						if (mAnimationFrame <= 3)
-							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, playerY - mAnimationFrame), GetTint(49, playerY - mAnimationFrame));
-						else
-							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, playerY - 3 + (mAnimationFrame - 3)), GetTint(49, playerY - 3 + (mAnimationFrame - 3)));
-
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), GetTint(51, mYAxis));
-					}
-					else if (mAnimationEvent == AnimationType.GotoJail)
-					{
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis), GetTint(49, mYAxis));
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), GetTint(51, mYAxis));
-					}
-					else if (mAnimationEvent == AnimationType.FollowSoldier)
-						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX + (mAnimationFrame - 1), playerY), GetTint(playerX + (mAnimationFrame - 1), playerY));
-					else if (mAnimationEvent == AnimationType.FollowSoldier2 && mAnimationFrame >= 118)
-					{
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (123 - mAnimationFrame)), GetTint(49, mYAxis + (123 - mAnimationFrame)));
-						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (123 - mAnimationFrame)), GetTint(50, mYAxis + (123 - mAnimationFrame)));
-					}
-					else if (mAnimationEvent == AnimationType.LeaveSoldier && mAnimationFrame > 0)
-					{
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (mAnimationFrame - 1)), GetTint(49, mYAxis + (mAnimationFrame - 1)));
-					}
-					else if (mAnimationEvent == AnimationType.TranformDraconianKing && mAnimationFrame == 4)
-					{
-						mCharacterTiles.Draw(sb, 12, mCharacterTiles.SpriteSize * new Vector2(mXAxis, mYAxis - 1), GetTint(mXAxis, mYAxis - 1));
-					}
-					else if (mAnimationEvent == AnimationType.TranformDraconianKing && mAnimationFrame >= 5)
-					{
-						mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mXAxis - 1, mYAxis - 2), GetTint(mXAxis - 1, mYAxis - 2));
-						mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mXAxis - 1, mYAxis - 1), GetTint(mXAxis - 1, mYAxis - 1));
-						mCharacterTiles.Draw(sb, 16, mCharacterTiles.SpriteSize * new Vector2(mXAxis, mYAxis - 2), GetTint(mXAxis, mYAxis - 2));
-						mCharacterTiles.Draw(sb, 17, mCharacterTiles.SpriteSize * new Vector2(mXAxis, mYAxis - 1), GetTint(mXAxis, mYAxis - 1));
-						mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mXAxis + 1, mYAxis - 2), GetTint(mXAxis + 1, mYAxis - 2));
-						mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mXAxis + 1, mYAxis - 1), GetTint(mXAxis + 1, mYAxis - 1));
-					}
-					else if (mSpecialEvent == SpecialEventType.MeetAhnYoungKi)
-						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(17, 17), GetTint(17, 17));
-				}
-
-				if (mDecorateTiles != null) {
-					if (mAnimationEvent == AnimationType.MeetCaminus && mAnimationFrame > 0) {
-						mDecorateTiles.Draw(sb, 8, mDecorateTiles.SpriteSize * new Vector2(playerX, playerY - (6 - mAnimationFrame)), GetTint(playerX, playerY - (6 - mAnimationFrame)));
+						DrawTile(sb, crystalMap.Layer, i, mCrystalX, mCrystalY, true);
 					}
 				}
 			}
+			else
+			{
+				var playerX = mXAxis;
+				var playerY = mYAxis;
 
-			if ((mAnimationEvent == AnimationType.GotoCourt ||
-				mAnimationEvent == AnimationType.GotoJail ||
-				mAnimationEvent == AnimationType.LiveJail || 
-				mAnimationEvent == AnimationType.FollowSoldier2 ||
-				mAnimationEvent == AnimationType.ConfirmPardon2 ||
-				mAnimationEvent == AnimationType.LearnOrcSpeaking2 ||
-				mAnimationEvent == AnimationType.LearnTrollWriting ||
-				mAnimationEvent == AnimationType.SendValiantToUranos) && mAnimationFrame <= 117)
-				AnimateTransition(mAnimationFrame, playerX, playerY);
+				var xOffset = 0;
+				var yOffset = 0;
+				if (mTelescopeXCount != 0)
+				{
+					if (mTelescopeXCount < 0)
+						xOffset = -(mTelescopePeriod - Math.Abs(mTelescopeXCount));
+					else
+						xOffset = mTelescopePeriod - Math.Abs(mTelescopeXCount);
+				}
+
+				if (mTelescopeYCount != 0)
+				{
+					if (mTelescopeYCount < 0)
+						yOffset = -(mTelescopePeriod - Math.Abs(mTelescopeYCount));
+					else
+						yOffset = mTelescopePeriod - Math.Abs(mTelescopeYCount);
+				}
+
+				var transform = Matrix3x2.Identity * Matrix3x2.CreateTranslation(-new Vector2(52 * (playerX - 4 + xOffset), 52 * (playerY - 5 + yOffset)));
+				args.DrawingSession.Transform = transform;
+
+				using (var sb = args.DrawingSession.CreateSpriteBatch(CanvasSpriteSortMode.None, CanvasImageInterpolation.NearestNeighbor, CanvasSpriteOptions.ClampToSourceRect))
+				{
+					Vector4 GetTint(int x, int y)
+					{
+						if ((!mEbony || mParty.Etc[0] > 0 || mMoonLight) && ((mMapHeader.Layer[x + y * mMapHeader.Width] & 0x80) == 0) && (playerX - mXWide > x || x > playerX + mXWide || playerY - mYWide > y || y > playerY + mYWide))
+							return new Vector4(0.1f, 0.1f, 0.6f, 1);
+						else
+							return Vector4.One;
+					}
+
+					lock (mapLock)
+					{
+						for (int i = 0; i < mMapHeader.Layer.Length; ++i)
+						{
+							DrawTile(sb, mMapHeader.Layer, i, playerX, playerY, false);
+						}
+					}
+
+					//Vector4 tint;
+					//if (fadeOut)
+					//	tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
+					//else if (fadeIn)
+					//	tint = new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1);
+					//else if (!mEbony || mParty.Etc[0] > 0 || mMoonLight)
+					//	tint = new Vector4(0.1f, 0.1f, 0.6f, 1);
+					//else
+					//	tint = Vector4.One;
+
+					if (mCharacterTiles != null && mFace >= 0)
+					{
+						if (mAnimationEvent != AnimationType.GotoCourt2 && mAnimationEvent != AnimationType.FollowSoldier && mAnimationEvent != AnimationType.FollowSoldier2)
+						{
+							if (fadeOut)
+							{
+								mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1));
+							}
+							else if (fadeIn)
+							{
+								mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1));
+							}
+							else if (!mEbony || mParty.Etc[0] > 0 || mMoonLight)
+							{
+								if (mEbony && mMoonLight && mXWide == 0 && mYWide == 0 && mParty.Etc[0] == 0)
+									mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(0.1f, 0.1f, 0.6f, 1));
+								else
+									mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
+							}
+						}
+
+						if (mAnimationEvent == AnimationType.CaptureProtagonist && mAnimationFrame > 0)
+						{
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + (6 - mAnimationFrame)), GetTint(24, mYAxis + (6 - mAnimationFrame)));
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + (6 - mAnimationFrame)), GetTint(25, mYAxis + (6 - mAnimationFrame)));
+						}
+						else if (mAnimationEvent == AnimationType.GotoCourt)
+						{
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(24, mYAxis + 1), GetTint(24, mYAxis + 1));
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(25, mYAxis + 1), GetTint(25, mYAxis + 1));
+						}
+						else if (mAnimationEvent == AnimationType.GotoCourt2 && mAnimationFrame > 0)
+						{
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (6 - mAnimationFrame)), GetTint(49, mYAxis + (6 - mAnimationFrame)));
+							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (6 - mAnimationFrame)), GetTint(50, mYAxis + (6 - mAnimationFrame)));
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis + (6 - mAnimationFrame)), GetTint(51, mYAxis + (6 - mAnimationFrame)));
+						}
+						else if (mAnimationEvent == AnimationType.SubmitProof && mAnimationFrame > 0)
+						{
+							if (mAnimationFrame <= 3)
+								mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, playerY - mAnimationFrame), GetTint(49, playerY - mAnimationFrame));
+							else
+								mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, playerY - 3 + (mAnimationFrame - 3)), GetTint(49, playerY - 3 + (mAnimationFrame - 3)));
+
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), GetTint(51, mYAxis));
+						}
+						else if (mAnimationEvent == AnimationType.GotoJail)
+						{
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis), GetTint(49, mYAxis));
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(51, mYAxis), GetTint(51, mYAxis));
+						}
+						else if (mAnimationEvent == AnimationType.FollowSoldier)
+							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX + (mAnimationFrame - 1), playerY), GetTint(playerX + (mAnimationFrame - 1), playerY));
+						else if (mAnimationEvent == AnimationType.FollowSoldier2 && mAnimationFrame >= 118)
+						{
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (123 - mAnimationFrame)), GetTint(49, mYAxis + (123 - mAnimationFrame)));
+							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(50, mYAxis + (123 - mAnimationFrame)), GetTint(50, mYAxis + (123 - mAnimationFrame)));
+						}
+						else if (mAnimationEvent == AnimationType.LeaveSoldier && mAnimationFrame > 0)
+						{
+							mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(49, mYAxis + (mAnimationFrame - 1)), GetTint(49, mYAxis + (mAnimationFrame - 1)));
+						}
+						else if (mAnimationEvent == AnimationType.TranformDraconianKing && mAnimationFrame == 4)
+						{
+							mCharacterTiles.Draw(sb, 12, mCharacterTiles.SpriteSize * new Vector2(mXAxis, mYAxis - 1), GetTint(mXAxis, mYAxis - 1));
+						}
+						else if (mAnimationEvent == AnimationType.TranformDraconianKing && mAnimationFrame >= 5)
+						{
+							mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mXAxis - 1, mYAxis - 2), GetTint(mXAxis - 1, mYAxis - 2));
+							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mXAxis - 1, mYAxis - 1), GetTint(mXAxis - 1, mYAxis - 1));
+							mCharacterTiles.Draw(sb, 16, mCharacterTiles.SpriteSize * new Vector2(mXAxis, mYAxis - 2), GetTint(mXAxis, mYAxis - 2));
+							mCharacterTiles.Draw(sb, 17, mCharacterTiles.SpriteSize * new Vector2(mXAxis, mYAxis - 1), GetTint(mXAxis, mYAxis - 1));
+							mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mXAxis + 1, mYAxis - 2), GetTint(mXAxis + 1, mYAxis - 2));
+							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mXAxis + 1, mYAxis - 1), GetTint(mXAxis + 1, mYAxis - 1));
+						}
+						else if (mSpecialEvent == SpecialEventType.MeetAhnYoungKi)
+							mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(17, 17), GetTint(17, 17));
+					}
+
+					if (mDecorateTiles != null)
+					{
+						if (mAnimationEvent == AnimationType.MeetCaminus && mAnimationFrame > 0)
+						{
+							mDecorateTiles.Draw(sb, 8, mDecorateTiles.SpriteSize * new Vector2(playerX, playerY - (6 - mAnimationFrame)), GetTint(playerX, playerY - (6 - mAnimationFrame)));
+						}
+					}
+				}
+
+				if ((mAnimationEvent == AnimationType.GotoCourt ||
+					mAnimationEvent == AnimationType.GotoJail ||
+					mAnimationEvent == AnimationType.LiveJail ||
+					mAnimationEvent == AnimationType.FollowSoldier2 ||
+					mAnimationEvent == AnimationType.ConfirmPardon2 ||
+					mAnimationEvent == AnimationType.LearnOrcSpeaking2 ||
+					mAnimationEvent == AnimationType.LearnTrollWriting ||
+					mAnimationEvent == AnimationType.SendValiantToUranos ||
+					mAnimationEvent == AnimationType.PassCrystal) && mAnimationFrame <= 117)
+					AnimateTransition(mAnimationFrame, playerX, playerY);
+			}
 		}
 
-		private void DrawTile(CanvasSpriteBatch sb, byte[] layer, int index, int playerX, int playerY)
+		private void DrawTile(CanvasSpriteBatch sb, byte[] layer, int index, int playerX, int playerY, bool viewCrystal)
 		{
 			int row = index / mMapHeader.Width;
 			int column = index % mMapHeader.Width;
@@ -17712,7 +18008,7 @@ namespace MysticUWP
 			Vector4 tint;
 
 			var darkness = false;
-			if (playerX - mXWide <= column && column <= playerX + mXWide && playerY - mYWide <= row && row <= playerY + mYWide)
+			if (!viewCrystal && playerX - mXWide <= column && column <= playerX + mXWide && playerY - mYWide <= row && row <= playerY + mYWide)
 				darkness = false;
 			else
 				darkness = true;
@@ -17735,7 +18031,9 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.MoveGround2 ||
 				mAnimationEvent == AnimationType.MoveGround3 ||
 				mAnimationEvent == AnimationType.CompleteLearnKoboldWriting ||
-				mAnimationEvent == AnimationType.LandUranos)
+				mAnimationEvent == AnimationType.LandUranos ||
+				mAnimationEvent == AnimationType.ViewCrystal ||
+				mAnimationEvent == AnimationType.ExitCrystal)
 				fadeIn = true;
 
 			if ((layer[index] & 0x80) > 0)
@@ -18404,6 +18702,9 @@ namespace MysticUWP
 			MeetAhnYoungKi,
 			FindShelter,
 			BattleOldLordAhn,
+			UseCromaticCrystal,
+			BuildDome,
+			ExitCrystal,
 			End3
 		}
 
@@ -18495,6 +18796,10 @@ namespace MysticUWP
 			Rebellion3,
 			OldLordAhn1,
 			OldLordAhn2,
+			OrcRevengeSpirit,
+			TrollRevengeSpirit,
+			KoboldRevengeSpirit,
+			DraconianRevengeSpirit
 		}
 
 		private enum BattleTurn
@@ -18558,7 +18863,9 @@ namespace MysticUWP
 			SendValiantToUranos,
 			LandUranos,
 			TranformDraconianKing,
-			MeetCaminus
+			MeetCaminus,
+			ViewCrystal,
+			ExitCrystal
 		}
 
 		private enum SpinnerType
@@ -18661,7 +18968,9 @@ namespace MysticUWP
 			MeetPollux,
 			JoinPollux,
 			ChooseItemType,
+			BattleChooseItemType,
 			ChooseCrystal,
+			BattleChooseCrystal,
 			LearnTrollWriting,
 			JoinAltair,
 			JoinVega,
@@ -18728,7 +19037,7 @@ namespace MysticUWP
 			JoinDraconian,
 			BattleDraconianEntrance,
 			TeleportCastleLore,
-			ChooseBetrayLordAhn
+			ChooseBetrayLordAhn,
 		}
 	}
 }
