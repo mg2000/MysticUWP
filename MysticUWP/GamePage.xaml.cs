@@ -1440,6 +1440,26 @@ namespace MysticUWP
 						else if (battleEvent == BattleEvent.OldLordAhn2) {
 							Talk($"[color={RGB.White}] 당신은 드디어 숙적 로드안을 물리쳤다.[/color]", SpecialEventType.End3);
 						}
+						else if (battleEvent == BattleEvent.OrcRevengeSpirit) {
+							Dialog($"[color={RGB.White}] 당신은 오크의 원혼을 크리스탈 볼 속에 봉인시켰다.[/color]");
+							mParty.Etc[25]++;
+						}
+						else if (battleEvent == BattleEvent.TrollRevengeSpirit)
+						{
+							Dialog($"[color={RGB.White}] 당신은 트롤의 원혼을 크리스탈 볼 속에 봉인시켰다.[/color]");
+							mParty.Etc[25]++;
+						}
+						else if (battleEvent == BattleEvent.KoboldRevengeSpirit)
+						{
+							Dialog($"[color={RGB.White}] 당신은 코볼트의 원혼을 크리스탈 볼 속에 봉인시켰다.[/color]");
+							mParty.Etc[25]++;
+						}
+						else if (battleEvent == BattleEvent.DraconianRevengeSpirit)
+						{
+							Dialog($"[color={RGB.White}] 당신은 드라콘의 원혼을 크리스탈 볼 속에 봉인시켰다.[/color]");
+							mParty.Etc[25]++;
+							mParty.Etc[19] = 11;
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1570,6 +1590,16 @@ namespace MysticUWP
 						}
 						else if (battleEvent == BattleEvent.OldLordAhn1 ||
 							battleEvent == BattleEvent.OldLordAhn2)
+						{
+							mBattleCommandQueue.Clear();
+							BattleMode();
+
+							return;
+						}
+						else if (battleEvent == BattleEvent.OrcRevengeSpirit ||
+							battleEvent == BattleEvent.TrollRevengeSpirit ||
+							battleEvent == BattleEvent.KoboldRevengeSpirit ||
+							battleEvent == BattleEvent.DraconianRevengeSpirit)
 						{
 							mBattleCommandQueue.Clear();
 							BattleMode();
@@ -1941,6 +1971,18 @@ namespace MysticUWP
 						{
 							while (mPlayerList.Count > 1)
 								mPlayerList.RemoveAt(1);
+
+							if (mAssistPlayer != null)
+								mAssistPlayer = null;
+
+							DisplayPlayerInfo();
+
+							UpdateTileInfo(mXAxis - 3, mYAxis, 44);
+							UpdateTileInfo(mXAxis + 3, mYAxis, 44);
+							UpdateTileInfo(mXAxis - 3, mYAxis + 2, 44);
+							UpdateTileInfo(mXAxis + 3, mYAxis + 2, 44);
+							UpdateTileInfo(mXAxis - 3, mYAxis + 4, 44);
+							UpdateTileInfo(mXAxis + 3, mYAxis + 4, 44);
 
 							Dialog(" 잠시간의 침묵이 흘렀다.");
 							InvokeAnimation(AnimationType.TransformProtagonist);
@@ -4799,13 +4841,13 @@ namespace MysticUWP
 									if (mParty.Etc[24] == 1) {
 										switch (mParty.Etc[19]) {
 											case 9:
-												predict = 19;
+												predict = 18;
 												break;
 											case 10:
-												predict = mParty.Etc[25] + 21;
+												predict = mParty.Etc[25] + 20;
 												break;
 											case 11:
-												predict = 11;
+												predict = 10;
 												break;
 										}
 									}
@@ -6568,10 +6610,55 @@ namespace MysticUWP
 											JoinEnemy(59);
 
 											mBattleEvent = BattleEvent.OrcRevengeSpirit;
+											StartBattle(false);
 										}
 										else
 											await ViewCrystal("Ground2", 91, 11);
 									}
+									else if (mParty.Etc[25] == 1)
+									{
+										if (mMapName == "Ground3" && mXAxis == 34 && mYAxis == 33)
+										{
+											mEncounterEnemyList.Clear();
+
+											JoinEnemy(60);
+
+											mBattleEvent = BattleEvent.TrollRevengeSpirit;
+											StartBattle(false);
+										}
+										else
+											await ViewCrystal("Ground3", 34, 33);
+									}
+									else if (mParty.Etc[25] == 2)
+									{
+										if (mMapName == "Ground4" && mXAxis == 10 && mYAxis == 90)
+										{
+											mEncounterEnemyList.Clear();
+
+											JoinEnemy(61);
+
+											mBattleEvent = BattleEvent.KoboldRevengeSpirit;
+											StartBattle(false);
+										}
+										else
+											await ViewCrystal("Ground4", 10, 90);
+									}
+									else if (mParty.Etc[25] == 3)
+									{
+										if (mMapName == "Ground1" && mXAxis == 43 && mYAxis == 49)
+										{
+											mEncounterEnemyList.Clear();
+
+											JoinEnemy(62);
+
+											mBattleEvent = BattleEvent.DraconianRevengeSpirit;
+											StartBattle(false);
+										}
+										else
+											await ViewCrystal("Ground1", 43, 49);
+									}
+									else
+										Dialog(" 크리스탈 볼 속에는  아무것도 떠오르지 않았다.");
 								}
 							}
 						}
@@ -16241,7 +16328,7 @@ namespace MysticUWP
 
 			reader.ReadBytes(50);
 
-			mapHeader.Layer = reader.ReadBytes(mMapHeader.Width * mMapHeader.Height);
+			mapHeader.Layer = reader.ReadBytes(mapHeader.Width * mapHeader.Height);
 
 			return mapHeader;
 		}
@@ -16864,7 +16951,7 @@ namespace MysticUWP
 				}
 				else if (mAnimationEvent == AnimationType.PassCrystal2)
 				{
-					for (var i = 1; i <= 5; i++)
+					for (var i = 1; i <= 4; i++)
 					{
 						mAnimationFrame = i;
 						if (i == 3)
@@ -16875,12 +16962,18 @@ namespace MysticUWP
 				}
 				else if (mAnimationEvent == AnimationType.SealCrystal || mAnimationEvent == AnimationType.SealCrystal2)
 				{
+					mAnimationFrame = 1;
 					Task.Delay(1000).Wait();
+					mAnimationFrame = 2;
 				}
 				else if (mAnimationEvent == AnimationType.TransformProtagonist)
 					Task.Delay(3000).Wait();
 				else if (mAnimationEvent == AnimationType.TransformProtagonist2)
+				{
+					mAnimationFrame = 1;
 					Task.Delay(2000).Wait();
+					mAnimationFrame = 2;
+				}
 				else if (mAnimationEvent == AnimationType.ComeSoldier)
 				{
 					for (var i = 1; i <= 3; i++)
@@ -17046,7 +17139,8 @@ namespace MysticUWP
 					AnimateTransition();
 				else if (mAnimationEvent == AnimationType.LandUranos)
 					AnimateFadeInOut();
-				else if (mAnimationEvent == AnimationType.TranformDraconianKing) {
+				else if (mAnimationEvent == AnimationType.TranformDraconianKing)
+				{
 					mAnimationFrame = 1;
 					Task.Delay(500).Wait();
 					mAnimationFrame = 2;
@@ -17057,14 +17151,17 @@ namespace MysticUWP
 					Task.Delay(1500).Wait();
 					mAnimationFrame = 5;
 				}
-				else if (mAnimationEvent == AnimationType.MeetCaminus) {
-					for (var i = 1; i <= 5; i++) {
+				else if (mAnimationEvent == AnimationType.MeetCaminus)
+				{
+					for (var i = 1; i <= 5; i++)
+					{
 						mAnimationFrame = i;
 						if (i < 5)
 							Task.Delay(500).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.ViewCrystal) {
+				else if (mAnimationEvent == AnimationType.ViewCrystal)
+				{
 					AnimateFadeInOut();
 				}
 				else if (mAnimationEvent == AnimationType.ExitCrystal)
@@ -17185,9 +17282,6 @@ namespace MysticUWP
 			}
 			else if (mAnimationEvent == AnimationType.SealCrystal)
 			{
-				mAnimationEvent = AnimationType.None;
-				mAnimationFrame = 0;
-
 				Talk(new string[] {
 					"",
 					" 로드안의  손에 들린 크리스탈 볼이  가볍게 떠오르기 시작했다. 로드안은 차츰 양손의 기력을 증강 시켰고 크리스탈 볼은 붉게 달아오르기 시작했다." +
@@ -17883,9 +17977,10 @@ namespace MysticUWP
 
 					lock (mapLock)
 					{
-						for (int i = 0; i < mMapHeader.Layer.Length; ++i)
+						var mapHeader = mMapHeader;
+						for (int i = 0; i < mapHeader.Layer.Length; ++i)
 						{
-							DrawTile(sb, mMapHeader.Layer, i, playerX, playerY, false);
+							DrawTile(sb, mapHeader.Layer, i, playerX, playerY, false);
 						}
 					}
 
@@ -17913,10 +18008,22 @@ namespace MysticUWP
 							}
 							else if (!mEbony || mParty.Etc[0] > 0 || mMoonLight)
 							{
-								if (mEbony && mMoonLight && mXWide == 0 && mYWide == 0 && mParty.Etc[0] == 0)
-									mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(0.1f, 0.1f, 0.6f, 1));
+								Vector4 GetPlayerTint() {
+									if (mEbony && mMoonLight && mXWide == 0 && mYWide == 0 && mParty.Etc[0] == 0)
+										return new Vector4(0.1f, 0.1f, 0.6f, 1);
+									else
+										return Vector4.One;
+								}
+
+								if (mAnimationEvent == AnimationType.PassCrystal2 && mAnimationEvent > 0)
+								{
+									if (mAnimationFrame <= 2)
+										mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - mAnimationFrame), GetPlayerTint());
+									else
+										mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - (5 - mAnimationFrame)), GetPlayerTint());
+								}
 								else
-									mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
+									mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), GetPlayerTint());
 							}
 						}
 
@@ -17976,6 +18083,8 @@ namespace MysticUWP
 						}
 						else if (mSpecialEvent == SpecialEventType.MeetAhnYoungKi)
 							mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(17, 17), GetTint(17, 17));
+						else if ((mAnimationEvent == AnimationType.SealCrystal && mAnimationFrame > 1) || mAnimationEvent == AnimationType.SealCrystal2)
+							mCharacterTiles.Draw(sb, 20, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - 2), GetTint(playerX, playerY - 2));
 					}
 
 					if (mDecorateTiles != null)
@@ -18865,7 +18974,7 @@ namespace MysticUWP
 			TranformDraconianKing,
 			MeetCaminus,
 			ViewCrystal,
-			ExitCrystal
+			ExitCrystal,
 		}
 
 		private enum SpinnerType
