@@ -1812,7 +1812,7 @@ namespace MysticUWP
 								"  당신은 이곳을 통해 하데스 테라로 간후 배리언트 피플즈의 주민들이 안전하게  살 수 있는 곳을  찾아내면 되는 것입니다. 아마 당신의 투시능력이 큰 도움을 줄것입니다." +
 								"  제가 당신에게 크로매틱 크리스탈을 드리겠습니다.  당신이 가장 좋은 장소를 찾았을 때 이 크리스탈을 사용하십시요." +
 								"  그리면 저의 투시력과  그 크리스탈이 서로 교감하여  나의 투시력이 그곳으로 작용할 것입니다.[/color]",
-								$"[color={RGB.LightBlue}] 당신의 성공을 빌겠습니다."
+								$"[color={RGB.LightBlue}] 당신의 성공을 빌겠습니다.[/color]"
 							}, SpecialEventType.None);
 
 							mParty.Crystal[7]++;
@@ -2828,7 +2828,13 @@ namespace MysticUWP
 							StartBattle(false);
 						}
 						else if (specialEvent == SpecialEventType.SendNecromancer) {
-							Talk(" 네크로만서로 변한 당신은 공간의 틈을 통해 다른 공간으로 빠져 버렸다.  그리고 로어 세계의 평화가 너무 오래 유지될 때  당신은 운명에 의해 이 세계로 내려 올 것이다.", SpecialEventType.SendNecromancer2);	
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
+
+							Talk(" 네크로만서로 변한 당신은 공간의 틈을 통해 다른 공간으로 빠져 버렸다.  그리고 로어 세계의 평화가 너무 오래 유지될 때  당신은 운명에 의해 이 세계로 내려 올 것이다.", SpecialEventType.SendNecromancer2);
+						}
+						else if (specialEvent == SpecialEventType.SendNecromancer2) {
+							InvokeAnimation(AnimationType.Ending1Cookie1);
 						}
 						else if (specialEvent == SpecialEventType.UseCromaticCrystal) {
 							Talk($"[color={RGB.LightBlue}] 역시  당신은 제가 생각했던대로 정말 훌륭하십니다.  당신이 찾은 이곳이라면 아마 베리언트 피플즈의 사람들이 숨기에는 충분할 것입니다." +
@@ -2880,6 +2886,23 @@ namespace MysticUWP
 						else if (specialEvent == SpecialEventType.ExitCrystal) {
 							mCrystalMap = null;
 							InvokeAnimation(AnimationType.ExitCrystal);
+						}
+						else if (specialEvent == SpecialEventType.Ending1Talk1) {
+							Talk($"[color={RGB.LightRed}] 예, 메피스토펠레스님.  그것은 원혼이 봉인된 에너지 공인데  로드안이 지하세계로 버린 것입니다." +
+							" 그런데 그것이 카미너스씨의 몸 속으로 들어갔습니다.[/color]", SpecialEventType.Ending1Talk2);
+						}
+						else if (specialEvent == SpecialEventType.Ending1Talk2) {
+							Talk(new string[] {
+							$"[color={RGB.LightMagenta}] 그래? 그렇다면 분명 카미너스씨의 자손중에서 원혼을 봉인한채 태어 나는 아이가 틀림없이 있을 것이다." +
+							" 그 아이가 태어났을때, 우리의 힘으로 봉인된 원혼을 풀어 버린다면 우리는 그 힘을 이용해 세계를 지배할 수 있을 것이다." +
+							" 후후후, 로드안은 정말 멍청한 짓을 했군.[/color]",
+							$"[color={RGB.LightMagenta}] 우리에게 도리어 이런 기회를 줘 버리다니..[/color]"
+							}, SpecialEventType.End1);
+						}
+						else if (specialEvent == SpecialEventType.End1) {
+							Window.Current.CoreWindow.KeyDown -= gamePageKeyDownEvent;
+							Window.Current.CoreWindow.KeyUp -= gamePageKeyUpEvent;
+							Frame.Navigate(typeof(CreditPage), null);
 						}
 						//else if (specialEvent == SpecialEventType.EndCookie1) 
 					}
@@ -9028,7 +9051,7 @@ namespace MysticUWP
 
 								DisplayPlayerInfo();
 
-
+								InvokeAnimation(AnimationType.LeaveCaminus);
 							}
 							else {
 								mAnimationEvent = AnimationType.None;
@@ -10440,7 +10463,7 @@ namespace MysticUWP
 					UpdateTileInfo(21, 35, tileA);
 					UpdateTileInfo(22, 38, tileA);
 				}
-				else if (mXAxis == 22 && mYAxis == 18)
+				else if (mXAxis == 22 && mYAxis == 14)
 				{
 					int tileA, tileB;
 
@@ -12267,6 +12290,15 @@ namespace MysticUWP
 						"",
 						"",
 						$"[color={RGB.LightCyan}]                도서관[/color]"
+					}, true);
+				}
+			}
+			else if (mMapName == "HdsGate") {
+				if (x == 12 && y == 21) {
+					Dialog(new string[] {
+						$"[color={RGB.White}] 진정한 길은 마음으로 보아야한다[/color]",
+						$"[color={RGB.White}] 당신 주위에 있는 인위적인 시각 요소를 배제하라[/color]",
+						$"[color={RGB.White}] 그리고 다시 눈을 떴을때 이미 길은 당신 앞에 펼쳐져 있을 것이다[/color]",
 					}, true);
 				}
 			}
@@ -17168,12 +17200,59 @@ namespace MysticUWP
 				{
 					AnimateFadeInOut();
 				}
+				else if (mAnimationEvent == AnimationType.Ending1Cookie1) {
+					AnimateFadeInOut();
+				}
+				else if (mAnimationEvent == AnimationType.Ending1Cookie2)
+				{
+					AnimateFadeInOut();
+					while (mXAxis != 45 || mYAxis != 47)
+					{
+						mXAxis += Math.Sign(45 - mXAxis);
+						mYAxis += Math.Sign(47 - mYAxis);
+						Task.Delay(300).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.Ending1Cookie3) {
+					AnimateFadeInOut();
+
+					while (mXAxis != 25 || mYAxis != 13)
+					{
+						mXAxis += Math.Sign(25 - mXAxis);
+						mYAxis += Math.Sign(13 - mYAxis);
+						Task.Delay(500).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.Ending1Cookie4) {
+					mAnimationFrame = 1;
+					Task.Delay(5000).Wait();
+					for (mYAxis = 14; mYAxis < 17; mYAxis++) {
+						mAnimationFrame++;
+						Task.Delay(1000).Wait();
+					}
+					Task.Delay(4000).Wait();
+					for (var i = 0; i < 3; i++)
+					{
+						mAnimationFrame++;
+						Task.Delay(500).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.LeaveCaminus) {
+					for (var i = 1; i <= 5; i++)
+					{
+						mAnimationFrame = i;
+						Task.Delay(500).Wait();
+					}
+				}
 			});
 
 			await animationTask;
 
 			if (mAnimationEvent == AnimationType.HearAncientEvil)
 			{
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
 				mSpecialEvent = SpecialEventType.HearAncientEvil;
 				ContinueText.Visibility = Visibility.Visible;
 			}
@@ -17312,9 +17391,6 @@ namespace MysticUWP
 			}
 			else if (mAnimationEvent == AnimationType.TransformProtagonist2)
 			{
-				mAnimationEvent = AnimationType.None;
-				mAnimationFrame = 0;
-
 				Talk(new string[] {
 					$"[color={RGB.LightGreen}] 당신은 이제 악의 추종자로서의 형체를 갖추었다네. 4 m 가량의 키와 강력한 마력을 겸비한 악의 최대 전투사로서..." +
 					$"  당신은 이제[/color] [color={RGB.LightCyan}]네크로만서[/color][color={RGB.LightGreen}]란 이름으로  이 세상의 평화가 오래 지속 될 때  이 세상을 위협하려 내려올 운명을 가지게 되었다네." +
@@ -17478,20 +17554,23 @@ namespace MysticUWP
 
 				ClearDialog();
 			}
-			else if (mAnimationEvent == AnimationType.InvestigateDeadBody) {
+			else if (mAnimationEvent == AnimationType.InvestigateDeadBody)
+			{
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
 
 				Dialog(" 곧이어 당신은 그 시체의 오른 손에 무언가가 꽉 쥐어져 있음을 알아차렸고 그것이 메세지를 전하기 위한 메모 쪽지라는 것을 알게 되었다." +
 				" 당신은 그의 손을 펴보려 했지만 그의 몸은 빳빳하게 굳어 있었고 좀처럼 펼 수가 없었다.", true);
 
-				if (mParty.Item[4] > 0) {
+				if (mParty.Item[4] > 0)
+				{
 					mParty.Item[4]--;
 
 					InvokeAnimation(AnimationType.UseHerbOfRessurection);
 				}
 			}
-			else if (mAnimationEvent == AnimationType.UseHerbOfRessurection) {
+			else if (mAnimationEvent == AnimationType.UseHerbOfRessurection)
+			{
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
 
@@ -17502,7 +17581,8 @@ namespace MysticUWP
 					" 당신은 그 시체에게 부활의 약초를 사용했고  예상대로 그의 몸은 약간의 핏기가 돌게 되었고  어렵지않게 그의 손에 쥐여진  종이 쪽지를  빼낼 수가 있었다. 내용은 이러했다."
 				}, SpecialEventType.ReadVesperMemo, true);
 			}
-			else if (mAnimationEvent == AnimationType.LearnTrollWriting) {
+			else if (mAnimationEvent == AnimationType.LearnTrollWriting)
+			{
 				Talk(" 당신은 그에게 일주일간 트롤의 글을 배웠다.", SpecialEventType.LearnTrollWriting);
 
 				mParty.Day += 7;
@@ -17515,7 +17595,8 @@ namespace MysticUWP
 
 				SetBit(10);
 			}
-			else if (mAnimationEvent == AnimationType.MoveGround4) {
+			else if (mAnimationEvent == AnimationType.MoveGround4)
+			{
 				mMapName = "Ground4";
 
 				await RefreshGame();
@@ -17526,7 +17607,8 @@ namespace MysticUWP
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
 			}
-			else if (mAnimationEvent == AnimationType.MoveGaeaTerraCastle) {
+			else if (mAnimationEvent == AnimationType.MoveGaeaTerraCastle)
+			{
 				mMapName = mMapHeader.ExitMap;
 
 				mXAxis = mMapHeader.ExitX - 1;
@@ -17537,39 +17619,45 @@ namespace MysticUWP
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
 			}
-			else if (mAnimationEvent == AnimationType.LearnKoboldWriting) {
+			else if (mAnimationEvent == AnimationType.LearnKoboldWriting)
+			{
 				Talk(" 일주일이 지났다.", SpecialEventType.LearnKoboldWriting);
 
 				SetBit(12);
 				mParty.Day += 7;
 				PlusTime(0, 0, 1);
 			}
-			else if (mAnimationEvent == AnimationType.CompleteLearnKoboldWriting) {
+			else if (mAnimationEvent == AnimationType.CompleteLearnKoboldWriting)
+			{
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
 
 				Dialog(" 당신은 이제 코볼트 글을 알게 되었다.");
 			}
-			else if (mAnimationEvent == AnimationType.TurnOffTorch) {
+			else if (mAnimationEvent == AnimationType.TurnOffTorch)
+			{
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
 
 				mParty.Etc[0] = 0;
 				UpdateView();
 			}
-			else if (mAnimationEvent == AnimationType.SendValiantToUranos) {
+			else if (mAnimationEvent == AnimationType.SendValiantToUranos)
+			{
 				mMapName = "Ground5";
 
 				await RefreshGame();
 
 				InvokeAnimation(AnimationType.LandUranos);
 			}
-			else if (mAnimationEvent == AnimationType.TranformDraconianKing) {
+			else if (mAnimationEvent == AnimationType.TranformDraconianKing)
+			{
 				ClearDialog();
 				mSpecialEvent = SpecialEventType.BattleDraconianKing;
 				ContinueText.Visibility = Visibility.Visible;
 			}
-			else if (mAnimationEvent == AnimationType.MeetCaminus) {
+			else if (mAnimationEvent == AnimationType.MeetCaminus)
+			{
 				Ask(new string[] {
 					" 나는 이번 반란을 지휘하고 있는 카미너스라는 사람이오. 몇일 전에 우리 성에 에인션트 이블의 의지가 다녀갔소. 그리고 이 세상의 진실을 어렴풋이 알게 되었소." +
 					"  우리는 항상 로드안이 말하는 것을 그대로 믿어왔소. 그건 여태껏 알려진 그의 명성 때문이었다오.  하지만 이제는 예외가 있다는걸 깨닭게 되었소.",
@@ -17583,11 +17671,44 @@ namespace MysticUWP
 					"로드안의 말대로 이들을 벌한다"
 				});
 			}
-			else if (mAnimationEvent == AnimationType.ViewCrystal) {
+			else if (mAnimationEvent == AnimationType.ViewCrystal)
+			{
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
 
 				Talk(" 당신은 수정구슬을 통해 낯선 풍경을 보았다.", SpecialEventType.ExitCrystal);
+			}
+			else if (mAnimationEvent == AnimationType.Ending1Cookie1)
+			{
+				mMapName = "UnderGrd";
+
+				await RefreshGame();
+
+				UpdateTileInfo(45, 47, 54);
+
+				mXAxis = 30;
+				mYAxis = 21;
+
+				InvokeAnimation(AnimationType.Ending1Cookie2);
+			}
+			else if (mAnimationEvent == AnimationType.Ending1Cookie2) {
+				mMapName = "Dome";
+
+				await RefreshGame();
+
+				UpdateTileInfo(27, 20, 53);
+
+				mXAxis = 25;
+				mYAxis = 5;
+
+				InvokeAnimation(AnimationType.Ending1Cookie3);
+			}
+			else if (mAnimationEvent == AnimationType.Ending1Cookie3)
+			{
+				InvokeAnimation(AnimationType.Ending1Cookie4);
+			}
+			else if (mAnimationEvent == AnimationType.Ending1Cookie4) {
+				Talk($"[color={RGB.LightMagenta}] 아스모데우스여,  방금 에너지 공이 이 방으로 들어가는 것을 보았는데 어떻게 된것인가?[/color]", SpecialEventType.Ending1Talk1);
 			}
 			else
 			{
@@ -17914,7 +18035,8 @@ namespace MysticUWP
 			if (mAnimationEvent == AnimationType.LearnOrcWriting ||
 				mAnimationEvent == AnimationType.MoveGround4 ||
 				mAnimationEvent == AnimationType.MoveGaeaTerraCastle ||
-				mAnimationEvent == AnimationType.LearnKoboldWriting)
+				mAnimationEvent == AnimationType.LearnKoboldWriting ||
+				mAnimationEvent == AnimationType.Ending1Cookie1)
 				fadeOut = true;
 			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting ||
 				mAnimationEvent == AnimationType.MoveGround2 ||
@@ -17922,7 +18044,9 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.CompleteLearnKoboldWriting ||
 				mAnimationEvent == AnimationType.LandUranos ||
 				mAnimationEvent == AnimationType.ViewCrystal ||
-				mAnimationEvent == AnimationType.ExitCrystal)
+				mAnimationEvent == AnimationType.ExitCrystal ||
+				mAnimationEvent == AnimationType.Ending1Cookie2 ||
+				mAnimationEvent == AnimationType.Ending1Cookie3)
 				fadeIn = true;
 
 			var crystalMap = mCrystalMap;
@@ -17996,7 +18120,14 @@ namespace MysticUWP
 
 					if (mCharacterTiles != null && mFace >= 0)
 					{
-						if (mAnimationEvent != AnimationType.GotoCourt2 && mAnimationEvent != AnimationType.FollowSoldier && mAnimationEvent != AnimationType.FollowSoldier2)
+						if (mAnimationEvent != AnimationType.GotoCourt2 && 
+							mAnimationEvent != AnimationType.FollowSoldier && 
+							mAnimationEvent != AnimationType.FollowSoldier2 &&
+							mSpecialEvent != SpecialEventType.SendNecromancer2 &&
+							mAnimationEvent != AnimationType.Ending1Cookie1 &&
+							mAnimationEvent != AnimationType.Ending1Cookie2 &&
+							mAnimationEvent != AnimationType.Ending1Cookie3 &&
+							mAnimationEvent != AnimationType.Ending1Cookie4)
 						{
 							if (fadeOut)
 							{
@@ -18021,6 +18152,10 @@ namespace MysticUWP
 										mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - mAnimationFrame), GetPlayerTint());
 									else
 										mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - (5 - mAnimationFrame)), GetPlayerTint());
+								}
+								else if (mAnimationEvent == AnimationType.TransformProtagonist2 && mAnimationFrame >= 2) {
+									mCharacterTiles.Draw(sb, 25, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - 1), GetPlayerTint());
+									mCharacterTiles.Draw(sb, 26, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), GetPlayerTint());
 								}
 								else
 									mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), GetPlayerTint());
@@ -18085,6 +18220,14 @@ namespace MysticUWP
 							mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(17, 17), GetTint(17, 17));
 						else if ((mAnimationEvent == AnimationType.SealCrystal && mAnimationFrame > 1) || mAnimationEvent == AnimationType.SealCrystal2)
 							mCharacterTiles.Draw(sb, 20, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - 2), GetTint(playerX, playerY - 2));
+						else if (mAnimationEvent == AnimationType.Ending1Cookie2 || mAnimationEvent == AnimationType.Ending1Cookie3) {
+							if (fadeIn && mAnimationFrame < 10f)
+							{
+								mCharacterTiles.Draw(sb, 20, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1));
+							}
+							else
+								mCharacterTiles.Draw(sb, 20, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
+						}
 					}
 
 					if (mDecorateTiles != null)
@@ -18092,6 +18235,9 @@ namespace MysticUWP
 						if (mAnimationEvent == AnimationType.MeetCaminus && mAnimationFrame > 0)
 						{
 							mDecorateTiles.Draw(sb, 8, mDecorateTiles.SpriteSize * new Vector2(playerX, playerY - (6 - mAnimationFrame)), GetTint(playerX, playerY - (6 - mAnimationFrame)));
+						}
+						else if (mAnimationEvent == AnimationType.LeaveCaminus && mAnimationEvent > 0) {
+							mDecorateTiles.Draw(sb, 8, mDecorateTiles.SpriteSize * new Vector2(playerX, playerY - mAnimationFrame), GetTint(playerX, playerY - mAnimationFrame));
 						}
 					}
 				}
@@ -18134,7 +18280,8 @@ namespace MysticUWP
 			if (mAnimationEvent == AnimationType.LearnOrcWriting ||
 				mAnimationEvent == AnimationType.MoveGround4 ||
 				mAnimationEvent == AnimationType.MoveGaeaTerraCastle ||
-				mAnimationEvent == AnimationType.LearnKoboldWriting)
+				mAnimationEvent == AnimationType.LearnKoboldWriting ||
+				mAnimationEvent == AnimationType.Ending1Cookie1)
 				fadeOut = true;
 			else if (mAnimationEvent == AnimationType.CompleteLearnOrcWriting ||
 				mAnimationEvent == AnimationType.MoveGround2 ||
@@ -18142,14 +18289,16 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.CompleteLearnKoboldWriting ||
 				mAnimationEvent == AnimationType.LandUranos ||
 				mAnimationEvent == AnimationType.ViewCrystal ||
-				mAnimationEvent == AnimationType.ExitCrystal)
+				mAnimationEvent == AnimationType.ExitCrystal ||
+				mAnimationEvent == AnimationType.Ending1Cookie2 ||
+				mAnimationEvent == AnimationType.Ending1Cookie3)
 				fadeIn = true;
 
-			if ((layer[index] & 0x80) > 0)
+			if ((layer[index] & 0x80) > 0 || mAnimationEvent == AnimationType.Ending1Cookie2 || mAnimationEvent == AnimationType.Ending1Cookie3 || mAnimationEvent == AnimationType.Ending1Cookie4)
 			{
 				if (fadeOut)
 					tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
-				else if (fadeIn)
+				else if (fadeIn && mAnimationFrame < 10)
 					tint = new Vector4(0.1f, 0.1f, mAnimationFrame / 10f, 1);
 				else
 					tint = Vector4.One;
@@ -18296,6 +18445,11 @@ namespace MysticUWP
 					else if (tileIdx == 53) {
 						mapIdx = 0;
 						tileIdx = 48;
+					}
+				}
+				else if (mMapName == "Dome") {
+					if (tileIdx == 54) {
+						tileIdx = 35;	
 					}
 				}
 				
@@ -18445,6 +18599,13 @@ namespace MysticUWP
 					else
 						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				}
+				else if (mAnimationEvent == AnimationType.Ending1Cookie4 && mAnimationFrame >= 5)
+				{
+					if (column == playerX + 3 && row == playerY + (10 - mAnimationFrame))
+						mMapTiles.Draw(sb, 52 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
 				else
 				{
 					mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
@@ -18513,6 +18674,10 @@ namespace MysticUWP
 							mDecorateTiles.Draw(sb, 5, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
 							break;
 					}
+				}
+				else if (mMapName == "Dome") {
+					if (oriTileIdx == 54)
+						mDecorateTiles.Draw(sb, 8, mDecorateTiles.SpriteSize * new Vector2(column, row), tint);
 				}
 			}
 		}
@@ -18814,7 +18979,10 @@ namespace MysticUWP
 			UseCromaticCrystal,
 			BuildDome,
 			ExitCrystal,
-			End3
+			End1,
+			End3,
+			Ending1Talk1,
+			Ending1Talk2
 		}
 
 		private enum BattleEvent
@@ -18975,6 +19143,11 @@ namespace MysticUWP
 			MeetCaminus,
 			ViewCrystal,
 			ExitCrystal,
+			LeaveCaminus,
+			Ending1Cookie1,
+			Ending1Cookie2,
+			Ending1Cookie3,
+			Ending1Cookie4
 		}
 
 		private enum SpinnerType
