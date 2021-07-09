@@ -178,6 +178,8 @@ namespace MysticUWP
 		private int mCrystalX;
 		private int mCrystalY;
 
+		private int mLordAhnBattleCount = 0;
+
 		public GamePage()
 		{
 			this.InitializeComponent();
@@ -271,6 +273,7 @@ namespace MysticUWP
 			mEnterTypeMap["DracTown"] = "드라코니안 마을";
 			mEnterTypeMap["Imperium"] = "임페리엄 마이너성";
 			mEnterTypeMap["HdsGate"] = "하데스 게이트";
+			mEnterTypeMap["UnderGrd"] = "하데스 테라";
 
 			gamePageKeyDownEvent = async (sender, args) =>
 			{
@@ -1460,6 +1463,23 @@ namespace MysticUWP
 							mParty.Etc[25]++;
 							mParty.Etc[19] = 11;
 						}
+						else if (battleEvent == BattleEvent.LordAhn) {
+							if (mLordAhnBattleCount == 14) {
+								Talk(" 당신은  힘겹게 로드안을 물리쳤다.  그리고 예상대로  로어성의 병사들은  자신의 군주가 패하자 뿔뿔이 흩어져 버렸다. 벌판에는 당신이 죽인 수 많은 시체가 널려있었다.", SpecialEventType.End2);
+							}
+							else if (mLordAhnBattleCount == 13)
+								BattleLordAhnType5();
+							else if (mLordAhnBattleCount == 12)
+								BattleLordAhnType4();
+							else if (mLordAhnBattleCount >= 10)
+								BattleLordAhnType3();
+							else if (mLordAhnBattleCount >= 6)
+								BattleLordAhnType2();
+							else
+								BattleLordAhnType1();
+
+							return;
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1582,7 +1602,8 @@ namespace MysticUWP
 						}
 						else if (battleEvent == BattleEvent.Rebellion1 ||
 							battleEvent == BattleEvent.Rebellion2 ||
-							battleEvent == BattleEvent.Rebellion3) {
+							battleEvent == BattleEvent.Rebellion3)
+						{
 							mBattleCommandQueue.Clear();
 							BattleMode();
 
@@ -1606,7 +1627,12 @@ namespace MysticUWP
 
 							return;
 						}
-
+						else if (battleEvent == BattleEvent.LordAhn)
+						{
+							Talk(" 일행은 너무 많은 적들에게 포위되어서 도망 갈 수가 없었다.", SpecialEventType.BackToBattleMode);
+							return;
+						}
+						
 						mEncounterEnemyList.Clear();
 						ShowMap();
 					}
@@ -1825,7 +1851,7 @@ namespace MysticUWP
 								"  우리가 자네와 헤어진후 로드안에게 갔을 때  로드안은 우리에게 멸망당한 네 종족의 원혼을 봉인하는 일을 시켰다네. 우리는 쾌히 승락하며 그 일을 해주었지." +
 								" 하지만 우리의 도움이 더 이상 필요없게 되자 로드안은 그 자신을 위해  우리의 동료였던 카노푸스를  악의 전사 네크로만서로 개조하여 다른 차원으로 보내 버렸다네." +
 								"  우리는 그 사실을 알아채자 로어성을 탈출하여 자네를 찾아 여기까지 왔다네.  자네와 다시 합류하여 로드안과 싸우고 싶네.[/color]"
-							}, MenuMode.JoinFriend, new string[] {
+							}, MenuMode.JoinFriendAgain, new string[] {
 								"쾌히 승락하겠네",
 								"하지만 이미 늦었네"
 							});
@@ -2787,30 +2813,7 @@ namespace MysticUWP
 
 							await RefreshGame();
 
-							mWatchYear = mParty.Year;
-							mWatchDay = mParty.Day;
-							mWatchHour = mParty.Hour;
-							mWatchMin = mParty.Min;
-							mWatchSec = mParty.Sec;
-
-							mTimeWatch = true;
-							mTimeEvent = 3;
-
-							mWatchMin += 90;
-							if (mWatchMin > 59)
-							{
-								mWatchMin -= 60;
-								mWatchHour++;
-								if (mWatchHour > 23) {
-									mWatchHour -= 24;
-									mWatchDay++;
-
-									if (mWatchDay > 359) {
-										mWatchDay -= 360;
-										mWatchYear++;
-									}
-								}
-							}
+							AddNextTimeEvent(3, 90);
 
 							mXAxis = 79;
 							mYAxis = 79;
@@ -2838,7 +2841,7 @@ namespace MysticUWP
 						}
 						else if (specialEvent == SpecialEventType.UseCromaticCrystal) {
 							Talk($"[color={RGB.LightBlue}] 역시  당신은 제가 생각했던대로 정말 훌륭하십니다.  당신이 찾은 이곳이라면 아마 베리언트 피플즈의 사람들이 숨기에는 충분할 것입니다." +
-							"  잠깐만 기다려 주십시오.  저의 염력으로 도시를 건설해 보겠습니다.", SpecialEventType.BuildDome);
+							"  잠깐만 기다려 주십시오.  저의 염력으로 도시를 건설해 보겠습니다.[/color]", SpecialEventType.BuildDome);
 						}
 						else if (specialEvent == SpecialEventType.BuildDome) {
 							mMapName = "Dome";
@@ -2857,31 +2860,7 @@ namespace MysticUWP
 							mXAxis = 24;
 							mYAxis = 49;
 
-							mWatchYear = mParty.Year;
-							mWatchDay = mParty.Day;
-							mWatchHour = mParty.Hour;
-							mWatchMin = mParty.Min;
-							mWatchSec = mParty.Sec;
-
-							mTimeWatch = true;
-							mTimeEvent = 0;
-
-							mWatchMin += 20;
-							if (mWatchMin > 59) {
-								mWatchMin -= 60;
-
-								mWatchHour++;
-								if (mWatchHour > 23) {
-									mWatchHour -= 24;
-
-									mWatchDay++;
-									if (mWatchDay > 359) {
-										mWatchDay -= 360;
-
-										mWatchYear++;
-									}
-								}
-							}
+							AddNextTimeEvent(1, 20);
 						}
 						else if (specialEvent == SpecialEventType.ExitCrystal) {
 							mCrystalMap = null;
@@ -2903,6 +2882,10 @@ namespace MysticUWP
 							Window.Current.CoreWindow.KeyDown -= gamePageKeyDownEvent;
 							Window.Current.CoreWindow.KeyUp -= gamePageKeyUpEvent;
 							Frame.Navigate(typeof(CreditPage), null);
+						}
+						else if (specialEvent == SpecialEventType.BattleLordAhn) {
+							mLordAhnBattleCount = 0;
+							BattleLordAhnType1();
 						}
 						//else if (specialEvent == SpecialEventType.EndCookie1) 
 					}
@@ -3506,10 +3489,6 @@ namespace MysticUWP
 						}
 					}
 
-					void AfterJoinFriendEvent() {
-						AddNextTimeEvent(4, 30);
-					}
-
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp)
 					{
 						if (mMenuMode == MenuMode.EnemySelectMode)
@@ -3561,7 +3540,7 @@ namespace MysticUWP
 					else if (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadB)
 					{
 						// 닫을 수 없는 메뉴
-						if (mMenuMode == MenuMode.BattleStart || mMenuMode == MenuMode.BattleCommand || mMenuMode == MenuMode.MeetPollux || mMenuMode == MenuMode.ChooseBetrayLordAhn)
+						if (mMenuMode == MenuMode.BattleStart || mMenuMode == MenuMode.BattleCommand || mMenuMode == MenuMode.MeetPollux || mMenuMode == MenuMode.ChooseBetrayLordAhn || mMenuMode == MenuMode.JoinFriendAgain)
 							return;
 
 						AppendText("");
@@ -3592,73 +3571,22 @@ namespace MysticUWP
 							}
 							else if (menuMode == MenuMode.EnemySelectMode)
 							{
-								if (mUseCrystalID == 2 || mUseCrystalID == 3) {
-									var enemy = mEncounterEnemyList[mEnemyFocusID];
-									if (enemy.Name == "로드 안") {
-										Talk($" {mPlayerList[mBattlePlayerID].NameSubjectJosa} 로드안을 향해 다크 크리스탈과 에보니 크리스탈을 동시에 사용하였다." +
-										"크리스탈에서 뿜어져 나온  검은 기운은  금새 로드안에게 침투해 들어갔고 그는 순식간에 백여년을 늙어 버렸다", SpecialEventType.NextToBattleMode);
+								mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.Transparent);
 
-										enemy.Strength /= 2;
-										enemy.Mentality /= 2;
-										enemy.Endurance /= 2;
-										enemy.Resistance[0] /= 2;
-										enemy.Resistance[1] /= 2;
-										enemy.Agility /= 2;
-										enemy.Accuracy[0] /= 2;
-										enemy.Accuracy[1] /= 2;
-										enemy.AC /= 2;
-										enemy.Level /= 2;
-
-										if (enemy.HP > enemy.Endurance * enemy.Level * 10)
-										{
-											enemy.HP = enemy.Endurance * enemy.Level * 10;
-											DisplayEnemy();
-										}
-
-
-										mParty.Crystal[2]--;
-										mParty.Crystal[3]--;
-									}
-									else {
-										Talk(" 이 크리스탈은  선의 힘을 사용하는 적에게만 반응한다.", SpecialEventType.NextToBattleMode);
-									}
-
-									mUseCrystalID = -1;
-								}
-								else if (mUseCrystalID == 4) {
-									mUseCrystalID = -1;
-
-									var enemy = mEncounterEnemyList[mEnemyFocusID];
-									if (enemy.HP > 1) {
-										Talk(" 당신이  영혼의 크리스탈을  적에게 사용하자 적의 영혼은 크리스탈에 의해 저주를 받아  황폐화 되어졌다.", SpecialEventType.NextToBattleMode);
-										enemy.AuxHP = (enemy.AuxHP + 1) / 2;
-										enemy.HP /= 2;
-
-										DisplayEnemy();
-										mParty.Crystal[4]--;
-									}
-									else {
-										Talk(" 하지만 크리스탈은 전혀 반응을 보이지 않았다.", SpecialEventType.NextToBattleMode);
-									}
-								}
-								else {
-									mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.Transparent);
-
-									switch (mBattleCommandID)
-									{
-										case 0:
-											BattleMode();
-											break;
-										case 1:
-											ShowCastOneMagicMenu();
-											break;
-										case 3:
-											ShowCastSpecialMenu();
-											break;
-										case 5:
-											BattleMode();
-											break;
-									}
+								switch (mBattleCommandID)
+								{
+									case 0:
+										BattleMode();
+										break;
+									case 1:
+										ShowCastOneMagicMenu();
+										break;
+									case 3:
+										ShowCastSpecialMenu();
+										break;
+									case 5:
+										BattleMode();
+										break;
 								}
 							}
 							else if (menuMode == MenuMode.ApplyBattleCureSpell || menuMode == MenuMode.ApplyBattleCureAllSpell)
@@ -4112,7 +4040,65 @@ namespace MysticUWP
 
 						if (menuMode == MenuMode.EnemySelectMode)
 						{
-							AddBattleCommand();
+							mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.Transparent);
+
+							if (mUseCrystalID == 2 || mUseCrystalID == 3)
+							{
+								var enemy = mEncounterEnemyList[mEnemyFocusID];
+								if (enemy.Name == "로드 안")
+								{
+									Talk($" {mPlayerList[mBattlePlayerID].NameSubjectJosa} 로드안을 향해 다크 크리스탈과 에보니 크리스탈을 동시에 사용하였다." +
+									"크리스탈에서 뿜어져 나온  검은 기운은  금새 로드안에게 침투해 들어갔고 그는 순식간에 백여년을 늙어 버렸다", SpecialEventType.NextToBattleMode);
+
+									enemy.Strength /= 2;
+									enemy.Mentality /= 2;
+									enemy.Endurance /= 2;
+									enemy.Resistance[0] /= 2;
+									enemy.Resistance[1] /= 2;
+									enemy.Agility /= 2;
+									enemy.Accuracy[0] /= 2;
+									enemy.Accuracy[1] /= 2;
+									enemy.AC /= 2;
+									enemy.Level /= 2;
+
+									if (enemy.HP > enemy.Endurance * enemy.Level * 10)
+									{
+										enemy.HP = enemy.Endurance * enemy.Level * 10;
+										DisplayEnemy();
+									}
+
+
+									mParty.Crystal[2]--;
+									mParty.Crystal[3]--;
+								}
+								else
+								{
+									Talk(" 이 크리스탈은  선의 힘을 사용하는 적에게만 반응한다.", SpecialEventType.NextToBattleMode);
+								}
+
+								mUseCrystalID = -1;
+							}
+							else if (mUseCrystalID == 4)
+							{
+								mUseCrystalID = -1;
+
+								var enemy = mEncounterEnemyList[mEnemyFocusID];
+								if (enemy.HP > 1)
+								{
+									Talk(" 당신이  영혼의 크리스탈을  적에게 사용하자 적의 영혼은 크리스탈에 의해 저주를 받아  황폐화 되어졌다.", SpecialEventType.NextToBattleMode);
+									enemy.AuxHP = (enemy.AuxHP + 1) / 2;
+									enemy.HP /= 2;
+
+									DisplayEnemy();
+									mParty.Crystal[4]--;
+								}
+								else
+								{
+									Talk(" 하지만 크리스탈은 전혀 반응을 보이지 않았다.", SpecialEventType.NextToBattleMode);
+								}
+							}
+							else
+								AddBattleCommand();
 						}
 						else if (menuMode == MenuMode.Game)
 						{
@@ -5925,6 +5911,8 @@ namespace MysticUWP
 									"  당신은 정말 훌륭한 일을 해내셨습니다.  제가  곧 당신을 지상으로 이동 시켜 드리겠습니다. 그리고 저는  몇 년 정도 휴식을 취하려 합니다." +
 									"  저의 영적 에너지를  마을을 건설하고 사람들을 이동 시키는데 써버려서 에너지 충전 기간이 필요합니다. 여태껏 당신의 도움들 정말 고마왔습니다." +
 									" 계속 자신이 결심한 의지대로 꿋꿋하게 나아가십시요.  저는 이제 뒷일을 모두 당신에게 맡기겠습니다.  당신이라면 분명히 해낼거라 믿습니다. 그럼, 안녕히...[/color]", SpecialEventType.FindShelter);
+
+									return;
 								}
 								else
 								{
@@ -7311,7 +7299,13 @@ namespace MysticUWP
 								Ebony = mEbony,
 								MoonLight = mMoonLight,
 								SaveTime = DateTime.Now.Ticks,
-								
+								WatchYear = mWatchYear,
+								WatchDay = mWatchDay,
+								WatchHour = mWatchHour,
+								WatchMin = mWatchMin,
+								WatchSec = mWatchSec,
+								TimeWatch = mTimeWatch,
+								TimeEvent = mTimeEvent,
 							};
 
 							var saveJSON = JsonConvert.SerializeObject(saveData);
@@ -7666,18 +7660,6 @@ namespace MysticUWP
 									ShowApplyItemResult(menuMode, $" {player.Name}의 죽음은 이 약초로는 살리지 못합니다.");
 							}
 						}
-						else if (menuMode == MenuMode.JoinFriend)
-						{
-							if (mMenuFocusID == 0)
-							{
-								// 이름 추가
-								SetBit(49);
-
-								AfterJoinFriendEvent();
-							}
-						}
-						else if (menuMode == MenuMode.JoinFriend)
-							AfterJoinFriendEvent();
 						else if (menuMode == MenuMode.JoinAlcor)
 						{
 							if (mMenuFocusID == 0)
@@ -9017,31 +8999,7 @@ namespace MysticUWP
 
 								Dialog(" 우리 성의 사람들은 당신의 용기 있는 결단에 찬사를 보내고 있소. 정말 장한 일이오.");
 
-								mWatchYear = mParty.Year;
-								mWatchDay = mParty.Day;
-								mWatchHour = mParty.Hour;
-								mWatchMin = mParty.Min;
-								mWatchSec = mParty.Sec;
-
-								mTimeWatch = true;
-								mTimeEvent = 0;
-
-								mWatchMin += 10;
-								if (mWatchMin > 59) {
-									mWatchMin -= 60;
-									mWatchHour++;
-
-									if (mWatchHour > 23) {
-										mWatchHour -= 24;
-										mWatchDay++;
-
-										if (mWatchDay > 359) {
-											mWatchDay -= 360;
-
-											mWatchYear++;
-										}
-									}
-								}
+								AddNextTimeEvent(0, 10);
 
 								mBackupPlayerList.Clear();
 								while (mPlayerList.Count > 1) {
@@ -9068,6 +9026,23 @@ namespace MysticUWP
 								mBattleEvent = BattleEvent.Rebellion1;
 								StartBattle(false);
 							}
+						}
+						else if (menuMode == MenuMode.JoinFriendAgain) {
+							if (mMenuFocusID == 0)
+							{
+								foreach (var player in mBackupPlayerList)
+								{
+									mPlayerList.Add(player);
+								}
+
+								mBackupPlayerList.Clear();
+
+								DisplayPlayerInfo();
+
+								SetBit(49);
+							}
+
+							AddNextTimeEvent(4, 30);
 						}
 					}
 					//				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
@@ -9344,7 +9319,8 @@ namespace MysticUWP
 
 					SetBit(51);
 				}
-				else if (mXAxis == 83 && mYAxis == 85) {
+				else if (mXAxis == 83 && mYAxis == 85)
+				{
 					if (mParty.Year <= 699)
 						ShowEnterMenu("HdsGate");
 					else
@@ -9423,11 +9399,14 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Ground2") {
-				if (mXAxis == 29 && mYAxis == 46 && !GetBit(51) && !GetBit(50)) {
+			else if (mMapName == "Ground2")
+			{
+				if (mXAxis == 29 && mYAxis == 46 && !GetBit(51) && !GetBit(50))
+				{
 					Talk(" 당신은 길을 가던 중  매우 지친듯이 보이는 한 여행자를 만났다. 그는 내가 베스퍼성으로 간다는 말을 듣더니 이렇게 말했다.", SpecialEventType.MeetTraveler);
 				}
-				else if (mXAxis == 89 && mYAxis == 79) {
+				else if (mXAxis == 89 && mYAxis == 79)
+				{
 					if (GetBit(8) && !GetBit(7))
 					{
 						Dialog(" 거기에는  오크의 글로 적혀진  비석이 있었다.  그리고 당신은  그 글을 읽어 내려갔다." +
@@ -9440,8 +9419,10 @@ namespace MysticUWP
 					else
 						Dialog(" 거기에는 비석이 하나  서 있었지만  도저히 무슨 글인지 알아 볼 수가 없었다.");
 				}
-				else if (mXAxis == 43 && mYAxis == 6) {
-					if (GetBit(3)) {
+				else if (mXAxis == 43 && mYAxis == 6)
+				{
+					if (GetBit(3))
+					{
 						if (!GetBit(203) && mParty.Etc[19] < 4)
 						{
 							Talk(" 당신이 아프로디테 게이트 안으로 막들어 가려고할 때, 허공에서 낯익은 목소리가 당신을 불렀다. 그 목소리의 주인공은 바로 로드안이었다", SpecialEventType.LordAhnCall);
@@ -9453,8 +9434,10 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "OrcTown") {
-				if (mYAxis == 18 && !GetBit(55)) {
+			else if (mMapName == "OrcTown")
+			{
+				if (mYAxis == 18 && !GetBit(55))
+				{
 					for (var i = 0; i < 3; i++)
 						JoinEnemy(18);
 					for (var i = 0; i < 4; i++)
@@ -9463,18 +9446,21 @@ namespace MysticUWP
 
 					Dialog(" 당신 앞에는  어느새인가 매직유저들이 길을 막고 서 있었다.");
 
-					if (GetBit(7)) {
+					if (GetBit(7))
+					{
 						Talk(new string[] {
 							" 그 중에서 마법사 차림을 제대로 한 오크 하나가 당신에게 말을했다.",
 							"",
 							$"[color={RGB.LightMagenta}] 나는 오크킹님을 위해 죽고 사는 아키메이지라고 한다. 나를 쓰러뜨리기 전에는 오크킹님을 만날 수가 없다.[/color]"
 						}, SpecialEventType.BattleOrcArchiMage, true);
 					}
-					else {
+					else
+					{
 						mSpecialEvent = SpecialEventType.BattleOrcArchiMage;
 					}
 				}
-				else if (23 <= mXAxis && mXAxis <= 26 && 15 <= mYAxis && mYAxis <= 17 && !GetBit(56)) {
+				else if (23 <= mXAxis && mXAxis <= 26 && 15 <= mYAxis && mYAxis <= 17 && !GetBit(56))
+				{
 					for (var i = 0; i < 2; i++)
 						JoinEnemy(20);
 					JoinEnemy(22);
@@ -9498,14 +9484,17 @@ namespace MysticUWP
 						mSpecialEvent = SpecialEventType.BattleOrcKing;
 					}
 				}
-				else if (mYAxis == 44) {
+				else if (mYAxis == 44)
+				{
 					ShowExitMenu();
 				}
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Ground3") {
-				if (mXAxis == 12 && mYAxis == 10) {
+			else if (mMapName == "Ground3")
+			{
+				if (mXAxis == 12 && mYAxis == 10)
+				{
 					mMapName = "Ground2";
 
 					await RefreshGame();
@@ -9520,13 +9509,15 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Vesper") {
+			else if (mMapName == "Vesper")
+			{
 				if (mXAxis == 4 || mXAxis == 70 || mYAxis == 5 || mYAxis == 69)
 					ShowExitMenu();
 				else
 					triggered = false;
 			}
-			else if (mMapName == "TrolTown") {
+			else if (mMapName == "TrolTown")
+			{
 				if ((mXAxis == 5 && mYAxis == 35) || (mXAxis == 44 && mYAxis == 28))
 				{
 					Dialog(" 당신이 아래에 있는 벽돌을 밟자  벽돌은 약간 아래로 꺼졌다.  그리고 몇 초후에 둔탁한 기계음이 들렸다.");
@@ -9583,7 +9574,8 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Ground4") {
+			else if (mMapName == "Ground4")
+			{
 				if (mXAxis == 47 && mYAxis == 34)
 				{
 					InvokeAnimation(AnimationType.MoveGaeaTerraCastle);
@@ -9591,7 +9583,8 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Hut") {
+			else if (mMapName == "Hut")
+			{
 				if (mXAxis == 8 && mYAxis == 12)
 				{
 					if (!GetBit(204))
@@ -9635,14 +9628,17 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Kobold") {
+			else if (mMapName == "Kobold")
+			{
 				if (mXAxis == 4)
 					ShowExitMenu();
-				else if (mXAxis == 7 && mYAxis == 29 && GetTileInfo(8, 29) != 53) {
+				else if (mXAxis == 7 && mYAxis == 29 && GetTileInfo(8, 29) != 53)
+				{
 					UpdateTileInfo(8, 29, 53);
 					Dialog(" 갑자기 땅에서 푯말이 솟아 나왔다.");
 				}
-				else if (29 <= mXAxis && mXAxis <= 54 && 20 <= mYAxis && mYAxis <= 35) {
+				else if (29 <= mXAxis && mXAxis <= 54 && 20 <= mYAxis && mYAxis <= 35)
+				{
 					if (mXAxis == 48 && mYAxis == 30 && !GetBit(17))
 					{
 						for (var i = 0; i < 5; i++)
@@ -9656,8 +9652,10 @@ namespace MysticUWP
 						mBattleEvent = BattleEvent.KoboldKnight;
 						StartBattle(false);
 					}
-					else {
-						for (var y = mYAxis - 1; y <= mYAxis + 1; y++) {
+					else
+					{
+						for (var y = mYAxis - 1; y <= mYAxis + 1; y++)
+						{
 							for (var x = mXAxis - 1; x <= mXAxis + 1; x++)
 								UpdateTileInfo(x, y, 50);
 						}
@@ -9665,12 +9663,14 @@ namespace MysticUWP
 						triggered = false;
 					}
 				}
-				else if (mXAxis == 37 && mYAxis == 12) {
+				else if (mXAxis == 37 && mYAxis == 12)
+				{
 					UpdateTileInfo(98, 20, 43);
 
 					Dialog(" 당신이 바닥의 기묘한 벽돌을 밟자 돌이 약간 밑으로 들어갔다.");
 				}
-				else if (mXAxis == 120 && mYAxis == 35) {
+				else if (mXAxis == 120 && mYAxis == 35)
+				{
 					UpdateTileInfo(109, 25, 43);
 
 					Dialog(" 당신이 바닥의 기묘한 벽돌을 밟자 돌이 약간 밑으로 들어갔다.");
@@ -9693,7 +9693,8 @@ namespace MysticUWP
 
 					Dialog(" 당신이 바닥의 기묘한 벽돌을 밟자 돌이 약간 밑으로 들어갔다.");
 				}
-				else if (mXAxis == 99 && mYAxis == 35 && !GetBit(18)) {
+				else if (mXAxis == 99 && mYAxis == 35 && !GetBit(18))
+				{
 					for (var i = 0; i < 7; i++)
 						JoinEnemy(35);
 					JoinEnemy(38);
@@ -9704,7 +9705,8 @@ namespace MysticUWP
 					mBattleEvent = BattleEvent.GoldKey;
 					StartBattle(false);
 				}
-				else if (mXAxis == 31 && mYAxis == 89 && !GetBit(19)) {
+				else if (mXAxis == 31 && mYAxis == 89 && !GetBit(19))
+				{
 					for (var i = 0; i < 7; i++)
 						JoinEnemy(35);
 					JoinEnemy(36);
@@ -9715,15 +9717,19 @@ namespace MysticUWP
 					mBattleEvent = BattleEvent.KoboldMagicUser;
 					StartBattle(false);
 				}
-				else if (95 <= mXAxis && mXAxis <= 118 && 84 <= mYAxis && mYAxis <= 97) {
+				else if (95 <= mXAxis && mXAxis <= 118 && 84 <= mYAxis && mYAxis <= 97)
+				{
 					var xOffset = 0;
 					var yOffset = 0;
-					if (mRand.Next(2) == 0) {
+					if (mRand.Next(2) == 0)
+					{
 						xOffset = mXAxis - prevX;
 						yOffset = mYAxis - prevY;
 					}
-					else {
-						while (xOffset == 0 && yOffset == 0) {
+					else
+					{
+						while (xOffset == 0 && yOffset == 0)
+						{
 							xOffset = mRand.Next(3) - 1;
 							yOffset = mRand.Next(3) - 1;
 						}
@@ -9732,11 +9738,13 @@ namespace MysticUWP
 					var newX = mXAxis + xOffset;
 					var newY = mYAxis + yOffset;
 
-					if (GetTileInfo(newX, newY) == 43) {
+					if (GetTileInfo(newX, newY) == 43)
+					{
 						UpdateTileInfo(mXAxis, mYAxis, 43);
 						UpdateTileInfo(newX, newY, 0);
 					}
-					else {
+					else
+					{
 						newX = mXAxis - 2 * xOffset;
 						newY = mYAxis - 2 * yOffset;
 
@@ -9744,12 +9752,14 @@ namespace MysticUWP
 						UpdateTileInfo(newX, newY, 0);
 					}
 
-					if (GetTileInfo(mXAxis + (mXAxis - prevX), mYAxis + (mYAxis - prevY)) == 37 || GetTileInfo(mXAxis + (mXAxis - prevX), mYAxis + (mYAxis - prevY)) == 38) {
+					if (GetTileInfo(mXAxis + (mXAxis - prevX), mYAxis + (mYAxis - prevY)) == 37 || GetTileInfo(mXAxis + (mXAxis - prevX), mYAxis + (mYAxis - prevY)) == 38)
+					{
 						mXAxis = mXAxis + 2 * (mXAxis - prevX);
 						mYAxis = mYAxis + 2 * (mYAxis - prevY);
 					}
 				}
-				else if (mXAxis == 94 && mYAxis == 90 && !GetBit(20)) {
+				else if (mXAxis == 94 && mYAxis == 90 && !GetBit(20))
+				{
 					for (var i = 0; i < 6; i++)
 						JoinEnemy(35);
 					for (var i = 0; i < 2; i++)
@@ -9770,7 +9780,8 @@ namespace MysticUWP
 
 					triggered = false;
 				}
-				else if (mXAxis == 123 && GetBit(19) && GetBit(89)) {
+				else if (mXAxis == 123 && GetBit(19) && GetBit(89))
+				{
 					UpdateTileInfo(122, 59, 43);
 					UpdateTileInfo(122, 60, 43);
 					UpdateTileInfo(121, 59, 0);
@@ -9778,8 +9789,10 @@ namespace MysticUWP
 
 					triggered = false;
 				}
-				else if (mXAxis == 61 && GetBit(20)) {
-					for (var y = 59; y < 61; y++) {
+				else if (mXAxis == 61 && GetBit(20))
+				{
+					for (var y = 59; y < 61; y++)
+					{
 						for (var x = 62; x <= 64; x++)
 							UpdateTileInfo(x, y, 43);
 					}
@@ -9787,8 +9800,10 @@ namespace MysticUWP
 					UpdateTileInfo(64, 60, 0);
 					triggered = false;
 				}
-				else if (mXAxis == 26 && GetBit(17)) {
-					for (var y = 59; y < 61; y++) {
+				else if (mXAxis == 26 && GetBit(17))
+				{
+					for (var y = 59; y < 61; y++)
+					{
 						for (var x = 86; x < 88; x++)
 							UpdateTileInfo(x, y, 43);
 					}
@@ -9797,7 +9812,8 @@ namespace MysticUWP
 
 					triggered = false;
 				}
-				else if (mXAxis == 121 && !GetBit(92)) {
+				else if (mXAxis == 121 && !GetBit(92))
+				{
 					for (var i = 0; i < 6; i++)
 						JoinEnemy(38);
 					for (var i = 0; i < 2; i++)
@@ -9808,7 +9824,8 @@ namespace MysticUWP
 
 					Talk($"[color={RGB.LightMagenta}] 정말 끈질긴 인간들이군. 번번히 패하면서 또 시비를 걸어 오다니...", SpecialEventType.BattleKoboldSoldier);
 				}
-				else if (mXAxis == 28 && !GetBit(91)) {
+				else if (mXAxis == 28 && !GetBit(91))
+				{
 					for (var i = 0; i < 4; i++)
 						JoinEnemy(38);
 					for (var i = 0; i < 3; i++)
@@ -9821,7 +9838,8 @@ namespace MysticUWP
 					Talk($"[color={RGB.LightMagenta}] 또 인간들이 우리 성을 침범하러 왔군.  너희들은 이 주위의 해골들이 보이지 않는가?" +
 					" 이것들은 우리에게 무모한 싸움을 걸었다가 죽어간 사람들의 해골이다.[/color]", SpecialEventType.BattleKoboldSoldier2);
 				}
-				else if (mXAxis == 85 && !GetBit(90)) {
+				else if (mXAxis == 85 && !GetBit(90))
+				{
 					for (var i = 0; i < 7; i++)
 						JoinEnemy(36);
 					JoinEnemy(37);
@@ -9831,20 +9849,24 @@ namespace MysticUWP
 
 					Talk($"[color={RGB.LightMagenta}] 나는 이 성의 경비대장이다.  나의 임무는 바로 너희들을  이 안으로  들여 놓지 않는 것이다. 나의 목숨을 바쳐서라도...", SpecialEventType.BattleKoboldSecurity);
 				}
-				else if (mXAxis == 85 && GetBit(90)) {
-					for (var y = 59; y < 61; y++) {
+				else if (mXAxis == 85 && GetBit(90))
+				{
+					for (var y = 59; y < 61; y++)
+					{
 						for (var x = 62; x < 65; x++)
 							UpdateTileInfo(x, y, 43);
 					}
 
-					for (var y = 59; y < 61; y++) {
+					for (var y = 59; y < 61; y++)
+					{
 						for (var x = 27; x < 29; x++)
 							UpdateTileInfo(x, y, 43);
 					}
 
 					triggered = false;
 				}
-				else if (mXAxis == 64 && !GetBit(89)) {
+				else if (mXAxis == 64 && !GetBit(89))
+				{
 					for (var i = 0; i < 3; i++)
 						JoinEnemy(38);
 					JoinEnemy(41);
@@ -9854,9 +9876,12 @@ namespace MysticUWP
 
 					Talk($"[color={RGB.LightMagenta}] 용케도 우리 성의 내부까지 들어왔군. 당신들은 소환 마법이란걸 들어봤나? 지금 바로 내가 소환 마법의 진가를 보여주지.", SpecialEventType.BattleKoboldSummoner);
 				}
-				else if (mXAxis == 47 && mYAxis == 72 && GetTileInfo(45, 46) == 50) {
-					for (var y = 41; y < 50; y++) {
-						for (var x = 36; x < 54; x++) {
+				else if (mXAxis == 47 && mYAxis == 72 && GetTileInfo(45, 46) == 50)
+				{
+					for (var y = 41; y < 50; y++)
+					{
+						for (var x = 36; x < 54; x++)
+						{
 							if (GetTileInfo(x, y) == 50)
 								UpdateTileInfo(x, y, 49);
 						}
@@ -9877,18 +9902,22 @@ namespace MysticUWP
 
 					triggered = false;
 				}
-				else if (41 <= mXAxis && mXAxis <= 52 && 54 <= mYAxis && mYAxis <= 65) {
+				else if (41 <= mXAxis && mXAxis <= 52 && 54 <= mYAxis && mYAxis <= 65)
+				{
 					if (mParty.Etc[35] > 3)
 						triggered = false;
-					else {
+					else
+					{
 						mParty.Etc[35]++;
 						UpdateTileInfo(mXAxis, mYAxis, 43);
 
-						if (mParty.Etc[35] == 4) {
+						if (mParty.Etc[35] == 4)
+						{
 							Dialog(" 당신은 땅에 반쯤 묻혀있는  오팔키를 발견했다.");
 							SetBit(21);
 						}
-						else {
+						else
+						{
 							// 현재 위치 제외 보정 필요
 							var newX = 0;
 							var newY = 0;
@@ -9898,13 +9927,14 @@ namespace MysticUWP
 								newX = mRand.Next(12) + 41;
 								newY = mRand.Next(12) + 54;
 							} while (newX == mXAxis && newY == mYAxis);
-							
+
 							UpdateTileInfo(newX, newY, 0);
 							triggered = true;
 						}
 					}
 				}
-				else if (90 <= mXAxis && mXAxis <= 120 && 40 <= mYAxis && mYAxis <= 79) {
+				else if (90 <= mXAxis && mXAxis <= 120 && 40 <= mYAxis && mYAxis <= 79)
+				{
 					if (mXAxis == 90 && mYAxis == 40 && !GetBit(22))
 					{
 						Dialog(" 당신은 어둠속에서도  반짝이는 물체를  하나 보았다. 자세히보니 그것은 흑요석키였고 즉시 그것을 가졌다.");
@@ -9975,14 +10005,16 @@ namespace MysticUWP
 					else
 						triggered = false;
 				}
-				else if (mXAxis == 57 && mYAxis == 100 && GetTileInfo(57, 99) != 49) {
+				else if (mXAxis == 57 && mYAxis == 100 && GetTileInfo(57, 99) != 49)
+				{
 					for (var y = 85; y < 100; y++)
 						UpdateTileInfo(57, y, 49);
 					UpdateTileInfo(57, 84, 0);
 
 					Dialog(" 당신이 무심코 벽에 팔을 기대자 벽은 안으로 쑥 들어가 버렸다. 그리고는 새로운 길이 나타났다.");
 				}
-				else if (mXAxis == 57 && mYAxis == 84) {
+				else if (mXAxis == 57 && mYAxis == 84)
+				{
 					UpdateTileInfo(57, 84, 43);
 					UpdateTileInfo(75, 73, 52);
 
@@ -9991,7 +10023,8 @@ namespace MysticUWP
 
 					var friend = mPlayerList.Count > 1 ? mPlayerList[mPlayerList.Count - 1] : null;
 
-					if (friend != null) {
+					if (friend != null)
+					{
 						Dialog(new string[] {
 							"",
 							$" 그때 옆에 있던 {friend.NameSubjectBJosa} 말했다.",
@@ -10001,15 +10034,18 @@ namespace MysticUWP
 						}, true);
 					}
 				}
-				else if (mXAxis == 75 && mYAxis == 73) {
+				else if (mXAxis == 75 && mYAxis == 73)
+				{
 					UpdateTileInfo(64, 24, 35);
 					UpdateTileInfo(63, 24, 0);
 					UpdateTileInfo(75, 73, 48);
 
 					Dialog(" 당신이 물 위로 떠오른 땅을 밟자  다시 가라앉아 버렸다.");
 				}
-				else if (mXAxis == 63 && mYAxis == 24 && GetTileInfo(107, 52) != 0) {
-					for (var y = 52; y < 54; y++) {
+				else if (mXAxis == 63 && mYAxis == 24 && GetTileInfo(107, 52) != 0)
+				{
+					for (var y = 52; y < 54; y++)
+					{
 						for (var x = 107; x < 109; x++)
 							UpdateTileInfo(x, y, 0);
 					}
@@ -10017,15 +10053,18 @@ namespace MysticUWP
 
 					Dialog(" 성의 남동쪽에서  돌연히 커다란 진동음과 함께 기계 소리가 들렸다.");
 				}
-				else if (mXAxis == 74 && mYAxis == 59 && GetBit(21) && GetTileInfo(74, 60) != 43) {
+				else if (mXAxis == 74 && mYAxis == 59 && GetBit(21) && GetTileInfo(74, 60) != 43)
+				{
 					UpdateTileInfo(74, 60, 43);
 					triggered = false;
 				}
-				else if (mXAxis == 75 && mYAxis == 60 && GetBit(22) && GetTileInfo(76, 60) != 43) {
+				else if (mXAxis == 75 && mYAxis == 60 && GetBit(22) && GetTileInfo(76, 60) != 43)
+				{
 					UpdateTileInfo(76, 60, 43);
 					triggered = false;
 				}
-				else if (mXAxis == 76 && mYAxis == 58 && !GetBit(88)) {
+				else if (mXAxis == 76 && mYAxis == 58 && !GetBit(88))
+				{
 					for (var i = 0; i < 3; i++)
 						JoinEnemy(38);
 
@@ -10041,9 +10080,12 @@ namespace MysticUWP
 					Talk($"[color={RGB.LightMagenta}] 신성한 신의 제단에 더러운 발을 디딘 놈들은 누구냐?  신을 모독한 너희네 인간들에게 몸소 가르침을 주겠다. 밧아랏!![/color]"
 					, SpecialEventType.BattleKoboldAlter);
 				}
-				else if (mYAxis == 38 && GetBit(88) && ((mParty.Etc[29] >> 4) == (mXAxis - 62) / 4)) {
-					if (GetTileInfo(mXAxis, mYAxis - 1) != 43) {
-						for (var y = mYAxis - 2; y <= mYAxis - 1; y++) {
+				else if (mYAxis == 38 && GetBit(88) && ((mParty.Etc[29] >> 4) == (mXAxis - 62) / 4))
+				{
+					if (GetTileInfo(mXAxis, mYAxis - 1) != 43)
+					{
+						for (var y = mYAxis - 2; y <= mYAxis - 1; y++)
+						{
 							for (var x = mXAxis - 1; x <= mXAxis; x++)
 								UpdateTileInfo(x, y, 43);
 						}
@@ -10051,7 +10093,8 @@ namespace MysticUWP
 
 					triggered = false;
 				}
-				else if (mYAxis == 81 && GetBit(88) && ((mParty.Etc[29] & 0x0F) == (mXAxis - 63) / 4)) {
+				else if (mYAxis == 81 && GetBit(88) && ((mParty.Etc[29] & 0x0F) == (mXAxis - 63) / 4))
+				{
 					if (GetTileInfo(mXAxis, mYAxis + 1) != 43)
 					{
 						for (var y = mYAxis + 1; y <= mYAxis + 2; y++)
@@ -10063,33 +10106,43 @@ namespace MysticUWP
 
 					triggered = false;
 				}
-				else if (mXAxis == 67 && mYAxis == 24) {
+				else if (mXAxis == 67 && mYAxis == 24)
+				{
 					if (GetBit(147))
 						triggered = false;
-					else if ((mParty.Etc[30] & 1) > 0) {
-						if (GetBit(24)) {
+					else if ((mParty.Etc[30] & 1) > 0)
+					{
+						if (GetBit(24))
+						{
 							if (GetBit(134))
 								triggered = false;
-							else {
+							else
+							{
 								BattleTreasureBox(SpecialEventType.BattleTreasureBox1);
 							}
 						}
-						else if (GetBit(11)) {
+						else if (GetBit(11))
+						{
 							AskTreasureBoxQuestion(SpecialEventType.AskTreasureboxQuestion1);
 						}
-						else {
+						else
+						{
 							Dialog(" 당신이 보물상자 앞으로 다가섰을때  상자 위의 두개골이 무어라 말을 했지만 전혀 알아 들을 수가 없었다.");
 						}
 					}
-					else {
+					else
+					{
 						Dialog(" 당신이 보물상자 앞으로 다가섰지만  상자 위의 두개골은 아무말도 하지 않았다.");
 					}
 				}
-				else if (mXAxis == 71 && mYAxis == 24) {
+				else if (mXAxis == 71 && mYAxis == 24)
+				{
 					if (GetBit(148))
 						triggered = false;
-					else if ((mParty.Etc[30] & (1 << 1)) > 0) {
-						if (GetBit(25)) {
+					else if ((mParty.Etc[30] & (1 << 1)) > 0)
+					{
+						if (GetBit(25))
+						{
 							if (GetBit(135))
 								triggered = false;
 							else
@@ -10163,8 +10216,10 @@ namespace MysticUWP
 						Dialog(" 당신이 보물상자 앞으로 다가섰지만  상자 위의 두개골은 아무말도 하지 않았다.");
 					}
 				}
-				else if (mXAxis == 83 && mYAxis == 24) {
-					if (!GetBit(23)) {
+				else if (mXAxis == 83 && mYAxis == 24)
+				{
+					if (!GetBit(23))
+					{
 						Talk(new string[] {
 							" 당신이 앞에 있는 보물상자를 보았을때  섬찟함을 느끼며 한 걸음 물러섰다.  그 상자 위에는 인간의 해골이 앉아 있었고 그 해골에는 두 눈동자와 머리카락이 듬성듬성 붙어 있었다.",
 							" 스르르 해골이 고개를 들며 당신을 노려 보았다. 당신은 다시 한 걸음을 물러섰다.  그러자 그 해골은 뼈뿐인 두 손을 들어 당신을 가리켰다. 그리고 인간의 말을 하기 시작했다.",
@@ -10192,7 +10247,8 @@ namespace MysticUWP
 							triggered = false;
 					}
 				}
-				else if (((mXAxis == 75 && mYAxis == 89) || (mXAxis == 76 && mYAxis == 89)) && !GetBit(87)) {
+				else if (((mXAxis == 75 && mYAxis == 89) || (mXAxis == 76 && mYAxis == 89)) && !GetBit(87))
+				{
 					mEncounterEnemyList.Clear();
 
 					for (var i = 0; i < 2; i++)
@@ -10220,7 +10276,8 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Ancient") {
+			else if (mMapName == "Ancient")
+			{
 				if ((mXAxis == 9 && mYAxis == 12) || (mXAxis == 10 && mYAxis == 12))
 				{
 					Dialog(" 당신은  무덤 앞으로 발을  내 디디려 했지만 어떤 힘에 의해 더 이상 들어 갈 수가 없었다.");
@@ -10251,7 +10308,8 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Ground5") {
+			else if (mMapName == "Ground5")
+			{
 				Dialog(new string[] {
 					" 당신은 잠을 자고있는 어떤 은둔자를 보았다. 그는 당신의 기척에 잠을 깨었는지  눈을 뜨고 당신을 바라 보았다. 그리고는 말을 시작했다.",
 					""
@@ -10277,7 +10335,8 @@ namespace MysticUWP
 				else
 					Dialog(" 혹시 당신 지금 드라코니안의 글을 배우려 하지 않습니까? 그렇다면 이 대륙 전체를 뒤져서 금빛의 인어를 찾아 보십시오.", true);
 			}
-			else if (mMapName == "DracTown") {
+			else if (mMapName == "DracTown")
+			{
 				if (mXAxis == 4)
 				{
 					ShowExitMenu();
@@ -10360,38 +10419,46 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Tomb") {
+			else if (mMapName == "Tomb")
+			{
 				if (mXAxis == 82 && mYAxis == 9)
 					UpdateTileInfo(38, 30, 44);
-				else if (mXAxis == 18 && mYAxis == 34 && !GetBit(124)) {
+				else if (mXAxis == 18 && mYAxis == 34 && !GetBit(124))
+				{
 					SetBit(124);
 					Dialog($"[color={RGB.LightCyan}] [[ 플래티움 갑옷 + 1 ][/color]");
 					if (mParty.Backpack[5, 9] < 255)
 						mParty.Backpack[5, 9]++;
 				}
-				else if (mXAxis == 83 && mYAxis == 14 && !GetBit(125)) {
+				else if (mXAxis == 83 && mYAxis == 14 && !GetBit(125))
+				{
 					SetBit(125);
 					Dialog($"[color={RGB.LightCyan}] [[ 황금 + 100,000 ][/color]");
 					mParty.Gold += 100_000;
 				}
-				else if (mXAxis == 86 && mYAxis == 14 && !GetBit(126)) {
+				else if (mXAxis == 86 && mYAxis == 14 && !GetBit(126))
+				{
 					SetBit(126);
 					Dialog($"[color={RGB.LightCyan}] [[ 황금 + 50,000 ][/color]");
 					mParty.Gold += 50_000;
 				}
-				else if (mXAxis == 83 && mYAxis == 25 && !GetBit(127)) {
+				else if (mXAxis == 83 && mYAxis == 25 && !GetBit(127))
+				{
 					Talk(" 당신이  보물상자를 열자  갑자기 저승사자가 튀어나왔다.", SpecialEventType.BattleMessengerOfDeath);
 				}
-				else if (mXAxis == 86 && mYAxis == 25 && !GetBit(128)) {
+				else if (mXAxis == 86 && mYAxis == 25 && !GetBit(128))
+				{
 					Talk(" 당신이  보물상자를 열자  갑자기 켈베로스가 튀어나왔다.", SpecialEventType.BattleKerberos);
 				}
-				else if (mXAxis == 84 && mYAxis == 20 && !GetBit(129)) {
+				else if (mXAxis == 84 && mYAxis == 20 && !GetBit(129))
+				{
 					Talk(" 당신이 괸 앞에 섰을때 무언가 묘한 분위기가 당신의 전신을 스치고 지나갔다.  잠시후 관의 뚜껑이 스르르 열리기 시작했다." +
 					"  당신은 무의식적으로 한 걸음 뒤로 물러났다. 곧이어 관속에서는  에테르화된 드라코니안의 형체가 일어났다. 그리고 말을 하기 시작했다.",
 					SpecialEventType.BattleDraconianOldKing);
 				}
 			}
-			else if (mMapName == "Imperium") {
+			else if (mMapName == "Imperium")
+			{
 				if (mYAxis == 44)
 				{
 					ShowExitMenu();
@@ -10428,7 +10495,8 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "HdsGate") {
+			else if (mMapName == "HdsGate")
+			{
 				if (mXAxis == 24 && mYAxis == 29)
 				{
 					int tileA, tileB;
@@ -10620,11 +10688,13 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
-			else if (mMapName == "Dome") {
+			else if (mMapName == "Dome")
+			{
 				if ((4 <= mXAxis && mXAxis <= 45) || (5 <= mYAxis && mYAxis <= 94))
 					ShowExitMenu();
 			}
-			else if (mMapName == "Light") {
+			else if (mMapName == "Light")
+			{
 				if (mYAxis == 69)
 					ShowExitMenu();
 				else if (mYAxis == 42 && !GetBit(33))
@@ -10634,6 +10704,8 @@ namespace MysticUWP
 				else
 					triggered = false;
 			}
+			else if (mMapName == "UnderGrd")
+				triggered = false;
 			
 	
 			return triggered;
@@ -15560,7 +15632,7 @@ namespace MysticUWP
 			//	musicUri = new Uri("ms-appx:///Assets/keep.mp3");
 			//}
 
-			if ((mMapHeader.StartX != 255 || mMapHeader.StartY != 255) && mMapHeader.TileType != PositionType.Ground) {
+			if ((mMapHeader.StartX != 255 || mMapHeader.StartY != 255) && (mMapHeader.TileType != PositionType.Ground || mMapName == "UnderGrd")) {
 				mXAxis = mMapHeader.StartX;
 				mYAxis = mMapHeader.StartY;
 			}
@@ -16869,6 +16941,13 @@ namespace MysticUWP
 			mEbony = saveData.Ebony;
 			mMoonLight = saveData.MoonLight;
 			mCruel = saveData.Cruel;
+			mWatchYear = saveData.WatchYear;
+			mWatchDay = saveData.WatchDay;
+			mWatchHour = saveData.WatchHour;
+			mWatchMin = saveData.WatchMin;
+			mWatchSec = saveData.WatchSec;
+			mTimeWatch = saveData.TimeWatch;
+			mTimeEvent = saveData.TimeEvent;
 			
 			DisplayPlayerInfo();
 
@@ -17258,6 +17337,9 @@ namespace MysticUWP
 			}
 			else if (mAnimationEvent == AnimationType.MeetFriend)
 			{
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
 				mSpecialEvent = SpecialEventType.MeetFriend;
 				ContinueText.Visibility = Visibility.Visible;
 			}
@@ -18012,6 +18094,89 @@ namespace MysticUWP
 
 			mBattleEvent = BattleEvent.DraconianGuardian;
 			StartBattle(false);
+		}
+
+		private void BattleLordAhnType1() {
+			mLordAhnBattleCount++;
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 8; i++)
+				JoinEnemy(66);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.LordAhn;
+			StartBattle(true);
+		}
+
+		private void BattleLordAhnType2()
+		{
+			mLordAhnBattleCount++;
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 6; i++)
+				JoinEnemy(66);
+			JoinEnemy(67);
+			JoinEnemy(68);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.LordAhn;
+			StartBattle(true);
+		}
+
+		private void BattleLordAhnType3()
+		{
+			mLordAhnBattleCount++;
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 4; i++)
+				JoinEnemy(68);
+			for (var i = 0; i < 4; i++)
+				JoinEnemy(67);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.LordAhn;
+			StartBattle(true);
+		}
+
+		private void BattleLordAhnType4()
+		{
+			mLordAhnBattleCount++;
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 4; i++)
+				JoinEnemy(67);
+			for (var i = 0; i < 3; i++)
+				JoinEnemy(68);
+			JoinEnemy(69);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.LordAhn;
+			StartBattle(true);
+		}
+
+		private void BattleLordAhnType5()
+		{
+			mLordAhnBattleCount++;
+			mEncounterEnemyList.Clear();
+
+			for (var i = 0; i < 6; i++)
+				JoinEnemy(70);
+			JoinEnemy(71);
+			JoinEnemy(72);
+
+			DisplayEnemy();
+			HideMap();
+
+			mBattleEvent = BattleEvent.LordAhn;
+			StartBattle(true);
 		}
 
 		private void canvas_Draw(Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
@@ -18980,6 +19145,7 @@ namespace MysticUWP
 			BuildDome,
 			ExitCrystal,
 			End1,
+			End2,
 			End3,
 			Ending1Talk1,
 			Ending1Talk2
@@ -19076,7 +19242,8 @@ namespace MysticUWP
 			OrcRevengeSpirit,
 			TrollRevengeSpirit,
 			KoboldRevengeSpirit,
-			DraconianRevengeSpirit
+			DraconianRevengeSpirit,
+			LordAhn
 		}
 
 		private enum BattleTurn
@@ -19242,7 +19409,6 @@ namespace MysticUWP
 			Hospital,
 			TrainingCenter,
 			ChooseMagicJob,
-			JoinFriend,
 			JoinAlcor,
 			JoinMizar,
 			JoinAntaresJr,
@@ -19320,6 +19486,7 @@ namespace MysticUWP
 			BattleDraconianEntrance,
 			TeleportCastleLore,
 			ChooseBetrayLordAhn,
+			JoinFriendAgain
 		}
 	}
 }

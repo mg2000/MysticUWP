@@ -64,6 +64,41 @@ namespace MysticUWP
 			set;
 		}
 
+		public int WatchYear {
+			get;
+			set;
+		}
+
+		public int WatchDay {
+			get;
+			set;
+		}
+
+		public int WatchHour {
+			get;
+			set;
+		}
+
+		public int WatchMin {
+			get;
+			set;
+		}
+
+		public int WatchSec {
+			get;
+			set;
+		}
+
+		public bool TimeWatch {
+			get;
+			set;
+		}
+
+		public int TimeEvent {
+			get;
+			set;
+		}
+
 		public long SaveTime
 		{
 			get;
