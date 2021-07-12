@@ -1464,19 +1464,29 @@ namespace MysticUWP
 							mParty.Etc[19] = 11;
 						}
 						else if (battleEvent == BattleEvent.LordAhn) {
-							if (mLordAhnBattleCount == 14) {
+//							if (mLordAhnBattleCount == 14) {
+								mMapName = "Lore";
+
+								await RefreshGame();
+
+								mXAxis = 50;
+								mYAxis = 30;
+
 								Talk(" 당신은  힘겹게 로드안을 물리쳤다.  그리고 예상대로  로어성의 병사들은  자신의 군주가 패하자 뿔뿔이 흩어져 버렸다. 벌판에는 당신이 죽인 수 많은 시체가 널려있었다.", SpecialEventType.End2);
-							}
-							else if (mLordAhnBattleCount == 13)
-								BattleLordAhnType5();
-							else if (mLordAhnBattleCount == 12)
-								BattleLordAhnType4();
-							else if (mLordAhnBattleCount >= 10)
-								BattleLordAhnType3();
-							else if (mLordAhnBattleCount >= 6)
-								BattleLordAhnType2();
-							else
-								BattleLordAhnType1();
+
+							mEncounterEnemyList.Clear();
+								mBattleEvent = 0;
+							//}
+							//else if (mLordAhnBattleCount == 13)
+							//	BattleLordAhnType5();
+							//else if (mLordAhnBattleCount == 12)
+							//	BattleLordAhnType4();
+							//else if (mLordAhnBattleCount >= 10)
+							//	BattleLordAhnType3();
+							//else if (mLordAhnBattleCount >= 6)
+							//	BattleLordAhnType2();
+							//else
+							//	BattleLordAhnType1();
 
 							return;
 						}
@@ -1629,6 +1639,7 @@ namespace MysticUWP
 						}
 						else if (battleEvent == BattleEvent.LordAhn)
 						{
+							mBattleEvent = BattleEvent.LordAhn;
 							Talk(" 일행은 너무 많은 적들에게 포위되어서 도망 갈 수가 없었다.", SpecialEventType.BackToBattleMode);
 							return;
 						}
@@ -2887,7 +2898,16 @@ namespace MysticUWP
 							mLordAhnBattleCount = 0;
 							BattleLordAhnType1();
 						}
-						//else if (specialEvent == SpecialEventType.EndCookie1) 
+						else if (specialEvent == SpecialEventType.End2) {
+							ShowMap();
+
+							InvokeAnimation(AnimationType.Ending2Cookie1);
+						}
+						else if (specialEvent == SpecialEventType.End2_2) {
+							Window.Current.CoreWindow.KeyDown -= gamePageKeyDownEvent;
+							Window.Current.CoreWindow.KeyUp -= gamePageKeyUpEvent;
+							Frame.Navigate(typeof(Ending2), null);
+						}
 					}
 					
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -4048,7 +4068,7 @@ namespace MysticUWP
 								if (enemy.Name == "로드 안")
 								{
 									Talk($" {mPlayerList[mBattlePlayerID].NameSubjectJosa} 로드안을 향해 다크 크리스탈과 에보니 크리스탈을 동시에 사용하였다." +
-									"크리스탈에서 뿜어져 나온  검은 기운은  금새 로드안에게 침투해 들어갔고 그는 순식간에 백여년을 늙어 버렸다", SpecialEventType.NextToBattleMode);
+									" 크리스탈에서 뿜어져 나온  검은 기운은  금새 로드안에게 침투해 들어갔고 그는 순식간에 백여년을 늙어 버렸다", SpecialEventType.NextToBattleMode);
 
 									enemy.Strength /= 2;
 									enemy.Mentality /= 2;
@@ -13371,11 +13391,19 @@ namespace MysticUWP
 								continue;
 
 							var impactPoint = enemy.HP;
+#if DEBUG
+							if (impactPoint < 5_000)
+								impactPoint = 0;
+							else
+								impactPoint -= 5_000;
+#else
 							if (impactPoint < player.Concentration * player.Level)
 								impactPoint = 0;
 							else
 								impactPoint -= player.Concentration * player.Level;
+#endif
 							enemy.HP = impactPoint;
+
 
 							if (enemy.Unconscious && !enemy.Dead)
 							{
@@ -17323,6 +17351,37 @@ namespace MysticUWP
 						Task.Delay(500).Wait();
 					}
 				}
+				else if (mAnimationEvent == AnimationType.Ending2Cookie1)
+				{
+					AnimateFadeInOut();
+				}
+				else if (mAnimationEvent == AnimationType.Ending2Cookie2)
+				{
+					mAnimationFrame = 0;
+					for (var i = 1; i <= 9; i++)
+					{
+						mAnimationFrame++;
+						Task.Delay(800).Wait();
+
+					}
+				}
+				else if (mAnimationEvent == AnimationType.Ending2Cookie3)
+				{
+					mAnimationFrame = 1;
+					Task.Delay(1_500).Wait();
+					for (var i = 2; i < 5; i++)
+					{
+						mAnimationFrame = i;
+						Task.Delay(800).Wait();
+					}
+					mAnimationFrame = 5;
+					Task.Delay(1_500).Wait();
+					for (var i = 6; i < 11; i++) {
+						mAnimationFrame = i;
+						Task.Delay(800).Wait();
+					}
+					mAnimationFrame = 11;
+				}
 			});
 
 			await animationTask;
@@ -17792,6 +17851,25 @@ namespace MysticUWP
 			else if (mAnimationEvent == AnimationType.Ending1Cookie4) {
 				Talk($"[color={RGB.LightMagenta}] 아스모데우스여,  방금 에너지 공이 이 방으로 들어가는 것을 보았는데 어떻게 된것인가?[/color]", SpecialEventType.Ending1Talk1);
 			}
+			else if (mAnimationEvent == AnimationType.Ending2Cookie1) {
+				mFace = 1;
+				if (mPlayerList[0].ClassType == ClassCategory.Magic)
+					mFace += 8;
+
+				InvokeAnimation(AnimationType.Ending2Cookie2);
+			}
+			else if (mAnimationEvent == AnimationType.Ending2Cookie2) {
+				mFace = 0;
+				if (mPlayerList[0].ClassType == ClassCategory.Magic)
+					mFace += 8;
+
+				Dialog(" 그것은  바로 새로운 군주를 탄생 시키는 자리였다. 진정한 선을 행할 수 있는 자만이 설 수 있는 자리.");
+
+				InvokeAnimation(AnimationType.Ending2Cookie3);
+			}
+			else if (mAnimationEvent == AnimationType.Ending2Cookie3) {
+				Talk(" 그 의식의 주인공은 바로 당신이었다.  새로운  로어 세계의 역사를 창조하는  그 순간을 모든 사람들은 두손 모아 찬미하였다.", SpecialEventType.End2_2);
+			}
 			else
 			{
 				mAnimationEvent = AnimationType.None;
@@ -18211,7 +18289,8 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.ViewCrystal ||
 				mAnimationEvent == AnimationType.ExitCrystal ||
 				mAnimationEvent == AnimationType.Ending1Cookie2 ||
-				mAnimationEvent == AnimationType.Ending1Cookie3)
+				mAnimationEvent == AnimationType.Ending1Cookie3 ||
+				mAnimationEvent == AnimationType.Ending2Cookie1)
 				fadeIn = true;
 
 			var crystalMap = mCrystalMap;
@@ -18292,7 +18371,10 @@ namespace MysticUWP
 							mAnimationEvent != AnimationType.Ending1Cookie1 &&
 							mAnimationEvent != AnimationType.Ending1Cookie2 &&
 							mAnimationEvent != AnimationType.Ending1Cookie3 &&
-							mAnimationEvent != AnimationType.Ending1Cookie4)
+							mAnimationEvent != AnimationType.Ending1Cookie4 &&
+							mAnimationEvent != AnimationType.Ending2Cookie1 &&
+							mAnimationEvent != AnimationType.Ending2Cookie2 &&
+							mAnimationEvent != AnimationType.Ending2Cookie3)
 						{
 							if (fadeOut)
 							{
@@ -18393,6 +18475,20 @@ namespace MysticUWP
 							else
 								mCharacterTiles.Draw(sb, 20, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
 						}
+						else if (mAnimationEvent == AnimationType.Ending2Cookie2 && mAnimationFrame > 0)
+						{
+							mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY + 6 - mAnimationFrame), Vector4.One);
+						}
+						else if (mAnimationEvent == AnimationType.Ending2Cookie3 && 0 < mAnimationFrame)
+						{
+							if (mAnimationFrame <= 5)
+							{
+								mCharacterTiles.Draw(sb, 21, mCharacterTiles.SpriteSize * new Vector2(playerX - (6 - mAnimationFrame), playerY - 3), Vector4.One);
+								mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - 3), Vector4.One);
+							}
+							else if (mAnimationFrame <= 10)
+								mCharacterTiles.Draw(sb, 22, mCharacterTiles.SpriteSize * new Vector2(playerX - (mAnimationFrame - 5), playerY - 3), Vector4.One);
+						}
 					}
 
 					if (mDecorateTiles != null)
@@ -18456,10 +18552,15 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.ViewCrystal ||
 				mAnimationEvent == AnimationType.ExitCrystal ||
 				mAnimationEvent == AnimationType.Ending1Cookie2 ||
-				mAnimationEvent == AnimationType.Ending1Cookie3)
+				mAnimationEvent == AnimationType.Ending1Cookie3 ||
+				mAnimationEvent == AnimationType.Ending2Cookie1)
 				fadeIn = true;
 
-			if ((layer[index] & 0x80) > 0 || mAnimationEvent == AnimationType.Ending1Cookie2 || mAnimationEvent == AnimationType.Ending1Cookie3 || mAnimationEvent == AnimationType.Ending1Cookie4)
+			if ((layer[index] & 0x80) > 0 || 
+				mAnimationEvent == AnimationType.Ending1Cookie2 || 
+				mAnimationEvent == AnimationType.Ending1Cookie3 || 
+				mAnimationEvent == AnimationType.Ending1Cookie4 ||
+				mAnimationEvent == AnimationType.Ending2Cookie1)
 			{
 				if (fadeOut)
 					tint = new Vector4(mAnimationFrame == 10 ? 0 : 0.1f, mAnimationFrame == 10 ? 0 : 0.1f, (10 - mAnimationFrame) / 10f, 1);
@@ -18768,6 +18869,23 @@ namespace MysticUWP
 				{
 					if (column == playerX + 3 && row == playerY + (10 - mAnimationFrame))
 						mMapTiles.Draw(sb, 52 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.Ending2Cookie1 || mAnimationEvent == AnimationType.Ending2Cookie2)
+				{
+					if (column == playerX && row == playerY - 3)
+						mMapTiles.Draw(sb, 42 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					else
+						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
+				else if (mAnimationEvent == AnimationType.Ending2Cookie3) {
+					if (column == playerX && row == playerY - 3) {
+						if (mAnimationFrame >= 5)
+							mMapTiles.Draw(sb, 54 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+						else
+							mMapTiles.Draw(sb, 42 + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+					}
 					else
 						mMapTiles.Draw(sb, tileIdx + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				}
@@ -19148,7 +19266,8 @@ namespace MysticUWP
 			End2,
 			End3,
 			Ending1Talk1,
-			Ending1Talk2
+			Ending1Talk2,
+			End2_2
 		}
 
 		private enum BattleEvent
@@ -19314,7 +19433,10 @@ namespace MysticUWP
 			Ending1Cookie1,
 			Ending1Cookie2,
 			Ending1Cookie3,
-			Ending1Cookie4
+			Ending1Cookie4,
+			Ending2Cookie1,
+			Ending2Cookie2,
+			Ending2Cookie3,
 		}
 
 		private enum SpinnerType

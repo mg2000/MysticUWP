@@ -127,6 +127,9 @@
     <Compile Include="CreditPage.xaml.cs">
       <DependentUpon>CreditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Ending2.xaml.cs">
+      <DependentUpon>Ending2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EnemyData.cs" />
     <Compile Include="GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
@@ -205,6 +208,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CreditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ending2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
