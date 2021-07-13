@@ -9,7 +9,7 @@
 	Background="Black">
 
 	<Grid>
-		<StackPanel  HorizontalAlignment="Center" VerticalAlignment="Center">
+		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 			<TextBlock Foreground="White" FontSize="30"  TextAlignment="Center">
 			&lt;&lt; The End &gt;&gt;
 			<LineBreak/>

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Text;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Gaming.XboxLive.Storage;
 using Windows.Storage;
@@ -302,13 +303,24 @@ namespace MysticUWP
 								Frame.Navigate(typeof(GamePage), null);
 							}
 						}
-						else
+						else if (mFocusItem == 2) {
+							prologControl.Visibility = Visibility.Visible;
+							mainmenuPanel.Visibility = Visibility.Collapsed;
+							mTargetVelocity = mTargetSpeed;
+						}
+						else if (mFocusItem == 3)
 						{
-							await new MessageDialog("원작: 다크 메이지 실리안 카미너스(안영기, 1994)\r\n\r\n" +
-							"음악: \r\n" +
+							await new MessageDialog("원작: 비전 속으로(안영기, 1995)\r\n\r\n" +
+							"시나리오 & 프로그래밍 & 그래픽: 안 영기\r\n" + 
+							"음악: \r\n" +	
 							"Town, Ground: https://www.zapsplat.com/\r\n" +
 							"Den: https://juhanijunkala.com/\r\n" +
-							"Keep: https://opengameart.org/content/boss-battle-theme", "저작권 정보").ShowAsync();
+							"Keep: https://opengameart.org/content/boss-battle-theme\r\n" + 
+							"도움을 주신분: 안 영훈\r\n" + 
+							"제작기간 : 1995년 2월 1일 저녁부터     2월 12일 새벽까지", "저작권 정보").ShowAsync();
+						}
+						else {
+							CoreApplication.Exit();
 						}
 					}
 					else if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadDPadDown || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown) {

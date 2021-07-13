@@ -130,6 +130,9 @@
     <Compile Include="Ending2.xaml.cs">
       <DependentUpon>Ending2.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Ending3.xaml.cs">
+      <DependentUpon>Ending3.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EnemyData.cs" />
     <Compile Include="GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
@@ -161,14 +164,17 @@
   <ItemGroup>
     <Content Include="Assets\DARK.M" />
     <Content Include="Assets\decorate.png" />
+    <Content Include="Assets\den.mp3" />
     <Content Include="Assets\DOME.M" />
     <Content Include="Assets\GAEA.M" />
+    <Content Include="Assets\ground.mp3" />
     <Content Include="Assets\GROUND1.M" />
     <Content Include="Assets\GROUND2.M" />
     <Content Include="Assets\GROUND3.M" />
     <Content Include="Assets\GROUND4.M" />
     <Content Include="Assets\GROUND5.M" />
     <Content Include="Assets\HDSGATE.M" />
+    <Content Include="Assets\keep.mp3" />
     <Content Include="Assets\KOBOLD.M" />
     <Content Include="Assets\LASTDTCH.M" />
     <Content Include="Assets\LIGHT.M" />
@@ -178,6 +184,7 @@
     <Content Include="Assets\MENACE.M" />
     <Content Include="Assets\ORCTOWN.M" />
     <Content Include="Assets\TOMB.M" />
+    <Content Include="Assets\town.mp3" />
     <Content Include="Assets\TROLTOWN.M" />
     <Content Include="Assets\UNDERGRD.M" />
     <Content Include="Assets\VALIANT.M" />
@@ -212,6 +219,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Ending2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ending3.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

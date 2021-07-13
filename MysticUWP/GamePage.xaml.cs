@@ -1436,8 +1436,9 @@ namespace MysticUWP
 
 							DisplayEnemy();
 							HideMap();
-
+							
 							mBattleEvent = BattleEvent.OldLordAhn2;
+							StartBattle(false);
 							return;
 						}
 						else if (battleEvent == BattleEvent.OldLordAhn2) {
@@ -1464,7 +1465,7 @@ namespace MysticUWP
 							mParty.Etc[19] = 11;
 						}
 						else if (battleEvent == BattleEvent.LordAhn) {
-//							if (mLordAhnBattleCount == 14) {
+							if (mLordAhnBattleCount == 14) {
 								mMapName = "Lore";
 
 								await RefreshGame();
@@ -1474,19 +1475,19 @@ namespace MysticUWP
 
 								Talk(" 당신은  힘겹게 로드안을 물리쳤다.  그리고 예상대로  로어성의 병사들은  자신의 군주가 패하자 뿔뿔이 흩어져 버렸다. 벌판에는 당신이 죽인 수 많은 시체가 널려있었다.", SpecialEventType.End2);
 
-							mEncounterEnemyList.Clear();
+								mEncounterEnemyList.Clear();
 								mBattleEvent = 0;
-							//}
-							//else if (mLordAhnBattleCount == 13)
-							//	BattleLordAhnType5();
-							//else if (mLordAhnBattleCount == 12)
-							//	BattleLordAhnType4();
-							//else if (mLordAhnBattleCount >= 10)
-							//	BattleLordAhnType3();
-							//else if (mLordAhnBattleCount >= 6)
-							//	BattleLordAhnType2();
-							//else
-							//	BattleLordAhnType1();
+							}
+							else if (mLordAhnBattleCount == 13)
+								BattleLordAhnType5();
+							else if (mLordAhnBattleCount == 12)
+								BattleLordAhnType4();
+							else if (mLordAhnBattleCount >= 10)
+								BattleLordAhnType3();
+							else if (mLordAhnBattleCount >= 6)
+								BattleLordAhnType2();
+							else
+								BattleLordAhnType1();
 
 							return;
 						}
@@ -1649,7 +1650,15 @@ namespace MysticUWP
 					}
 					else if (mBattleTurn == BattleTurn.Lose)
 					{
-						
+						if (battleEvent == BattleEvent.LordAhn) {
+							mEncounterEnemyList.Clear();
+							ShowMap();
+
+							Dialog(" 이제는 로드안에게 패하는구나하며 모든것을 단념하려는 순간  빛나는 광채가 당신을 둘러싸기 시작했다." +
+							" 그리고는 빨려 들어가듯 당신을 감싸던 광채는 차원의 틈속으로 당신을 몰아넣었다.");
+
+							InvokeAnimation(AnimationType.Dying);
+						}
 					}
 
 					mBattleTurn = BattleTurn.None;
@@ -2901,12 +2910,35 @@ namespace MysticUWP
 						else if (specialEvent == SpecialEventType.End2) {
 							ShowMap();
 
+							Dialog(" 얼마후 로어성에는 성대한 의식이 행해졌다.");
+
 							InvokeAnimation(AnimationType.Ending2Cookie1);
 						}
 						else if (specialEvent == SpecialEventType.End2_2) {
 							Window.Current.CoreWindow.KeyDown -= gamePageKeyDownEvent;
 							Window.Current.CoreWindow.KeyUp -= gamePageKeyUpEvent;
 							Frame.Navigate(typeof(Ending2), null);
+						}
+						else if (specialEvent == SpecialEventType.GoToFuture) {
+							InvokeAnimation(AnimationType.GoToFuture);
+						}
+						else if (specialEvent == SpecialEventType.HearAlbireo) {
+							Talk(new string[] {
+								" 당신의 귓가에서 귀에 익은 목소리가 울려퍼졌다.",
+								"",
+								$"[color={RGB.LightGreen}] 나는 당신을 이런 운명으로 끌어들였던 알비레오라는 예언자이오. 물론 당신은 나를 알겠지요." +
+								"  나는 이곳의 존재가 아니라서  이곳의 역사에 관여할 자격은 없소.  하지만  당신의 위급한 상황을 보고는 참을 수가 없어서 차원이탈 마법으로 당신을 795년으로 오게했소.[/color]",
+								"",
+								$"[color={RGB.LightGreen}] 이미 로어 세계는  당신을 잊혀진 인물로 평가할 정도의 세월이 지났소.  결코 당신을 알아볼 사람은 이곳에 없을거요." +
+								" 세상의 최강자였던 로드안은 이제 기력이 많이 약해져서 지금 당신의 맞수로서 충분하리라 생각하오. 이제 당신은 별 제약없이 로어성으로 들어갈 수 있을거요.[/color]",
+								$"[color={RGB.LightGreen}] 거기서  최후의 결전을 벌여  진정한 정의를 실현하시오. 행운을 빌겠소.[/color]"
+							}, SpecialEventType.None);
+						}
+						else if (specialEvent == SpecialEventType.End3)
+						{
+							Window.Current.CoreWindow.KeyDown -= gamePageKeyDownEvent;
+							Window.Current.CoreWindow.KeyUp -= gamePageKeyUpEvent;
+							Frame.Navigate(typeof(Ending3), null);
 						}
 					}
 					
@@ -4045,6 +4077,7 @@ namespace MysticUWP
 								}
 							}
 
+							DisplayPlayerInfo();
 
 							var message = " 에너지 크리스탈은 강한 에너지를  우리 대원들의 몸속으로  방출하였고  그 에너지를 취한 대원들은 모두 원래의 기운을 되찾았다.";
 							if (battle)
@@ -4133,7 +4166,31 @@ namespace MysticUWP
 							}
 							else if (mMenuFocusID == 2)
 							{
+								DialogText.Visibility = Visibility.Collapsed;
 
+								HPPotionText.Text = mParty.Item[0].ToString();
+								SPPotionText.Text = mParty.Item[1].ToString();
+								AntidoteText.Text = mParty.Item[2].ToString();
+								StimulantText.Text = mParty.Item[3].ToString();
+								RevivalText.Text = mParty.Item[4].ToString();
+
+								SummonScrollText.Text = mParty.Item[5].ToString();
+								BigTorchText.Text = mParty.Item[6].ToString();
+								QuartzBallText.Text = mParty.Item[7].ToString();
+								FlyingBootsText.Text = mParty.Item[8].ToString();
+								TransportationBallText.Text = mParty.Item[9].ToString();
+
+								FireCrystalText.Text = mParty.Crystal[0].ToString();
+								FrozenCrystalText.Text = mParty.Crystal[1].ToString();
+								DarkCrystalText.Text = mParty.Crystal[2].ToString();
+								EbonyCrystalText.Text = mParty.Crystal[3].ToString();
+								SpiritCrystalText.Text = mParty.Crystal[4].ToString();
+								SummonCrystalText.Text = mParty.Crystal[5].ToString();
+								EnergyCrystalText.Text = mParty.Crystal[6].ToString();
+								CromaticCrystalText.Text = mParty.Crystal[7].ToString();
+								CrystalBallText.Text = mParty.Crystal[8].ToString();
+
+								ItemInfoPanel.Visibility = Visibility.Visible;
 							}
 							else if (mMenuFocusID == 3)
 							{
@@ -4163,7 +4220,8 @@ namespace MysticUWP
 							}
 							else if (mMenuFocusID == 6)
 							{
-
+								Dialog($"[color={RGB.LightGreen}]한명을 고르시오 ---[/color]");
+								ShowCharacterMenu(MenuMode.Equip, false);
 							}
 							else if (mMenuFocusID == 7)
 							{
@@ -6437,7 +6495,7 @@ namespace MysticUWP
 						{
 							if (mMenuFocusID == 0)
 							{
-								mBattleToolID = mMenuFocusID;
+								mBattleToolID = 3;
 								SelectEnemy();
 							}
 							else
@@ -6473,16 +6531,15 @@ namespace MysticUWP
 						}
 						else if (menuMode == MenuMode.ChooseESPMagic)
 						{
-							mBattleToolID = mMenuFocusID + 1;
+							mBattleToolID = mMenuFocusID + 6;
 
-							AddBattleCommand();
-						}
-						else if (menuMode == MenuMode.CastESP)
-						{
-							mBattleToolID = mMenuFocusID + 1;
-							mEnemyFocusID = -1;
-
-							AddBattleCommand();
+							if (mMenuFocusID > 0)
+								SelectEnemy();
+							else
+							{
+								mEnemyFocusID = -1;
+								AddBattleCommand();
+							}
 						}
 						else if (menuMode == MenuMode.CastSummon)
 						{
@@ -12165,11 +12222,11 @@ namespace MysticUWP
 			else if (mMapName == "Dark") {
 				if ((moveX == 86 && moveY == 72) || (moveX == 93 && moveY == 67) || (moveX == 90 && moveY == 64))
 					ShowGroceryMenu();
-				else if ((moveX == 7 && moveY == 70) || (moveX == 13 && moveY == 68) || (moveX == 13 && moveY == 68))
+				else if ((moveX == 7 && moveY == 70) || (moveX == 13 && moveY == 68) || (moveX == 13 && moveY == 72))
 					ShowWeaponShopMenu();
 				else if ((moveX == 85 && moveY == 11) || (moveX == 86 && moveY == 13))
 					ShowHospitalMenu();
-				else if (moveX == 8 && moveY == 63)
+				else if (moveX == 82 && moveY == 15)
 					ShowMedicineStoreMenu();
 				else if ((moveX == 20 && moveY == 11) || (moveX == 24 && moveY == 12))
 					ShowClassTrainingMenu();
@@ -12259,7 +12316,16 @@ namespace MysticUWP
 				}
 			}
 			else if (mMapName == "Dark") {
-				if ((x == 50 && y == 17) || (x == 51 && y == 17))
+				if (x == 50 && y == 83) {
+					Dialog(new string[] {
+						$"[color={RGB.White}]          이곳은 로어성입니다.[/color]",
+						$"[color={RGB.White}]          여러분을 환영합니다.[/color]",
+						"",
+						"",
+						$"[color={RGB.LightGreen}]         이곳의 성주 로드안 씀[/color]"
+					}, true);
+				}
+				else if ((x == 50 && y == 17) || (x == 51 && y == 17))
 					Dialog($"[color={RGB.White}]      로어 왕립 죄수 수용소[/color]", true);
 				else if (x == 23 && y == 30)
 				{
@@ -13302,7 +13368,7 @@ namespace MysticUWP
 				{
 					var player = battleCommand.Player;
 
-					if (battleCommand.Tool == 0)
+					if (battleCommand.Tool == 3)
 					{
 						var enemy = GetDestEnemy();
 						if (enemy == null)
@@ -13361,7 +13427,7 @@ namespace MysticUWP
 						enemy.HP = 0;
 						enemy.Level = 0;
 					}
-					else if (battleCommand.Tool == 1)
+					else if (battleCommand.Tool == 6)
 					{
 						GetBattleStatus(null);
 
@@ -13391,17 +13457,11 @@ namespace MysticUWP
 								continue;
 
 							var impactPoint = enemy.HP;
-#if DEBUG
-							if (impactPoint < 5_000)
-								impactPoint = 0;
-							else
-								impactPoint -= 5_000;
-#else
+
 							if (impactPoint < player.Concentration * player.Level)
 								impactPoint = 0;
 							else
 								impactPoint -= player.Concentration * player.Level;
-#endif
 							enemy.HP = impactPoint;
 
 
@@ -13417,7 +13477,7 @@ namespace MysticUWP
 							}
 						}
 					}
-					else if (battleCommand.Tool == 2)
+					else if (battleCommand.Tool == 7)
 					{
 						var enemy = GetDestEnemy();
 						if (enemy == null)
@@ -13471,7 +13531,7 @@ namespace MysticUWP
 						battleResult.Add($"[color={RGB.LightGreen}]{enemy.NameSubjectJosa} 겁을 먹고는 도망가 버렸다[/color]");
 						PlusExperience(enemy);
 					}
-					else if (battleCommand.Tool == 3)
+					else if (battleCommand.Tool == 8)
 					{
 						var enemy = GetDestEnemy();
 						if (enemy == null)
@@ -13516,7 +13576,7 @@ namespace MysticUWP
 							return;
 						}
 					}
-					else if (battleCommand.Tool == 4)
+					else if (battleCommand.Tool == 9)
 					{
 						var enemy = GetDestEnemy();
 						if (enemy == null)
@@ -13558,7 +13618,7 @@ namespace MysticUWP
 						else
 							enemy.Posion = true;
 					}
-					else if (battleCommand.Tool == 5)
+					else if (battleCommand.Tool == 10)
 					{
 						var enemy = GetDestEnemy();
 						if (enemy == null)
@@ -15639,26 +15699,14 @@ namespace MysticUWP
 		private void InitializeMap()
 		{
 			Uri musicUri;
-			//if (mMapName == 1 || mMapName == 3 || mMapName == 4)
-			//{
-			//	mMapHeader.TileType = PositionType.Ground;
-			//	musicUri = new Uri("ms-appx:///Assets/ground.mp3");
-			//}
-			//else if (6 <= mMapName && mMapName <= 9)
-			//{
-			//	mMapHeader.TileType = PositionType.Town;
-			//	musicUri = new Uri("ms-appx:///Assets/town.mp3");
-			//}
-			//else if (mMapName == 2 || (10 <= mMapName && mMapName <= 17))
-			//{
-			//	mMapHeader.TileType = PositionType.Den;
-			//	musicUri = new Uri("ms-appx:///Assets/den.mp3");
-			//}
-			//else
-			//{
-			//	mMapHeader.TileType = PositionType.Keep;
-			//	musicUri = new Uri("ms-appx:///Assets/keep.mp3");
-			//}
+			if (mMapHeader.TileType == PositionType.Town)
+				musicUri = new Uri("ms-appx:///Assets/town.mp3");
+			else if (mMapHeader.TileType == PositionType.Ground)
+				musicUri = new Uri("ms-appx:///Assets/ground.mp3");
+			else if (mMapHeader.TileType == PositionType.Den)
+				musicUri = new Uri("ms-appx:///Assets/den.mp3");
+			else
+				musicUri = new Uri("ms-appx:///Assets/keep.mp3");
 
 			if ((mMapHeader.StartX != 255 || mMapHeader.StartY != 255) && (mMapHeader.TileType != PositionType.Ground || mMapName == "UnderGrd")) {
 				mXAxis = mMapHeader.StartX;
@@ -15691,7 +15739,7 @@ namespace MysticUWP
 				mMaxEnemy = 5;
 
 			//ShowMap();
-			//BGMPlayer.Source = musicUri;
+			BGMPlayer.Source = musicUri;
 
 			UpdateView();
 		}
@@ -16641,6 +16689,9 @@ namespace MysticUWP
 			if (StatHealthPanel.Visibility == Visibility.Visible)
 				StatHealthPanel.Visibility = Visibility.Collapsed;
 
+			if (ItemInfoPanel.Visibility == Visibility.Visible)
+				ItemInfoPanel.Visibility = Visibility.Collapsed;
+
 			if (DialogText.Visibility == Visibility.Collapsed)
 				DialogText.Visibility = Visibility.Visible;
 
@@ -17382,6 +17433,14 @@ namespace MysticUWP
 					}
 					mAnimationFrame = 11;
 				}
+				else if (mAnimationEvent == AnimationType.Dying) {
+					Task.Delay(1_000).Wait();
+				}
+				else if (mAnimationEvent == AnimationType.GoToFuture) {
+					AnimateTransition();
+				}
+				else if (mAnimationEvent == AnimationType.Wakeup)
+					AnimateFadeInOut();
 			});
 
 			await animationTask;
@@ -17870,6 +17929,59 @@ namespace MysticUWP
 			else if (mAnimationEvent == AnimationType.Ending2Cookie3) {
 				Talk(" 그 의식의 주인공은 바로 당신이었다.  새로운  로어 세계의 역사를 창조하는  그 순간을 모든 사람들은 두손 모아 찬미하였다.", SpecialEventType.End2_2);
 			}
+			else if (mAnimationEvent == AnimationType.Dying) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				mSpecialEvent = SpecialEventType.GoToFuture;
+				ContinueText.Visibility = Visibility.Visible;
+			}
+			else if (mAnimationEvent == AnimationType.GoToFuture) {
+				mMapName = "Ground1";
+
+				await RefreshGame();
+
+				mXAxis = 57;
+				mYAxis = 78;
+
+				mParty.Year = 795;
+				mParty.Day = 18;
+				mParty.Hour = 9;
+				mParty.Min = 0;
+				mParty.Sec = 0;
+
+				UpdateView();
+
+				foreach (var player in mPlayerList) {
+					player.HP = 1;
+					player.Poison = 0;
+					player.Unconscious = 0;
+					player.Dead = 0;
+				}
+
+				if (mAssistPlayer != null) {
+					mAssistPlayer.HP = 1;
+					mAssistPlayer.Poison = 0;
+					mAssistPlayer.Unconscious = 0;
+					mAssistPlayer.Dead = 0;
+				}
+
+				DisplayPlayerInfo();
+
+				Dialog(new string[] {
+					" 얼마나 아득한 순간이 지났을까...",
+					" 당신은 문득 정신을 차렸다.  그리고 당신이 본 것은 뭔가 낯선듯한 로어 대륙의 모습이었다."
+				});
+
+				InvokeAnimation(AnimationType.Wakeup);
+			}
+			else if (mAnimationEvent == AnimationType.Wakeup) {
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+
+				mSpecialEvent = SpecialEventType.HearAlbireo;
+				ContinueText.Visibility = Visibility.Visible;
+			}
 			else
 			{
 				mAnimationEvent = AnimationType.None;
@@ -18290,7 +18402,8 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.ExitCrystal ||
 				mAnimationEvent == AnimationType.Ending1Cookie2 ||
 				mAnimationEvent == AnimationType.Ending1Cookie3 ||
-				mAnimationEvent == AnimationType.Ending2Cookie1)
+				mAnimationEvent == AnimationType.Ending2Cookie1 ||
+				mAnimationEvent == AnimationType.Wakeup)
 				fadeIn = true;
 
 			var crystalMap = mCrystalMap;
@@ -18511,7 +18624,8 @@ namespace MysticUWP
 					mAnimationEvent == AnimationType.LearnOrcSpeaking2 ||
 					mAnimationEvent == AnimationType.LearnTrollWriting ||
 					mAnimationEvent == AnimationType.SendValiantToUranos ||
-					mAnimationEvent == AnimationType.PassCrystal) && mAnimationFrame <= 117)
+					mAnimationEvent == AnimationType.PassCrystal ||
+					mAnimationEvent == AnimationType.GoToFuture) && mAnimationFrame <= 117)
 					AnimateTransition(mAnimationFrame, playerX, playerY);
 			}
 		}
@@ -18553,7 +18667,8 @@ namespace MysticUWP
 				mAnimationEvent == AnimationType.ExitCrystal ||
 				mAnimationEvent == AnimationType.Ending1Cookie2 ||
 				mAnimationEvent == AnimationType.Ending1Cookie3 ||
-				mAnimationEvent == AnimationType.Ending2Cookie1)
+				mAnimationEvent == AnimationType.Ending2Cookie1 ||
+				mAnimationEvent == AnimationType.Wakeup)
 				fadeIn = true;
 
 			if ((layer[index] & 0x80) > 0 || 
@@ -19267,7 +19382,9 @@ namespace MysticUWP
 			End3,
 			Ending1Talk1,
 			Ending1Talk2,
-			End2_2
+			End2_2,
+			GoToFuture,
+			HearAlbireo
 		}
 
 		private enum BattleEvent
@@ -19437,6 +19554,9 @@ namespace MysticUWP
 			Ending2Cookie1,
 			Ending2Cookie2,
 			Ending2Cookie3,
+			Dying,
+			GoToFuture,
+			Wakeup,
 		}
 
 		private enum SpinnerType
@@ -19521,6 +19641,7 @@ namespace MysticUWP
 			SetEncounterType,
 			AttackCruelEnemy,
 			OrderToCharacter,
+			Equip
 			Unequip,
 			UseWeaponCharacter,
 			UseShieldCharacter,
