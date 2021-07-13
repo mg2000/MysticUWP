@@ -5204,6 +5204,9 @@ namespace MysticUWP
 
 							AppendText("");
 						}
+						else if (menuMode == MenuMode.Equip) {
+
+						}
 						else if (menuMode == MenuMode.UnequipCharacter)
 						{
 							if (mUnequipPlayer.Weapon == 0 && mUnequipPlayer.Shield == 0 && mUnequipPlayer.Armor == 0)
@@ -19641,7 +19644,7 @@ namespace MysticUWP
 			SetEncounterType,
 			AttackCruelEnemy,
 			OrderToCharacter,
-			Equip
+			Equip,
 			Unequip,
 			UseWeaponCharacter,
 			UseShieldCharacter,
