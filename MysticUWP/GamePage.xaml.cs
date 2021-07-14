@@ -180,6 +180,11 @@ namespace MysticUWP
 
 		private int mLordAhnBattleCount = 0;
 
+		private Lore mEquipPlayer;
+		private List<Tuple<int, int>> mEquipGearIDList = new List<Tuple<int, int>>();
+		private List<int> mEquipTypeList = new List<int>();
+		private int mEquipTypeID;
+
 		public GamePage()
 		{
 			this.InitializeComponent();
@@ -4088,6 +4093,105 @@ namespace MysticUWP
 							mParty.Crystal[6]--;
 						}
 
+						void ShowEquipUnequipMenu()
+						{
+							var hasGear = mEquipPlayer.Weapon > 0 || mEquipPlayer.Shield > 0 || mEquipPlayer.Armor > 0;
+
+							var hasBackpackGear = false;
+							for (var type = 0; type < 6; type++)
+							{
+								for (var gear = 0; gear < 7; gear++)
+								{
+									if (mParty.Backpack[type, gear] > 0)
+									{
+										if ((type < 4 && IsUsableWeapon(mEquipPlayer, (type + 1) * 7 + (gear + 1))) ||
+											type == 5 && IsUsableShield(mEquipPlayer) ||
+											type == 6 && IsUsableArmor(mEquipPlayer, gear + 1)) {
+											hasBackpackGear = true;
+											break;
+										}
+										
+									}
+								}
+
+								if (hasBackpackGear)
+									break;
+
+							}
+
+							if (!hasGear && !hasBackpackGear)
+								Dialog($"{mEquipPlayer.NameSubjectJosa}에게 맞는 장비가 없습니다.");
+							else
+								ShowEquipTypeMenu();
+						}
+
+						void ShowEquipTypeMenu() {
+							mEquipTypeList.Clear();
+
+							if (mEquipPlayer.Weapon > 0)
+								mEquipTypeList.Add(0);
+							else {
+								for (var type = 0; type < 4; type++)
+								{
+									for (var gear = 0; gear < 7; gear++)
+									{
+										if (mParty.Backpack[type, gear] > 0)
+										{
+											if (IsUsableWeapon(mEquipPlayer, (type + 1) * 7 + (gear + 1)))
+											{
+												mEquipTypeList.Add(0);
+												break;
+											}
+
+										}
+									}
+
+									if (mEquipTypeList.Count > 0)
+										break;
+								}
+							}
+
+							if (mEquipPlayer.Shield > 0)
+								mEquipTypeList.Add(1);
+							else if (IsUsableShield(mEquipPlayer)) {
+								for (var gear = 0; gear < 7; gear++)
+								{
+									if (mParty.Backpack[4, gear] > 0)
+									{
+										mEquipTypeList.Add(1);
+										break;
+									}
+								}
+							}
+
+							if (mEquipPlayer.Armor > 0)
+								mEquipTypeList.Add(2);
+							else
+							{
+								for (var gear = 0; gear < 7; gear++)
+								{
+									if (mParty.Backpack[5, gear] > 0 && IsUsableArmor(mEquipPlayer, gear + 1))
+									{
+										mEquipTypeList.Add(2);
+										break;
+									}
+								}
+							}
+
+							var equipNameList = new List<string>();
+							foreach (var typeID in mEquipTypeList)
+							{
+								if (typeID == 0)
+									equipNameList.Add($"무기: {Common.GetWeaponName(mEquipPlayer.Weapon)}");
+								else if (typeID == 1)
+									equipNameList.Add($"방패: {Common.GetShieldName(mEquipPlayer.Shield)}");
+								else if (typeID == 2)
+									equipNameList.Add($"갑옷: {Common.GetShieldName(mEquipPlayer.Armor)}");
+							}
+
+							Ask("장착 또는 교체할 장비를 선택해 주십시오.", MenuMode.EquipType, equipNameList.ToArray());
+						}
+
 						var menuMode = HideMenu();
 						ClearDialog();
 
@@ -4220,7 +4324,6 @@ namespace MysticUWP
 							}
 							else if (mMenuFocusID == 6)
 							{
-								Dialog($"[color={RGB.LightGreen}]한명을 고르시오 ---[/color]");
 								ShowCharacterMenu(MenuMode.Equip, false);
 							}
 							else if (mMenuFocusID == 7)
@@ -5205,7 +5308,148 @@ namespace MysticUWP
 							AppendText("");
 						}
 						else if (menuMode == MenuMode.Equip) {
+							mEquipPlayer = mPlayerList[mMenuFocusID];
 
+							ShowEquipUnequipMenu();
+
+						}
+						else if (menuMode == MenuMode.EquipUnequip) {
+							if (mMenuFocusID == 0) {
+								ShowEquipTypeMenu();
+							}
+						}
+						else if (menuMode == MenuMode.EquipType) {
+							mEquipGearIDList.Clear();
+
+							mEquipTypeID = mEquipTypeList[mMenuFocusID];
+
+							var backpackWeaponList = new List<string>();
+							if (mEquipTypeID == 0) {
+								if (mEquipPlayer.Weapon > 0)
+									mEquipGearIDList.Add(new Tuple<int, int>(-1, -1));
+
+								for (var type = 0; type < 4; type++) {
+									for (var weapon = 0; weapon < 7; weapon++) {
+										if (mParty.Backpack[type, weapon] > 0 && IsUsableWeapon(mEquipPlayer, (type + 1) * 7 + (weapon + 1)))
+											mEquipGearIDList.Add(new Tuple<int, int>(type, weapon));
+									}
+								}
+
+								foreach (var gearID in mEquipGearIDList) {
+									if (gearID.Item1 == -1 && gearID.Item2 == -1)
+										backpackWeaponList.Add($"장비 해제");
+									else
+										backpackWeaponList.Add($"{Common.GetWeaponName((gearID.Item1 + 1) * 7 + (gearID.Item2 + 1))}: {mParty.Backpack[gearID.Item1, gearID.Item2]}개");
+								}
+							}
+							else if (mEquipTypeID == 1)
+							{
+								if (mEquipPlayer.Shield > 0)
+									mEquipGearIDList.Add(new Tuple<int, int>(-1, -1));
+
+								for (var weapon = 0; weapon < 10; weapon++)
+								{
+									if (mParty.Backpack[4, weapon] > 0 && IsUsableShield(mEquipPlayer))
+										mEquipGearIDList.Add(new Tuple<int, int>(-1, weapon));
+								}
+
+								foreach (var gearID in mEquipGearIDList)
+								{
+									if (gearID.Item1 == -1 && gearID.Item2 == -1)
+										backpackWeaponList.Add($"장비 해제");
+									else
+										backpackWeaponList.Add($"{Common.GetShieldName(gearID.Item2 + 1)}: {mParty.Backpack[4, gearID.Item2]}개");
+								}
+
+								Ask("장착할 장비를 선택해 주십시오.", MenuMode.ChooseEquip, backpackWeaponList.ToArray());
+							}
+							else if (mEquipTypeID == 2)
+							{
+								if (mEquipPlayer.Shield > 0)
+									mEquipGearIDList.Add(new Tuple<int, int>(-1, -1));
+
+								for (var weapon = 0; weapon < 10; weapon++)
+								{
+									if (mParty.Backpack[5, weapon] > 0 && IsUsableArmor(mEquipPlayer, weapon + 1))
+										mEquipGearIDList.Add(new Tuple<int, int>(-1, weapon));
+								}
+
+								foreach (var gearID in mEquipGearIDList)
+								{
+									if (gearID.Item1 == -1 && gearID.Item2 == -1)
+										backpackWeaponList.Add($"장비 해제");
+									else
+										backpackWeaponList.Add($"{Common.GetArmorName(gearID.Item2 + 1)}: {mParty.Backpack[5, gearID.Item2]}개");
+								}
+							}
+
+							Ask("장착할 장비를 선택해 주십시오.", MenuMode.ChooseEquip, backpackWeaponList.ToArray());
+						}
+						else if (menuMode == MenuMode.ChooseEquip) {
+							var equipID = mMenuFocusID;
+
+							if (mEquipTypeID == 0) {
+								if (mEquipPlayer.Weapon > 0)
+								{
+									var type = (mEquipPlayer.Weapon - 1) / 7;
+									var gear = (mEquipPlayer.Weapon - 1) % 7;
+
+									mParty.Backpack[type, gear]++;
+
+									if (equipID == 0)
+									{
+										mEquipPlayer.Weapon = 0;
+										UpdateItem(mEquipPlayer);
+										ShowEquipTypeMenu();
+										return;
+									}
+								}
+
+								mEquipPlayer.Weapon = (mEquipGearIDList[equipID].Item1 + 1) * 7 + (mEquipGearIDList[equipID].Item2 + 1);
+								mParty.Backpack[mEquipGearIDList[equipID].Item1, mEquipGearIDList[equipID].Item2]--;
+								UpdateItem(mEquipPlayer);
+								ShowEquipTypeMenu();
+							}
+							else if (mEquipTypeID == 1)
+							{
+								if (mEquipPlayer.Shield > 0)
+								{
+									mParty.Backpack[4, mEquipPlayer.Shield - 1]++;
+
+									if (equipID == 0)
+									{
+										mEquipPlayer.Shield = 0;
+										UpdateItem(mEquipPlayer);
+										ShowEquipTypeMenu();
+										return;
+									}
+								}
+
+								mEquipPlayer.Shield = mEquipGearIDList[equipID].Item2 + 1;
+								mParty.Backpack[4, mEquipGearIDList[equipID].Item2]--;
+								UpdateItem(mEquipPlayer);
+								ShowEquipTypeMenu();
+							}
+							else if (mEquipTypeID == 2)
+							{
+								if (mEquipPlayer.Armor > 0)
+								{
+									mParty.Backpack[4, mEquipPlayer.Armor - 1]++;
+
+									if (equipID == 0)
+									{
+										mEquipPlayer.Armor = 0;
+										UpdateItem(mEquipPlayer);
+										ShowEquipTypeMenu();
+										return;
+									}
+								}
+
+								mEquipPlayer.Armor = mEquipGearIDList[equipID].Item2 + 1;
+								mParty.Backpack[4, mEquipGearIDList[equipID].Item2]--;
+								UpdateItem(mEquipPlayer);
+								ShowEquipTypeMenu();
+							}
 						}
 						else if (menuMode == MenuMode.UnequipCharacter)
 						{
@@ -19645,6 +19889,9 @@ namespace MysticUWP
 			AttackCruelEnemy,
 			OrderToCharacter,
 			Equip,
+			EquipUnequip,
+			EquipType,
+			ChooseEquip,
 			Unequip,
 			UseWeaponCharacter,
 			UseShieldCharacter,
