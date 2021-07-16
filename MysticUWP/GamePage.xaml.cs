@@ -11659,14 +11659,14 @@ namespace MysticUWP
 						" 사자를 뜻하는 나의 이름에서 알 수 있듯이 나는 맨손 전투에서만은 어느 누구에게도 지지 않소." +
 						" 나는 이곳에서 이쉬도 테라의 코볼트족을 정벌하고 신대륙을 개척할 일행을 찾고 있었소. 내가 당신의 일행에 참가하려는데 어떻게 생각하오?"
 					}, MenuMode.JoinDenebola, new string[] {
-						"쾌히 승락하겠소",
-						"하지만 전투승은 필요없소"
+						"쾌히 승낙하겠소",
+						"하지만 전투승은 필요 없소"
 					});
 				}
 				else if (moveX == 10 && moveY == 35) {
-					Ask(" 저는 이곳에서 초급마법을 배우는 카펠라라고 합니다. 사실 메이지로서의 제 능력은 아직 많이 부족합니다." +
+					Ask(" 저는 이곳에서 초급 마법을 배우는 카펠라라고 합니다. 사실 메이지로서의 제 능력은 아직 많이 부족합니다." +
 					" 그래서 당신들과 함께 실전에서 많은 것들을 배우고 싶습니다. 제가 일행에 끼어도 되겠습니까?", MenuMode.JoinCapella, new string[] {
-						"그렇다면 한번 동행해 보겠소",
+						"그렇다면 한번 동행해 보시오",
 						"당신은 아직 미숙하니 곤란하오"
 					});
 				}
@@ -11680,11 +11680,11 @@ namespace MysticUWP
 						Talk(new string[] {
 							$" 역시 와 주었군요, {mPlayerList[0].Name}.",
 							" 당신이 지금 베스퍼성에 원정을 가고 있는 중이란 건 알고 있소. 하지만 나의 부탁을 하나 들어 주지 않겠소?",
-							" 지금 우리가 있는 가이아 테라에는 인류와 오크족이 공존하고 있소. 오크족들은 우리 대륙는 했지만 그리 문제 될 것까지는 없었소." +
-							" 하지만 베스퍼성의 참사를 듣고나니 우리성도 오크족에 대해서는 예외가 아니란걸 알았소." +
-							" 우리 성에서도 몇 번은 그들을 정벌하자는 의견이 나왔지만 그들의 해악성이 별로 크지 않은데다가" +
-							" 그들의 전염병이 우리에게 옮을수 있다는 생각에서 모두들 기피해 왔던게 사실이오." +
-							" 하지만 사태가 사태이니만큼 한시 바삐 그들을 정벌해야만 우리가 편안히 지낼수 있겠소.",
+							" 지금 우리가 있는 가이아 테라에는 인류와 오크족이 공존하고 있소. 오크족들은 우리 대륙을 횡단하는 여행자들에게 약간의 피해를 주기는 했지만 그리 문제 될 것까지는 없었소." +
+							" 하지만 베스퍼성의 참사를 듣고 나니 우리성도 오크족에 대해서는 예외가 아니란 걸 알았소." +
+							" 우리 성에서도 몇 번은 그들을 정벌하자는 의견이 나왔지만 그들의 해악성이 별로 크지 않은 데다가" +
+							" 그들의 전염병이 우리에게 옮을 수 있다는 생각에서 모두들 기피해 왔던 게 사실이오." +
+							" 하지만 사태가 사태이니만큼 한시 바삐 그들을 정벌해야만 우리가 편안히 지낼 수 있겠소.",
 							" 오크족을 정벌해 주지 않겠소? 만약 당신이 허락한다면 당신에게 이 성의 보물창고를 개방하리다." +
 							" 이곳 주민을 대표하여 당신에게 부탁하겠소."
 						}, SpecialEventType.None);
@@ -11692,10 +11692,10 @@ namespace MysticUWP
 						mParty.Etc[20]++;
 					}
 					else if (mParty.Etc[20] == 1) {
-						Dialog(" 오크족의 오크킹만 제거한다면 그들의 사회는 붕괴 될거요. 그리고 오크족의 마을은 이 성의 동쪽 멀리에 있소. 그럼 부탁하오.");
+						Dialog(" 오크족의 오크킹만 제거한다면 그들의 사회는 붕괴될 거요. 그리고 오크족의 마을은 이 성의 동쪽 멀리에 있소. 그럼 부탁하오.");
 					}
 					else if (mParty.Etc[20] == 2) {
-						Dialog(" 당신이라면 해낼줄 알았소. 그 답례로 보물창고를 당신에게 개방하겠소. 거기서 마음껏 필요한 것을 가져 가도록하시오.");
+						Dialog(" 당신이라면 해낼 줄 알았소. 그 답례로 보물창고를 당신에게 개방하겠소. 거기서 마음껏 필요한 것을 가져가도록 하시오.");
 						mParty.Etc[20]++;
 					}
 					else if (mParty.Etc[20] == 3) {
@@ -11703,18 +11703,18 @@ namespace MysticUWP
 					}
 				}
 				else if (moveX == 36 && moveY == 26) {
-					Dialog(" 오크족은 강한자가 왕이되는 전통을 가지고 있습니다.");
+					Dialog(" 오크족은 강한 자가 왕이 되는 전통을 가지고 있습니다.");
 				}
 				else if (moveX == 37 && moveY == 13) {
-					Dialog(" 오크족에서 제대로 마법을 행하는 자는 오크킹의 왼팔격인 이키메이지뿐입니다.");
+					Dialog(" 오크족에서 제대로 마법을 행하는 자는 오크킹의 왼팔 격인 이키메이지뿐입니다.");
 				}
 				else if ((moveX == 39 && moveY == 23) || (moveX == 39 && moveY == 26)) {
 					Dialog(" 오크들은 정말 추하고 더럽고 비위생적인 종족입니다.");
 				}
 				else if (moveX == 36 && moveY == 23) {
-					Dialog(" 저는 오크족에 대해 수 년동안 정보수집을 했었습니다." +
-					" 제가 알게된 바로는, 오크의 보스는 오크킹이며 그 밑에 오크 아키몽크와 오크 아키메이지가 있습니다." +
-					" 또 아키메이지 밑에는 그의 마법제자인 오크 매직유저가 7 명 있으며 아키몽크 밑에는 4 명의 오크 전사와 수 십 또는 수 백명의 오크 병사가 있습니다.");
+					Dialog(" 저는 오크족에 대해 수년 동안 정보 수집을 했었습니다." +
+					" 제가 알게 된 바로는, 오크의 보스는 오크킹이며 그 밑에 오크 아키몽크와 오크 아키메이지가 있습니다." +
+					" 또 아키메이지 밑에는 그의 마법 제자인 오크 매직유저가 7명 있으며 아키몽크 밑에는 4명의 오크 전사와 수십 또는 수백 명의 오크 병사가 있습니다.");
 				}
 				else if (moveX == 41 && moveY == 33) {
 					Dialog(" 드라코니안족은 인간과 드래곤의 트기라더군요." +
@@ -11723,7 +11723,7 @@ namespace MysticUWP
 				else if (moveX == 26 && moveY == 14) {
 					if (!GetBit(5))
 					{
-						Dialog(" 코볼트족의 배타성 때문에 인류의 신세계 개척이 늦어지고 있습니다. 그들을 굴복 시켜 한시 바삐 새 시대를 열어야 합니다.");
+						Dialog(" 코볼트족의 배타성 때문에 인류의 신세계 개척이 늦어지고 있습니다. 그들을 굴복 시켜 한시바삐 새 시대를 열어야 합니다.");
 					}
 					else {
 						Dialog(" 이제는 신세계 개척에 힘써야 할 때입니다.");
@@ -11731,16 +11731,16 @@ namespace MysticUWP
 				}
 				else if (moveX == 13 && moveY == 37) {
 					Dialog(" 저는 코볼트족이 지배하는 이쉬도 테라에 갔다가 겨우 도망쳐 나왔습니다." +
-					" 그들은 외부 종족이 그들의 영역 내에 들어오는 것을 매우 싫어하더군요. 그들의 무장은 다른 종족보다 강하여 도저히 당해내기 힘들었습니다.");
+					" 그들은 외부 종족이 그들의 영역 내에 들어오는 것을 매우 싫어하더군요. 그들의 무장은 다른 종족보다 강하여 도저히 당해 내기 힘들었습니다.");
 				}
 				else if (moveX == 23 && moveY == 28) {
 					if (mParty.Etc[4] == 0 || GetBit(8)) {
-						Dialog(" 당신이 오크의 말과 글을 배운다면 그들과 대화가 이루어 질거요.");
+						Dialog(" 당신이 오크의 말과 글을 배운다면 그들과 대화가 이루어질 거요.");
 					}
 					else {
-						Ask(" 만약 당신이 나에게 금을 2,000개 준다면 기꺼이 일주일만에 오크의 글을 가르쳐 주리다.", MenuMode.LearnOrcWriting, new string[] {
+						Ask(" 만약 당신이 나에게 금을 2,000개 준다면 기꺼이 일주일 만에 오크의 글을 가르쳐 주리다.", MenuMode.LearnOrcWriting, new string[] {
 						"그렇게 합시다",
-						"배울 필요는 없을것 같소"
+						"배울 필요는 없을 것 같소"
 						});
 					}
 				}
@@ -11748,35 +11748,35 @@ namespace MysticUWP
 			else if (mMapName == "OrcTown") {
 				if (moveX == 9 && moveY == 38) {
 					if (GetBit(7))
-						Talk(" 제발 살려 주십시요. 저는 여태껏 남에게 해 한 번 안입히고 살아왔습니다.", SpecialEventType.AskKillOrc1);
+						Talk(" 제발 살려 주십시요. 저는 여태껏 남에게 해 한번 안 입히고 살아왔습니다.", SpecialEventType.AskKillOrc1);
 					else
-						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 애원하는듯 했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc1);
+						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 애원하는 듯했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc1);
 				}
 				else if (moveX == 8 && moveY == 18) {
 					if (GetBit(7))
-						Talk(" 우리는 당신네 인간들에게 아무런 나쁜짓도 안했는데 왜 당신들은 우리를 못 살게 구는 겁니까 ?", SpecialEventType.AskKillOrc2);
+						Talk(" 우리는 당신네 인간들에게 아무런 나쁜 짓도 안 했는데 왜 당신들은 우리를 못살게 구는 겁니까?", SpecialEventType.AskKillOrc2);
 					else
-						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 하소연하는듯 했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc2);
+						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 하소연하는 듯했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc2);
 				}
 				else if (moveX == 12 && moveY == 11)
 				{
 					if (GetBit(7))
-						Talk(" 나는 이곳에서 50년 가까이 농사만 지으며 살아왔소. 이곳 밖으로 나가본 적도 거의 없고, 더우기 인간에게 밑보일 짓도 하지 않았소." +
-						" 그런데 왜 당신들은 우리 마을을 짓밟고 우리 동족을 죽이려하오?", SpecialEventType.AskKillOrc3);
+						Talk(" 나는 이곳에서 50년 가까이 농사만 지으며 살아왔소. 이곳 밖으로 나가본 적도 거의 없고, 더욱이 인간에게 밉보일 짓도 하지 않았소." +
+						" 그런데 왜 당신들은 우리 마을을 짓밟고 우리 동족을 죽이려 하오?", SpecialEventType.AskKillOrc3);
 					else
-						Talk(" 당신 앞에 있는 늙은 오크가 당신에게 무어라 질책하는듯 하였으나 도무지 말을 알아들을 수가 없었다.", SpecialEventType.AskKillOrc3);
+						Talk(" 당신 앞에 있는 늙은 오크가 당신에게 무어라 질책하는듯하였으나 도무지 말을 알아들을 수가 없었다.", SpecialEventType.AskKillOrc3);
 				}
 				else if (moveX == 20 && moveY == 8)
 				{
 					if (GetBit(7))
-						Talk(" 분명 오크족 중에서도 나쁜자가 있어서 지나가는 여행자들을 위협하기도 했던게 사실이오. 하지만 대부분은 선량한 오크들이란걸 알아두시오.", SpecialEventType.AskKillOrc4);
+						Talk(" 분명 오크족 중에서도 나쁜 자가 있어서 지나가는 여행자들을 위협하기도 했던 게 사실이오. 하지만 대부분은 선량한 오크들이란 걸 알아두시오.", SpecialEventType.AskKillOrc4);
 					else
-						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 하소연하는듯 했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc4);
+						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 하소연하는듯했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc4);
 				}
 				else if (moveX == 42 && moveY == 11)
 				{
 					if (GetBit(7))
-						Talk(" 당신네들이 이렇게 우리들을 못살게 군다면 오크킹님이 가만 있지 않을 것입니다.", SpecialEventType.AskKillOrc5);
+						Talk(" 당신네들이 이렇게 우리들을 못살게 군다면 오크킹님이 가만있지 않을 것입니다.", SpecialEventType.AskKillOrc5);
 					else
 						Talk(" 당신 앞의 오크 주민이 무어라 당신에게 적개심을 보이며 이야기했지만 알아들을 수는 없었다.", SpecialEventType.AskKillOrc5);
 				}
@@ -11792,23 +11792,23 @@ namespace MysticUWP
 					if (GetBit(7))
 						Talk(" 로드 안은 이 세계의 적입니다. 그리고 그를 따르는 당신도 적입니다.", SpecialEventType.AskKillOrc7);
 					else
-						Talk(" 당신앞에 있는 오크 청년은 당장이라도 달려들듯이 당신에게 무어라 소리쳐댔다.", SpecialEventType.AskKillOrc7);
+						Talk(" 당신 앞에 있는 오크 청년은 당장이라도 달려들듯이 당신에게 무어라 소리쳐댔다.", SpecialEventType.AskKillOrc7);
 				}
 				else if (moveX == 40 && moveY == 38) {
 					if (GetBit(7))
-						Talk(" 우리 부족의 아키메이지는 코볼트족의 왕에게서 마법을 배웠습니다. 그라면 충분히 당신을 내 쫒을 겁니다.", SpecialEventType.AskKillOrc8);
+						Talk(" 우리 부족의 아키메이지는 코볼트족의 왕에게서 마법을 배웠습니다. 그라면 충분히 당신을 내쫓을 겁니다.", SpecialEventType.AskKillOrc8);
 					else
-						Talk(" 당신앞에 있는 오크 청년은 당장이라도 달려들듯이 당신에게 무어라 소리쳐댔다.", SpecialEventType.AskKillOrc8);
+						Talk(" 당신 앞에 있는 오크 청년은 당장이라도 달려들듯이 당신에게 무어라 소리쳐댔다.", SpecialEventType.AskKillOrc8);
 				}
 				else if ((moveX == 24 && moveY == 41) || (moveX == 24 && moveY == 42)) {
 					Ask(new string[] {
 						" 마을의 문 앞을 지키고 있는 오크가 당신에게 인간의 말로 이렇게 말했다.",
 						"",
 						"",
-						$"[color={RGB.LightMagenta}] 인간은 오크 마을에 들어 올 수 없소.[/color]",
-						$"[color={RGB.LightMagenta}] 썩 물러나시오 !![/color]"
+						$"[color={RGB.LightMagenta}] 인간은 오크 마을에 들어올 수 없소.[/color]",
+						$"[color={RGB.LightMagenta}] 썩 물러나시오!![/color]"
 					}, MenuMode.GuardOrcTown, new string[] {
-						"알았소, 나가면 될거 아니오",
+						"알았소, 나가면 될 거 아니오",
 						"당신들을 쓰러뜨리고 지나가야겠소"
 					});
 				}
@@ -11826,7 +11826,7 @@ namespace MysticUWP
 					HideMap();
 
 					if (GetBit(7))
-						Talk($"[color={RGB.LightMagenta}] 인간은 절대 이곳으로 들여 보내지 않겠다. 자! 덤벼라.[/color]", SpecialEventType.BattleOrcTempleEnterance);
+						Talk($"[color={RGB.LightMagenta}] 인간은 절대 이곳으로 들여보내지 않겠다. 자! 덤벼라.[/color]", SpecialEventType.BattleOrcTempleEnterance);
 					else
 						Talk("무장을 제법 갖춘 2명의 오크 전사와 다른 전투사들이 당신을 공격하기 시작했다.", SpecialEventType.BattleOrcTempleEnterance);
 				}
@@ -11856,11 +11856,11 @@ namespace MysticUWP
 					if (GetBit(9))
 						Talk($"[color={RGB.LightMagenta}] 아직도 남은 인간이 있었다니... 너도 나에게 죽어줘야겠다.[/color]", specialEvent);
 					else
-						Talk(" 당신 앞의 트롤이 무어라 말했지만 알아 들을 수가 없었다.", specialEvent);
+						Talk(" 당신 앞의 트롤이 무어라 말했지만 알아들을 수가 없었다.", specialEvent);
 				}
 				else if (moveX == 46 && moveY == 54) {
 					Dialog(new string[] {
-						" 당신 앞의 시체는 다른 시체들보다 늦게 살해 당했는지 부패의 정도가 덜했다. 비교적 형태를 알아 볼 수 있었기에 당신은 그의 몸을 조사하기 시작했다.",
+						" 당신 앞의 시체는 다른 시체들보다 늦게 살해당했는지 부패의 정도가 덜했다. 비교적 형태를 알아볼 수 있었기에 당신은 그의 몸을 조사하기 시작했다.",
 						""
 					});
 
@@ -11876,15 +11876,15 @@ namespace MysticUWP
 			else if (mMapName == "TrolTown") {
 				if (GetTileInfo(moveX, moveY) == 54) {
 					void CantSpeakTrollSpeaking(SpecialEventType specialEvent) {
-						Talk(" 당신 앞의 트롤족이 당신에게 무어라 말을 했지만 알아 들을 수가 없었다.", specialEvent);
+						Talk(" 당신 앞의 트롤족이 당신에게 무어라 말을 했지만 알아들을 수가 없었다.", specialEvent);
 					}
 
 					if ((moveX == 24 && moveY == 7) || (moveX == 25 && moveY == 7)) {
 						if (!GetBit(16) && GetBit(9)) {
-							Ask($"[color={RGB.LightMagenta}] 아니! 이곳까지 이방인이 쳐들어 오다니.... 나는 이곳의 왕인 트롤킹이라고 하는데 우리 협상으로 해결하는게 어떻겠는가?[/color]"
+							Ask($"[color={RGB.LightMagenta}] 아니! 이곳까지 이방인이 쳐들어 오다니.... 나는 이곳의 왕인 트롤킹이라고 하는데 우리 협상으로 해결하는 게 어떻겠는가?[/color]"
 							, MenuMode.NegotiateTrollKing, new string[] {
 								"그럼 조건부터 들어보겠소",
-								"협상은 필요없소"
+								"협상은 필요 없소"
 							});
 						}
 					}
@@ -11906,7 +11906,7 @@ namespace MysticUWP
 						HideMap();
 
 						if (GetBit(9)) {
-							Talk($"[color={RGB.LightMagenta}] 감히 트롤의 보물을 탈취하려고 이곳에 오다니! 나는 이 보물창고의 경비대장으로써 목숨을 걸고 보물을 지킬테다.[/color]", SpecialEventType.BattleTroll1);
+							Talk($"[color={RGB.LightMagenta}] 감히 트롤의 보물을 탈취하려고 이곳에 오다니! 나는 이 보물창고의 경비대장으로써 목숨을 걸고 보물을 지킬 것이다.[/color]", SpecialEventType.BattleTroll1);
 						}
 						else {
 							mBattleEvent = BattleEvent.Troll1;
@@ -11926,8 +11926,8 @@ namespace MysticUWP
 						HideMap();
 
 						if (GetBit(9)) {
-							Talk($"[color={RGB.LightMagenta}] 바로 너희들이 우리 동굴에 잡혀 있는 인간들을 구하러온 자들인가?" +
-							" 하지만 나의 파괴 마법앞에서는 너희들의 배짱도 산산히 부셔져 버릴 것이다.[/color]", SpecialEventType.BattleTroll2);
+							Talk($"[color={RGB.LightMagenta}] 바로 너희들이 우리 동굴에 잡혀 있는 인간들을 구하러 온 자들인가?" +
+							" 하지만 나의 파괴 마법 앞에서는 너희들의 배짱도 산산이 부서져 버릴 것이다.[/color]", SpecialEventType.BattleTroll2);
 						}
 						else {
 							mBattleEvent = BattleEvent.Troll2;
@@ -11980,7 +11980,7 @@ namespace MysticUWP
 
 						if (GetBit(9))
 						{
-							Talk($"[color={RGB.LightMagenta}] 너희들을 절대 이 안으로 들여 보낼수 없다!![/color]", SpecialEventType.BattleTroll5);
+							Talk($"[color={RGB.LightMagenta}] 너희들을 절대 이 안으로 들여보낼 수 없다!![/color]", SpecialEventType.BattleTroll5);
 						}
 						else
 						{
@@ -11990,7 +11990,7 @@ namespace MysticUWP
 					}
 					else if (moveX == 5 && moveY == 30) {
 						if (GetBit(9)) {
-							Ask(" 날 제발 살려 주시오. 나는 이곳의 물리학자인데 당신에게 중요한 발견하나를 알려줄테니 제발 목숨만은 살려주시오.",
+							Ask(" 날 제발 살려 주시오. 나는 이곳의 물리학자인데 당신에게 중요한 발견 하나를 알려줄 테니 제발 목숨만은 살려주시오.",
 							MenuMode.PhysicistTeaching, new string[] {
 								"좋소, 한번 들어봅시다",
 								"날 속이려고 드는군, 자 죽어랏!"
@@ -12022,21 +12022,21 @@ namespace MysticUWP
 					else if (moveX == 39 && moveY == 29)
 					{
 						if (GetBit(9))
-							Talk(" 침략자 !!", SpecialEventType.AskKillTroll10);
+							Talk(" 침략자!!", SpecialEventType.AskKillTroll10);
 						else
 							CantSpeakTrollSpeaking(SpecialEventType.AskKillTroll10);
 					}
 					else if (moveX == 40 && moveY == 34)
 					{
 						if (GetBit(9))
-							Talk(" 아이고, 위대하신 용사님들. 제발 저에게 헤로인 주사를 좀 놔 주십시요. 부탁합니다. 지금 헤로인을 맞지 않으면 죽을 것 같습니다.", SpecialEventType.AskKillTroll11);
+							Talk(" 아이고, 위대하신 용사님들. 제발 저에게 헤로인 주사를 좀 놔 주십시오. 부탁합니다. 지금 헤로인을 맞지 않으면 죽을 것 같습니다.", SpecialEventType.AskKillTroll11);
 						else
 							CantSpeakTrollSpeaking(SpecialEventType.AskKillTroll11);
 					}
 					else if (moveX == 42 && moveY == 31) {
 						if (GetBit(9))
 						{
-							Talk(" 당신네 인간들은 우리 트롤족에게서 금을 뺏기위해, 진통과 설사에 좋다는 명목으로 헤로인을 주사하기 시작했소." +
+							Talk(" 당신네 인간들은 우리 트롤족에게서 금을 뺏기 위해, 진통과 설사에 좋다는 명목으로 헤로인을 주사하기 시작했소." +
 							" 그 때문에 상당수의 트롤 주민들이 헤로인 중독에 고생하며, 또한 헤로인을 구하기 위해 인간들에게 많은 금을 지불하고 있소.", SpecialEventType.AskKillTroll12);
 						}
 						else
@@ -12053,25 +12053,25 @@ namespace MysticUWP
 					Talk(" 당신들이 우리를 구하러 온 사람들이오? 정말 감사하오. 소문에 의하면 베스퍼성이 완전히 전멸 당했다는데 그 말이 사실이오? 그렇다면 정말 유감이군요.", SpecialEventType.MeetBecrux);
 				}
 				else if (moveX == 41 && moveY == 15) {
-					Dialog(" 헤로인을 만드는건 쉬워요. 설익은 양귀비 열매 꼬투리에 흠집을내면 나오는 우유같은 수액을 갈색 고무질로 건조 시키면 되는거니까요." +
-					" 그건 일종의 중추 신경 완화제의 역할을 하죠. 그걸 트롤에게 팔아서 꽤 돈을 벌었는데 한날 트롤족들이 들고 일어나는 바람에 꼼짝없이 잡혀서 여기에 있는거죠.");
+					Dialog(" 헤로인을 만드는 건 쉬워요. 설익은 양귀비 열매 꼬투리에 흠집을 내면 나오는 우유 같은 수액을 갈색 고무질로 건조하면 되는 것이니까요." +
+					" 그건 일종의 중추 신경 완화제의 역할을 하죠. 그걸 트롤에게 팔아서 꽤 돈을 벌었는데 한날 트롤족들이 들고일어나는 바람에 꼼짝없이 잡혀서 여기에 있는 거죠.");
 				}
 				else if (moveX == 41 && moveY == 20) {
-					Talk(" 베스퍼성의 사람들은 이 대륙을 확실한 인간의 영토로 굳히기 위해 번번히 트롤족의 동굴을 공격했소." +
-					" 때로는 협박을하고 때로는 회유책을 쓰면서 그들을 대륙의 구석으로 몰아 붙이려 했지만 역부족이었소." +
-					" 그래서 베스퍼 성주를 중심으로 트롤의 동굴에 대대적인 공격을 감행했었소. 그때 죽거나 잡힌 트롤들은 모두 사지가 절단된채 쇠 꼬챙이에 꿰어 매달려 있었소." +
+					Talk(" 베스퍼성의 사람들은 이 대륙을 확실한 인간의 영토로 굳히기 위해 번번이 트롤족의 동굴을 공격했소." +
+					" 때로는 협박을 하고 때로는 회유책을 쓰면서 그들을 대륙의 구석으로 몰아붙이려 했지만 역부족이었소." +
+					" 그래서 베스퍼 성주를 중심으로 트롤의 동굴에 대대적인 공격을 감행했었소. 그때 죽거나 잡힌 트롤들은 모두 사지가 절단된 채 쇠꼬챙이에 꿰어 매달려 있었소." +
 					" 그들에게 겁을 주어 다시는 인간에게 대항하지 못하게 하자는 속셈이었던 거요. 하지만 예상은 빗나갔었소." +
-					" 그 광경들을 본 트롤들은 치밀어 오르는 분노에 집단적으로 베스퍼성에 대한 야습을 개시했던 거요. 여지껏 당하고만 살아왔던 한을 이때 모두 폭발시켰던 거라오." +
+					" 그 광경들을 본 트롤들은 치밀어 오르는 분노에 집단적으로 베스퍼성에 대한 야습을 개시했던 거요. 여태껏 당하고만 살아왔던 한을 이때 모두 폭발시켰던 거라오." +
 					" 그래서 예상하지도 못했던 기습을 받은 베스퍼성은 순식간에 전멸되었던 것이었소. 모두가 다 우리가 자청한 일이나 다름없었던 거지요.", SpecialEventType.None);
 				}
 			}
 			else if (mMapName == "Hut") {
 				if (moveX == 14 && moveY == 8) {
 					if (!GetBit(12)) {
-						Ask(" 나는 어릴때부터 코볼트족에게 발견되어 그들의 손에 자라났습니다." +
+						Ask(" 나는 어릴 때부터 코볼트족에게 발견되어 그들의 손에 자라났습니다." +
 						" 지금은 비록 인간이라는 이유로 그들의 집단에서 소외되어 이곳에서 홀로 살고 있지만 한때는 코볼트족의 말과 글을 사용하던 시절이 있습니다." +
 						" 당신 혹시 나에게 체력 회복약 5개만 주지 않겠습니까? 그런다면 나는 기꺼이 당신에게 코볼트의 글을 가르쳐 주겠습니다." +
-						" 그것도 일주일만에 말입니다.", MenuMode.LearnKoboldWriting, new string[] {
+						" 그것도 일주일 만에 말입니다.", MenuMode.LearnKoboldWriting, new string[] {
 							"좋소, 그렇게 합시다",
 							"체력 회복약 5개는 좀..."
 						});
@@ -12080,14 +12080,14 @@ namespace MysticUWP
 						Dialog(" 당신들이 가지고 있는 창과 갑옷을 어디선가 본 것 같은데...");
 					}
 					else {
-						Dialog(" 이제 당신은 웬만한 코볼트 글을 이해 할 수 있을 겁니다.");
+						Dialog(" 이제 당신은 웬만한 코볼트 글을 이해할 수 있을 겁니다.");
 					}
 				}
 			}
 			else if (mMapName == "Ancient") {
 				if ((moveX == 9 && moveY == 16) || (moveX == 10 && moveY == 16)) {
 					Ask(new string[] {
-						" 신전 입구인듯한 곳에 신자인것 같은 드라코니안 두명이 서 있었다. 당신들을 보고 뭐라고 알 수 없는 말을 서로 지껄이더니 서투른 인간의 말로 당신에게 말했다.",
+						" 신전 입구인듯한 곳에 신자인 것 같은 드라코니안 두 명이 서있었다. 당신들을 보고 뭐라고 알 수 없는 말을 서로 지껄이더니 서투른 인간의 말로 당신에게 말했다.",
 						"",
 						$"[color={RGB.LightMagenta}] 여기는 에인션트 이블님의 신전을 모시고 있는 신전입니다. 그리고 우리 둘은 이곳을 관리하는 신도들입니다. 어떤 일로 여기에 오셨습니까?[/color]"
 					}, MenuMode.MeetAncientEvil, new string[] {
@@ -12108,20 +12108,20 @@ namespace MysticUWP
 				else if (moveX == 23 && moveY == 91)
 				{
 					if (GetBit(13))
-						Talk(" 음? 너는... 호모 사피엔스 종족이로군. 이처럼 하등한 포유류가 감히 드라코니안 종족의 영역을 침법하다니 놀랍군.", SpecialEventType.BattleDraconian2);
+						Talk(" 음? 너는... 호모 사피엔스 종족이로군. 이처럼 하등한 포유류가 감히 드라코니안 종족의 영역을 침범하다니 놀랍군.", SpecialEventType.BattleDraconian2);
 					else
 						BattleDraconian(BattleEvent.Draconian2);
 				}
 				else if (moveX == 24 && moveY == 80) {
 					if (GetBit(13))
-						Talk(" 그래... 너 잘만났다. 한번 죽어봐라.", SpecialEventType.BattleDraconian3);
+						Talk(" 그래... 너 잘 만났다. 한번 죽어봐라.", SpecialEventType.BattleDraconian3);
 					else
 						BattleDraconian(BattleEvent.Draconian3);
 				}
 				else if (moveX == 33 && moveY == 99) {
 					if (GetBit(13))
 						Talk(" 당신이 우리를 정벌하러 왔다는 말을 들었는데 뭔가 잘못 안 것은 아니오?" +
-						" 여태껏 우리 종족과 당신들은 아무런 접촉도 없었는데 악의를 품은채 이곳으로 올 이유가 없지 않소. 어짜피 당신은 우리들의 상대가 안되니 여기서 썩 물러 나시오.",
+						" 여태껏 우리 종족과 당신들은 아무런 접촉도 없었는데 악의를 품은 채 이곳으로 올 이유가 없지 않소. 어차피 당신은 우리들의 상대가 안 되니 여기서 썩 물러 나시오.",
 						SpecialEventType.BattleDraconian4);
 					else
 						BattleDraconian(BattleEvent.Draconian4);
@@ -12131,8 +12131,8 @@ namespace MysticUWP
 					if (GetBit(13))
 						Talk(new string[] {
 						" 우리 드라코니안족은 드래곤과 인간의 장점만을 모아 진화한 생명체로써 드라콘이라고 줄여 부르기도 하지." +
-						" 지능은 IQ 200에서 250 정도로 인간의 두배 정도이고 키도 평균 2m 30cm로 인간보다 크고 게다가 날개도 있어서 하늘을 나는 것도 가능하네." +
-						" 수명도 150 에서 200 세 정도라서 인간보다 발전 가능성도 뛰어나지.",
+						" 지능은 IQ 200에서 250정도로 인간의 두 배 정도이고 키도 평균 2m 30cm로 인간보다 크고 게다가 날개도 있어서 하늘을 나는 것도 가능하네." +
+						" 수명도 150에서 200세 정도라서 인간보다 발전 가능성도 뛰어나지.",
 						" 흐흐흐... 어때? 이래도 우리에게 대항하겠는가?"
 						}, SpecialEventType.BattleDraconian5);
 					else
@@ -12148,7 +12148,7 @@ namespace MysticUWP
 				}
 				else if (moveX == 32 && moveY == 81) {
 					if (GetBit(13))
-						Talk(" 콩알만한 것들이 겁도 없이 들어 오다니. 심심하던 차에 잘됐군. 싸움이나 걸어야지.", SpecialEventType.BattleDraconian7);
+						Talk(" 콩알만한 것들이 겁도 없이 들어오다니. 심심하던 차에 잘 됐군. 싸움이나 걸어야지.", SpecialEventType.BattleDraconian7);
 					else
 						BattleDraconian(BattleEvent.Draconian7);
 				}
@@ -12161,8 +12161,8 @@ namespace MysticUWP
 				else if (moveX == 31 && moveY == 21) {
 					if (GetBit(13))
 					{
-						Talk(" 나는 이곳 최고의 물리학자일세. 그리고 나의 이름은 아인슈타인이라네. 내가 어릴때 머리가 완전히 돌이었지." +
-						$" 그래서 항상 아이들이 나를 보며 [color={RGB.LightGreen}]\"Du bist ein Stein\"[/color]이라고 놀리곤했지. 거기서 나온 이름이 내 이름인 'Einstein'일세", SpecialEventType.BattleDraconian9);
+						Talk(" 나는 이곳 최고의 물리학자일세. 그리고 나의 이름은 아인슈타인이라네. 내가 어릴 때 머리가 완전히 돌이었지." +
+						$" 그래서 항상 아이들이 나를 보며 [color={RGB.LightGreen}]\"Du bist ein Stein\"[/color]이라고 놀리곤 했지. 거기서 나온 이름이 내 이름인 'Einstein'일세", SpecialEventType.BattleDraconian9);
 					}
 					else
 						BattleDraconian(BattleEvent.Draconian9);
@@ -12170,7 +12170,7 @@ namespace MysticUWP
 				else if (moveX == 39 && moveY == 32) {
 					if (GetBit(13))
 					{
-						Talk(" 만약, 당신이 자꾸 우리를 위협하겠다면 우리는 성의 서쪽 감옥에 있는 인간들을 모두 처형시켜 버릴테다.", SpecialEventType.BattleDraconian10);
+						Talk(" 만약, 당신이 자꾸 우리를 위협하겠다면 우리는 성의 서쪽 감옥에 있는 인간들을 모두 처형시켜 버릴 테다.", SpecialEventType.BattleDraconian10);
 					}
 					else
 						BattleDraconian(BattleEvent.Draconian10);
@@ -12197,33 +12197,33 @@ namespace MysticUWP
 				else if (moveX == 14 && moveY == 47) {
 					if (GetBit(13))
 					{
-						Talk(" 위대한 프로그래머이시며 이 세계의 창시자이신 분과 타임워커 알비레오는 동일인물이라는 생각이 안드오?", SpecialEventType.BattleDraconian13);
+						Talk(" 위대한 프로그래머이시며 이 세계의 창시자이신 분과 타임워커 알비레오는 동일 인물이라는 생각이 안 드오?", SpecialEventType.BattleDraconian13);
 					}
 					else
 						BattleDraconian(BattleEvent.Draconian13);
 				}
 				else if (moveX == 14 && moveY == 56) {
-					Ask(" 나는 드라콘족의 통치체제에 반발하다가 이곳에 반역죄로 잡혀오게 되었소. 당신 역시 이곳의 체제를 전복 시키려는게 주목적인것 같은데, 우리 힘을 합해 보는게 어떻겠소.",
+					Ask(" 나는 드라콘족의 통치체제에 반발하다가 이곳에 반역죄로 잡혀오게 되었소. 당신 역시 이곳의 체제를 전복시키려는 게 주목적인 것 같은데, 우리 힘을 합해 보는 게 어떻겠소.",
 					MenuMode.JoinDraconian, new string[] {
 						"그렇게 하지요",
 						"그건 안되겠소"
 					});
 				}
 				else if (moveX == 21 && moveY == 23) {
-					Talk(" 나는 마징가 Z 를 실제로 보았죠. 정말 무쇠팔, 무쇠다리, 로켓트주먹을 가지고 있더군요. 만약 전쟁이 일어나면 인천 앞바다가 갈라지며 출동한다고 들었어요. 그것뿐만 아니죠." +
-					" 잠실구장이 열리면서 메칸더 V 도 나오고 비룡폭포에서는 그렌다이져가 뉴크프리트와 합체하여 출격하고 육군본부에 보호망이 쳐지며 그레이트 마징가와 비너스 A 가 같이 나타나고" +
-					" 공군 본부에서 출동한 독수리 5 형제가 조국의 창공을 지키게 되죠. 물론 김박사가 만든 태권 V도 최후의 희망으로 버티고 있죠. 뭐,믿기지 않는다면 국방부 장관님께 직접 물어 보시죠.",
+					Talk(" 나는 마징가 Z를 실제로 보았죠. 정말 무쇠팔, 무쇠다리, 로켓트 주먹을 가지고 있더군요. 만약 전쟁이 일어나면 인천 앞바다가 갈라지며 출동한다고 들었어요. 그것뿐만 아니죠." +
+					" 잠실구장이 열리면서 메칸더 V도 나오고 비룡폭포에서는 그렌다이져가 뉴크프리트와 합체하여 출격하고 육군본부에 보호망이 쳐지며 그레이트 마징가와 비너스 A가 같이 나타나고" +
+					" 공군 본부에서 출동한 독수리 5 형제가 조국의 창공을 지키게 되죠. 물론 김 박사가 만든 태권 V도 최후의 희망으로 버티고 있죠. 뭐, 믿기지 않는다면 국방부 장관님께 직접 물어보시죠.",
 					SpecialEventType.SteelBoy);
 				}
 				else if (moveX == 23 && moveY == 49) {
 					if (mParty.Etc[4] == 0)
-						Dialog(" 그는 당신을 슬쩍본 후 다시 자기 할 일만 하고 있었다.");
+						Dialog(" 그는 당신을 슬쩍 본 후 다시 자기 할 일만 하고 있었다.");
 					else {
-						Talk(" 당신은 지금 로드 안에게 속고 있소. 그는 표면적인 선을 행하기 위해서 당신을 이용하고 있는 것이오. 당신이 드라코니안족을 적대시 할 이유가 없소." +
+						Talk(" 당신은 지금 로드 안에게 속고 있소. 그는 표면적인 선을 행하기 위해서 당신을 이용하고 있는 것이오. 당신이 드라코니안족을 적대시할 이유가 없소." +
 						" 그들은 인간에게 아무런 피해도 간섭도 없이 살아왔소. 그들이 에인션트 이블을 숭상한다는 것이 정벌의 이유가 될 수는 없소." +
-						" 당신은 에인션트 이블을 진정으로 만나보기라도 했소? 당신은 위선자 로드 안의 말만 믿고 에인션트 이블과 그의 추종자들을 배척하고 있는거란 말이오." +
-						" 당신은 어릴때부터 에인션트 이블과 악은 나쁘다고 사상교육을 받아왔던걸 아시오?" +
-						" 진리를 모른채 단지 위에서 가르치는대로 배우며 그것을 진실로 받아들이고 머리속에 새겼던게 바로 화근이었던 것이오.", SpecialEventType.None);
+						" 당신은 에인션트 이블을 진정으로 만나보기라도 했소? 당신은 위선자 로드 안의 말만 믿고 에인션트 이블과 그의 추종자들을 배척하고 있는 거란 말이오." +
+						" 당신은 어릴 때부터 에인션트 이블과 악은 나쁘다고 사상교육을 받아왔던걸 아시오?" +
+						" 진리를 모른 채 단지 위에서 가르치는 대로 배우며 그것을 진실로 받아들이고 머릿속에 새겼던 게 바로 화근이었던 것이오.", SpecialEventType.None);
 					}
 				}
 				else if (moveX == 66 && moveY == 20) {
@@ -12235,13 +12235,13 @@ namespace MysticUWP
 					}
 					else if (mParty.Etc[23] == 2) {
 						if (GetBit(13)) {
-							Dialog(" 나는 드라코니안족의 대예언자요. 나에게는 당신의 미래가 보인다오. 그러나 그것은 너무나 무서운 것이기에 함부로 얘기할 수 없소.");
+							Dialog(" 나는 드라코니안족의 대 예언자요. 나에게는 당신의 미래가 보인다오. 그러나 그것은 너무나 무서운 것이기에 함부로 얘기할 수 없소.");
 							mParty.Etc[23]++;
 						}
 					}
 					else if (mParty.Etc[23] == 3) {
 						if (GetBit(13)) {
-							Dialog(" 좋소, 애기해 주겠소. 당신은 곧 에인션트 이블님을 만나게 될거요. 그리고 로드 안을 배신하려는 선택을 할지도 모르는 순간이 다가올 것이오." +
+							Dialog(" 좋소, 얘기해 주겠소. 당신은 곧 에인션트 이블님을 만나게 될 거요. 그리고 로드 안을 배신하려는 선택을 할지도 모르는 순간이 다가올 것이오." +
 							" 그때의 선택은 당신의 결말을 크게 뒤흔들 것이오.");
 							mParty.Etc[23]++;
 						}
@@ -12264,7 +12264,7 @@ namespace MysticUWP
 				else if ((moveX == 46 && moveY == 60) || (moveX == 47 && moveY == 60)) {
 					if (GetBit(13))
 					{
-						Talk($"[color={RGB.LightMagenta}] 이곳은 너희같은 이방인은 절대 들어갈 수 없는 곳이다. 그래도 끝까지 들어가려 한다면 나와의 사생결단이 남았을뿐이다.[/color]", SpecialEventType.BattleDraconianEntrance2);
+						Talk($"[color={RGB.LightMagenta}] 이곳은 너희 같은 이방인은 절대 들어갈 수 없는 곳이다. 그래도 끝까지 들어가려 한다면 나와의 사생결단이 남았을 뿐이다.[/color]", SpecialEventType.BattleDraconianEntrance2);
 					}
 					else
 						BattleDraconianEntrance2();
@@ -12288,7 +12288,7 @@ namespace MysticUWP
 					if (GetBit(13))
 					{
 						Talk($"[color={RGB.LightMagenta}] 나는 너희들과 같은 보물 약탈자들을 제거하기 위해 보물창고 앞을 지키고 있는 프로스트 드라코니안이다." +
-						" 나의 냉기와 한파공격에는 아무 저항도 하지 못하고 나가 떨어질 것이다.[/color]", SpecialEventType.BattleFrostDraconian);
+						" 나의 냉기와 한파 공격에는 아무 저항도 하지 못하고 나가떨어질 것이다.[/color]", SpecialEventType.BattleFrostDraconian);
 					}
 					else
 						BattleFrostDraconian();
@@ -12305,7 +12305,7 @@ namespace MysticUWP
 					if (GetBit(13))
 					{
 						Talk($"[color={RGB.LightMagenta}] 네가 더 이상 이 안으로 들어갈 수 없는 이유는 바로 내가 있기 때문이다." +
-						" 내가 만든 나의 환상속에서 너는 스스로의 능력에 대한 비애를 느낄수 밖에 없을 것이다.[/color]", SpecialEventType.BattleDraconianMagician);
+						" 내가 만든 나의 환상 속에서 너는 스스로의 능력에 대한 비애를 느낄 수밖에 없을 것이다.[/color]", SpecialEventType.BattleDraconianMagician);
 					}
 					else
 						BattleDraconianMagician();
@@ -12314,15 +12314,15 @@ namespace MysticUWP
 					if (GetBit(13))
 					{
 						Talk($"[color={RGB.LightMagenta}] 나는 아키드라코니안이라고 하는 여기 최강의 용사이다. 또한 드라코니안킹의 방을 지키는 경호대장이다." +
-						" 너같은 자들은 나의 능력으로 충분히 제거해 버릴수 있다.[/color]", SpecialEventType.BattleDraconianGuardian);
+						" 너 같은 자들은 나의 능력으로 충분히 제거해 버릴 수 있다.[/color]", SpecialEventType.BattleDraconianGuardian);
 					}
 					else
 						BattleDraconianGuardian();
 				}
 				else if (moveX == 101 && moveY == 20 && !GetBit(95)) {
 					Talk(new string[] {
-					$"[color={RGB.LightMagenta}] 나는 네가 목표로하는 드라코니안족의 왕이다. 아마 이곳에 살아 남은 우리 종족의 전투사들은 거의 없을 것으로 안다." +
-					" 보이다시피 지금 너의 앞에는 나와 가드 드라코니안 3명 밖에는 없다. 너는 이 기회를 놓치지 않고 반드시 나를 쓰러뜨려서 드라코니안 종족을 멸망시키려 할 것이란건 알고 있다." +
+					$"[color={RGB.LightMagenta}] 나는 네가 목표로 하는 드라코니안족의 왕이다. 아마 이곳에 살아남은 우리 종족의 전투사들은 거의 없을 것으로 안다." +
+					" 보이다시피 지금 너의 앞에는 나와 가드 드라코니안 3명 밖에는 없다. 너는 이 기회를 놓치지 않고 반드시 나를 쓰러뜨려서 드라코니안 종족을 멸망시키려 할 것이란 건 알고 있다." +
 					" 하지만 지금 나의 편이 불리하다고 내가 진다는 것은 아니다. 나 역시 반드시 너희들을 패배 시켜서 우리 종족을 존속 시키려고 필사적이다.[/color]",
 					$"[color={RGB.LightMagenta}] 이제 나의 뜻을 알았을 것이라 믿는다. 그럼 이제 결전이다![/color]"
 					}, SpecialEventType.MeetDraconianKing);
@@ -12330,13 +12330,13 @@ namespace MysticUWP
 			}
 			else if (mMapName == "Tomb") {
 				if ((moveX == 88 && moveY == 19) || (moveX == 87 && moveY == 20)) {
-					Dialog(" 당신은 여기서 뼈만 남은 인간의 해골을 보았다. 아마도 오래전에 여기를 도굴하려다가 갇혔던 것같다.");
+					Dialog(" 당신은 여기서 뼈만 남은 인간의 해골을 보았다. 아마도 오래전에 여기를 도굴하려다가 갇혔던 것 같다.");
 				}
 			}
 			else if (mMapName == "Imperium") {
 				if (moveX == 8 && moveY == 6)
 				{
-					Dialog(" 예전에는 로어성 주민과도 교역 했었다고 하는데 몇 백년 전부터는 무슨 이유인지는 몰라도 왕래가 완전히 끊겨 버렸어요.");
+					Dialog(" 예전에는 로어 성 주민과도 교역했었다고 하는데 몇 백년 전부터는 무슨 이유인지는 몰라도 왕래가 완전히 끊겨 버렸어요.");
 				}
 				else if (moveX == 7 && moveY == 34)
 				{
@@ -12348,7 +12348,7 @@ namespace MysticUWP
 				}
 				else if (moveX == 23 && moveY == 38)
 				{
-					Dialog(" 당신은 못 보던 사람이군요. 아마 여행자인것 같은데 우리 성에 온 것을 환영하오.");
+					Dialog(" 당신은 못 보던 사람이군요. 아마 여행자인 것 같은데 우리 성에 온 것을 환영하오.");
 				}
 				else if (moveX == 25 && moveY == 38)
 				{
@@ -12361,15 +12361,15 @@ namespace MysticUWP
 				else if (moveX == 17 && moveY == 17) {
 					Talk(new string[] {
 						$" 안녕하시오, {mPlayerList[0].Name}.",
-						$" 나는 나의 게임속의 버그를 찾거나 난이도를 조절하기 위해서 항상 게임속을 떠도는 이 게임의 제작자 [color={RGB.Yellow}]안 영기[/color]라는 사람이오." +
-						" 때로는 로어성의 병사로 때로는 다른 종족의 주민으로 계속 변장하며 이곳 저곳을 떠돌아 다닌다오.",
+						$" 나는 나의 게임 속의 버그를 찾거나 난이도를 조절하기 위해서 항상 게임 속을 떠도는 이 게임의 제작자 [color={RGB.Yellow}]안 영기[/color]라는 사람이오." +
+						" 때로는 로어 성의 병사로 때로는 다른 종족의 주민으로 계속 변장하며 이곳저곳을 떠돌아다닌다오.",
 						" 당신은 벌써 이 게임의 반 이상을 했군요. 나는 당신에게 많은 것을 바라지는 않는다오." +
-						" 다만, 내가 이 게임을 통해 말하고자하는 현실적인 주제를 알아 주었으면 하는 바램이 있을뿐이라오."
+						" 다만, 내가 이 게임을 통해 말하고자 하는 현실적인 주제를 알아주었으면 하는 바람이 있을 뿐이라오."
 					}, SpecialEventType.MeetAhnYoungKi);
 				}
 				else if (moveX == 15 && moveY == 19) {
 					Dialog(" 안 영기님이 그러시던데 '또 다른 지식의 성전'은 원래 멀티 엔딩이 아니었고" +
-					" '다크 메이지 실리안 카미너스'는 군입대 시간이 급박해서 멀티 엔딩을 만들지 못했다고 하는데 이번 게임은 확실한 멀티 엔딩이라더군요.");
+					" '다크 메이지 실리안 카미너스'는 군 입대 시간이 급박해서 멀티 엔딩을 만들지 못했다고 하는데 이번 게임은 확실한 멀티 엔딩이라더군요.");
 				}
 				else if (moveX == 32 && moveY == 17) {
 					Dialog(" 저는 예언자로서의 능력을 키우는 중입니다. 저의 예언 능력은 아직 미숙하지만 당신의 미래가 조금은 옅보입니다." +
@@ -12377,7 +12377,7 @@ namespace MysticUWP
 				}
 				else if (moveX == 32 && moveY == 19) {
 					Dialog(" 이곳에는 안 영기님이 만든 게임들이 보관되어 있습니다." +
-					" 첫번째로 만든 '3D 건담'이라는 시뮬레이션 게임의 APPLE SOFT BASIC 과 65C02 기계어 소스 프로그램부터" +
+					" 첫 번째로 만든 '3D 건담'이라는 시뮬레이션 게임의 APPLE SOFT BASIC 과 65C02 기계어 소스 프로그램부터" +
 					" 13번째 게임인 '또 다른 지식의 성전'과 16번째 게임인 '다크 메이지 실리안 카미너스', 또 17번째 게임인 '비전 속으로'와 같은 게임이 소스와 함께 보관되어 있습니다.");
 				}
 				else if ((moveX == 21 && moveY == 16) || (moveX == 27 && moveY == 17)) {
@@ -12387,37 +12387,37 @@ namespace MysticUWP
 					Dialog(" 이 안은 '비전의 지식'이라는 신전이오. 에인션트 이블님의 의지가 잠든 곳이기도 하지요.");
 				}
 				else if (moveX == 25 && moveY == 28) {
-					Dialog(" 이 안의 두 사람은 에인션트 이블님의 의지를 깨닳은 사람들이지요. 당신에게 결코 거짓말 따위는 하지 않을 거예요.");
+					Dialog(" 이 안의 두 사람은 에인션트 이블님의 의지를 깨달은 사람들이지요. 당신에게 결코 거짓말 따위는 하지 않을 거예요.");
 				}
 				else if (moveX == 21 && moveY == 23) {
 					Talk(new string[] {
-					" 에인션트 이블님은 예전에 아주 덕이 높은 현자였었지요. 또한 로드 안과도 무척 친한 사이였어요. 수백년전에 로드 안이 선이라는 전제를 걸고 이 세계를 통치 했었지요." +
-					" 로드 안의 훌륭한 정치에 모든 대륙은 평화를 누리게 되었고 그게 너무 만연된 나머지 현재의 평화를 아주 당연시 해버리고는 그것을 지키려는 생각은 접어둔채" +
-					" 항상 남에 의해 평화를 보장 받으려는 사상이 팽배해졌죠." +
+					" 에인션트 이블님은 예전에 아주 덕이 높은 현자였었지요. 또한 로드 안과도 무척 친한 사이였어요. 수백 년 전에 로드 안이 선이라는 전제를 걸고 이 세계를 통치했었지요." +
+					" 로드 안의 훌륭한 정치에 모든 대륙은 평화를 누리게 되었고 그게 너무 만연된 나머지 현재의 평화를 아주 당연시해버리고는 그것을 지키려는 생각은 접어둔 채" +
+					" 항상 남에 의해 평화를 보장받으려는 사상이 팽배해졌죠." +
 					" 후손들은 급기야 자신의 조상이 흘린 피의 보답으로 이렇게 평화로운 세상이 생겨났다는 것을 까맣게 잊어버리기 시작했고 마침내 로드 안은 그런 사람들에게 경각심을 부추겨 보자는 의도로" +
-					" 새로운 개념을 도입했죠. 그것이 바로 그대들이 '악'이라고 배운 것들이예요. 그때 로드 안의 추상적인 '악'의 개념을 구체적인 '악'으로 만들기 위해 그 상징이 되어줄 사람을 수소문했죠.",
-					" 로드 안의 친구 대부분은 그의 뜻에 찬성헀지만 아무도 자신이 '악'을 대표하는 그런 역을 맡아 남들로부터 비난받고 저주받는 역을 하려고는 하지 않았죠." +
-					" 그때 나타난 사람이 바로 에인션트 이블님이예요. 그분은 여태껏 지녔던 훌륭한 명성들을 버려둔채 악의 집대성으로 군림했지요. 본명 또한 버리고 지금의 이름을 사용하며 로드 안의 일에 적극 동참했어요." +
-					" 그의 존재 때문에 로어 세계의 사람들은 악으로부터 자신과 가족을 지키기 위해 스스로 선을 자각하고 현재의 평화에 감사하며 그 평화를 유지하려 노력하는 자세를 가지게 된거죠." +
-					" 로드 안은 사람들의 경각심을 더 부추기기 위해 지금 에인션트 이블이 여러 곳에서 이런 저런 구체적인 악행을 일삼고 있다고 거짓으로 소문을 퍼트리기 시작했고" +
-					" 어릴때부터 교육과정에 그런 사상을 심어 넣어 어른이 되어서도 선을 지켜야 한다는 개념이 없어지지 않도록 해왔어요."
+					" 새로운 개념을 도입했죠. 그것이 바로 그대들이 '악'이라고 배운 것들이에요. 그때 로드 안의 추상적인 '악'의 개념을 구체적인 '악'으로 만들기 위해 그 상징이 되어줄 사람을 수소문했죠.",
+					" 로드 안의 친구 대부분은 그의 뜻에 찬성했지만 아무도 자신이 '악'을 대표하는 그런 역을 맡아 남들로부터 비난받고 저주받는 역을 하려고는 하지 않았죠." +
+					" 그때 나타난 사람이 바로 에인션트 이블님이에요. 그분은 여태껏 지녔던 훌륭한 명성들을 버려둔 채 악의 집대성으로 군림했지요. 본명 또한 버리고 지금의 이름을 사용하며 로드 안의 일에 적극 동참했어요." +
+					" 그의 존재 때문에 로어 세계의 사람들은 악으로부터 자신과 가족을 지키기 위해 스스로 선을 자각하고 현재의 평화에 감사하며 그 평화를 유지하려 노력하는 자세를 가지게 된 거죠." +
+					" 로드 안은 사람들의 경각심을 더 부추기기 위해 지금 에인션트 이블이 여러 곳에서 이런저런 구체적인 악행을 일삼고 있다고 거짓으로 소문을 퍼트리기 시작했고" +
+					" 어릴 때부터 교육과정에 그런 사상을 심어 넣어 어른이 되어서도 선을 지켜야 한다는 개념이 없어지지 않도록 해왔어요."
 					}, SpecialEventType.None);
 				}
 				else if (moveX == 26 && moveY == 25) {
 					Talk(new string[] {
-					" 로드 안은 선에 대한 너무 강한 집착 때문에 중대한 실수를 저질렀죠. 바로 당신을 시켜서 오크, 트롤, 코볼트, 드라코니안 이 네 종족을 멸망시킨게 그 실수예요." +
+					" 로드 안은 선에 대한 너무 강한 집착 때문에 중대한 실수를 저질렀죠. 바로 당신을 시켜서 오크, 트롤, 코볼트, 드라코니안 이 네 종족을 멸망시킨 게 그 실수예요." +
 					" 로드 안은 인간을 이롭게 하고자 아프로디테 테라의 트롤족을 몰아내고 그곳에 베스퍼성이란 전초기지를 건설했죠." +
-					" 그곳은 인간에게 대단히 유용한 자원을 조달했고 그로인해 로드 안의 평은 상당히 높아졌어요." +
+					" 그곳은 인간에게 대단히 유용한 자원을 조달했고 그로 인해 로드 안의 평은 상당히 높아졌어요." +
 					" 그리고 최근에는 다시 마지막 남은 트롤성을 공격하여 아프로디테 테라를 완전히 인간의 것으로 만들자는 계획을 세우고 베스퍼성의 주민들에게 명령했죠.",
-					" 베스퍼성 사람들은 헤로인이란 마약을 트롤성으로 반입해서 트롤주민들에게 팔았어요. 즉, 수입도 올리고 트롤족을 마약 중독자로 만들어 마약 공급원인 베스퍼성 주민들에게 복종하게 하려는 의도였어요." +
+					" 베스퍼성 사람들은 헤로인이란 마약을 트롤성으로 반입해서 트롤 주민들에게 팔았어요. 즉, 수입도 올리고 트롤족을 마약 중독자로 만들어 마약 공급원인 베스퍼성 주민들에게 복종하게 하려는 의도였어요." +
 					" 또한 베스퍼성의 강경파 세력은 수시로 트롤족의 동굴에 침입하여 그들을 괴롭히기 시작했고 마침내 대대적인 침략을 시작했지요." +
-					" 트롤성을 침략한 이들은 정말 잔혹한 수법으로 트롤의 희생자를 처리하여 그들의 사기를 떨어뜨리려 했지만 결국 효과는 반대로 나타나서 더욱 더 트롤족을 분노에 떨게 했죠." +
-					" 그리고는 도리어 그들에게 야습을 당해서 베스퍼성은 삽시간에 아수라장이 되고 급기야 모든 주민이 희생을 당하게 되었던 거예요.",
-					" 이 일이 있은 후 로드 안은 로어성의 주민들에게 편파적으로 소식을 알렸죠. 자신의 잘못은 은폐한채 베스퍼성이 당한 결과만을 바탕으로 트롤족에 대한 적개심을 부추겼죠." +
-					" 그리고 그것을 다른 종족에 까지 확산시켜 지금에까지 이르렀던 거예요. 당신이 한 일 때문에 인간은 로어 세계에 있는 5개의 대륙 모두를 손에 넣게 되었죠." +
-					" 악에 대한 정벌이란 거창한 목표 뒤에는 인간의 영토를 넓히겠다는 정복자의 야욕이 숨어있엇다는 것을 알아야 될거예요." +
-					" 그 야욕 때문에 죄없는 수많은 타종족 주민들이 악인으로 몰려 비참한 최후를 맞이하게된 것을 당신도 인정하지요?",
-					" 인간의 입장에서 생각할 때는 물론 당신은 영웅이죠. 하지만 모든 종족의 관점에서 본 당신은 비정한 정복자의 꼭두각시일뿐이예요." +
+					" 트롤성을 침략한 이들은 정말 잔혹한 수법으로 트롤의 희생자를 처리하여 그들의 사기를 떨어뜨리려 했지만 결국 효과는 반대로 나타나서 더욱더 트롤족을 분노에 떨게 했죠." +
+					" 그러고는 도리어 그들에게 야습을 당해서 베스퍼성은 삽시간에 아수라장이 되고 급기야 모든 주민이 희생을 당하게 되었던 거예요.",
+					" 이 일이 있은 후 로드 안은 로어성의 주민들에게 편파적으로 소식을 알렸죠. 자신의 잘못은 은폐한 채 베스퍼성이 당한 결과만을 바탕으로 트롤족에 대한 적개심을 부추겼죠." +
+					" 그리고 그것을 다른 종족에까지 확산시켜 지금에까지 이르렀던 거예요. 당신이 한 일 때문에 인간은 로어 세계에 있는 5개의 대륙 모두를 손에 넣게 되었죠." +
+					" 악에 대한 정벌이란 거창한 목표 뒤에는 인간의 영토를 넓히겠다는 정복자의 야욕이 숨어있었다는 것을 알아야 될 거예요." +
+					" 그 야욕 때문에 죄 없는 수많은 타 종족 주민들이 악인으로 몰려 비참한 최후를 맞이하게 된 것을 당신도 인정하지요?",
+					" 인간의 입장에서 생각할 때는 물론 당신은 영웅이죠. 하지만 모든 종족의 관점에서 본 당신은 비정한 정복자의 꼭두각시일 뿐이에요." +
 					" 나의 말을 깊이 새기고, 머지않은 미래에 있을 중요한 선택에 현명한 판단을 하기 바라겠어요."
 					}, SpecialEventType.None);
 				}
@@ -12428,10 +12428,10 @@ namespace MysticUWP
 					" 즉, 정의를 지키는 사람들의 마을이란 뜻입니다.");
 				}
 				else if (moveX == 12 && moveY == 26) {
-					Dialog(" 당신은 우리들의 생명의 은인입니다. 또한 새로운 로드 안이 되실 충분한 가능성을 갖고 계신분입니다.");
+					Dialog(" 당신은 우리들의 생명의 은인입니다. 또한 새로운 로드 안이 되실 충분한 가능성을 갖고 계신 분입니다.");
 				}
 				else if (moveX == 21 && moveY == 34) {
-					Dialog(" 당신의 용기있는 결단에 정말 감격했습니다.");
+					Dialog(" 당신의 용기 있는 결단에 정말 감격했습니다.");
 				}
 				else if (moveX == 38 && moveY == 28) {
 					Dialog(" 당신과 에인션트 이블이 정말 진정한 선의 수호자입니다.");
@@ -12440,14 +12440,14 @@ namespace MysticUWP
 					Dialog(" 당신은 비록 과거에 로드 안의 심복으로써 큰 실수를 저질렀지만 이제는 명실공히 이런 난세의 구세주입니다.");
 				}
 				else if (moveX == 29 && moveY == 62) {
-					Dialog(" 우리들은 투표로 이곳의 지도자를 선출했습니다. 그는 바로 우리들을 일어서게한 용감한 사람, 바로 카미너스씨입니다.");
+					Dialog(" 우리들은 투표로 이곳의 지도자를 선출했습니다. 그는 바로 우리들을 일어서게 한 용감한 사람, 바로 카미너스씨입니다.");
 				}
 				else if (moveX == 18 && moveY == 72) {
-					Dialog(" 이곳 사람들은 모두 당신에게 고마와하고 있고 당신이 우리가 못다한 일을 해줄거라 믿고 있습니다.");
+					Dialog(" 이곳 사람들은 모두 당신에게 고마와하고 있고 당신이 우리가 못다 한 일을 해줄 거라 믿고 있습니다.");
 				}
 				else if (moveX == 37 && moveY == 40) {
 					if (!GetBit(202)) {
-						Dialog($" 당신의 용기에대한 나의 작은 정성이오. 자 이걸 받으시오. 우리 조상 대대로 내려오던 [color={RGB.LightCyan}]에보니 크리스탈[/color]이란거요.");
+						Dialog($" 당신의 용기에 대한 나의 작은 정성이오. 자 이걸 받으시오. 우리 조상 대대로 내려오던 [color={RGB.LightCyan}]에보니 크리스탈[/color]이란 거요.");
 						mParty.Crystal[3]++;
 						SetBit(202);
 					}
@@ -12473,7 +12473,7 @@ namespace MysticUWP
 				else if (moveX == 18 && moveY == 52)
 					Dialog($"[color={RGB.Yellow}] 이 세계의 창시자는 안영기님이시며 그는 위대한 프로그래머입니다.[/color]");
 				else if (moveX == 12 && moveY == 54)
-					Dialog(" 이십 몇년 전에 이곳은 네크로만서란 자에 의해 큰 혼란이 있었습니다.");
+					Dialog(" 이십몇 년 전에 이곳은 네크로만서란 자에 의해 큰 혼란이 있었습니다.");
 				else if (moveX == 23 && moveY == 49)
 					Dialog(" 안녕하시오.");
 				else if ((moveX == 12 && moveY == 26) || (moveX == 17 && moveY == 26))
@@ -12491,28 +12491,28 @@ namespace MysticUWP
 					Dialog(" 여태껏 근 20년간 아무도 이곳에 갇히지 않았죠. 그래서 저는 너무 할 일이 없습니다.");
 				}
 				else if (moveX == 71 && moveY == 77)
-					Dialog(" 여기는 로어성의 묘지입니다. 함부로 들어가지 마십시요.");
+					Dialog(" 여기는 로어성의 묘지입니다. 함부로 들어가지 마십시오.");
 				else if (moveX == 76 && moveY == 45)
-					Dialog(" 메너스는 폐광이 된지 50년이 넘었죠.");
+					Dialog(" 메너스는 폐광이 된 지 50년이 넘었죠.");
 				else if (moveX == 82 && moveY == 58)
-					Dialog(" 라스트디치는 주민 등록을 마친 자만이 들어 갈 수있죠.");
+					Dialog(" 라스트디치는 주민 등록을 마친 자만이 들어갈 수 있죠.");
 				else if (moveX == 82 && moveY == 24)
 					Dialog(" 20년 전에 알비레오라는 사람이 이상한 예언서를 남겼죠. 거기서 다크 메이지라는 사람이 나타난다고 했었는데 실제로는 나타나지 않았어요.");
 				else if (moveX == 67 && moveY == 60)
-					Dialog(" 당신들의 옷은 정말 특이하군요. 100년전 사람 같아요.");
+					Dialog(" 당신들의 옷은 정말 특이하군요. 100년 전 사람 같아요.");
 				else if ((moveX == 49 && moveY == 50) || (moveX == 51 && moveY == 50))
 					Dialog(" 안녕하시오.");
 				else if (47 <= mXAxis && mXAxis <= 53 && 30 <= mYAxis && mYAxis <= 36)
 					Dialog(" ...");
 				else if (moveX == 50 && moveY == 27) {
 					Talk(new string[] {
-						$"[color={RGB.Brown}] 로드 안!! 당신은 나를 기억하겠소? 100년전 쯤에 나를 이용하여 무고한 네 종족을 멸망시키게 만들었던것도 말이오.[/color]",
+						$"[color={RGB.Brown}] 로드 안!! 당신은 나를 기억하겠소? 100년 전쯤에 나를 이용하여 무고한 네 종족을 멸망시키게 만들었던 것도 말이오.[/color]",
 						"",
 						" 당신의 말이 채 끝나기도 전에 로드 안은 다급하게 외쳤다.",
 						"",
-						$"[color={RGB.LightBlue}] 경호원, 경호원 !![/color]",
+						$"[color={RGB.LightBlue}] 경호원, 경호원!![/color]",
 						"",
-						" 순간 몇명의 용사가 주위에서 나와 로드 안을 감쌌다."
+						" 순간 몇 명의 용사가 주위에서 나와 로드 안을 감쌌다."
 					}, SpecialEventType.BattleOldLordAhn);
 				}
 			}
@@ -12520,7 +12520,7 @@ namespace MysticUWP
 
 		private void ShowSign(int x, int y)
 		{
-			Dialog(new string[] { "푯말에 쓰여있기로 ...", "", "" });
+			Dialog(new string[] { "푯말에 쓰여있기로...", "", "" });
 
 			if (mMapName == "Lore") {
 				if (x == 50 && y==83)
@@ -12544,11 +12544,11 @@ namespace MysticUWP
 				}
 				else if (x == 50 && y == 57) {
 					if (GetBit(50)) {
-						Dialog($"[color={RGB.White}]     이제 우리를 위협하던 네 종족은 정의의 심판에 의해 무릎을 꿓고 말았다. 이제부터는 새로운 인류의 역사가 시작 될 것이다.[/color]", true);
+						Dialog($"[color={RGB.White}]     이제 우리를 위협하던 네 종족은 정의의 심판에 의해 무릎을 꿇고 말았다. 이제부터는 새로운 인류의 역사가 시작될 것이다.[/color]", true);
 					}
 					else {
 						Dialog($"[color={RGB.White}]   674년 1월 17일. 아프로디테의 베스퍼성이 호전적인 트롤족에 의해 참변을 당했다. " +
-						"이를 계기로 로어성과 그 이외의 성들은 오크족, 트롤족, 코볼트족, 드라코니안족에 대한 무차별 정벌을 선포하는 바이다." +
+						"이를 계기로 로어 성과 그 이외의 성들은 오크족, 트롤족, 코볼트족, 드라코니안족에 대한 무차별 정벌을 선포하는 바이다." +
 						" 이로 인해 인간 이외의 다른 종족에 대한 호의를 일체 중지하며 이제는 적대 관계로 그들을 대할 것이다.[/color]", true);
 					}
 				}
@@ -12576,7 +12576,7 @@ namespace MysticUWP
 			}
 			else if (mMapName == "LastDtch") {
 				if (x == 38 && y == 7)
-					Dialog($"[color={RGB.White}] 이곳은 가이아 테라로 통하는 게이트 입니다.[/color]", true);
+					Dialog($"[color={RGB.White}] 이곳은 가이아 테라로 통하는 게이트입니다.[/color]", true);
 				else if (x == 38 && y == 67)
 				{
 					Dialog(new string[] {
@@ -12592,7 +12592,7 @@ namespace MysticUWP
 			}
 			else if (mMapName == "Valiant" || mMapName == "Light") {
 				if (x == 38 && y == 7)
-					Dialog($"[color={RGB.White}] 이곳은 로어 대륙으로 통하는 게이트 입니다.[/color]", true);
+					Dialog($"[color={RGB.White}] 이곳은 로어 대륙으로 통하는 게이트입니다.[/color]", true);
 				else if (x == 38 && y == 67)
 				{
 					Dialog(new string[] {
@@ -12650,7 +12650,7 @@ namespace MysticUWP
 				}
 				else if (x == 53 && y == 62) {
 					Ask(new string[] {
-						"푯말에 쓰여있기로 ...",
+						"푯말에 쓰여있기로...",
 						"",
 						"",
 						"",
@@ -12667,7 +12667,7 @@ namespace MysticUWP
 					Dialog(new string[] {
 						"",
 						"",
-						$"[color={RGB.White}]     이곳은 신성한 드라코니안 묘지이므로 함부로 회손 시키지 마시오[/color]"
+						$"[color={RGB.White}]     이곳은 신성한 드라코니안 묘지이므로 함부로 훼손시키지 마시오[/color]"
 					}, true);
 				}
 			}
@@ -12678,7 +12678,7 @@ namespace MysticUWP
 						"",
 						$"[color={RGB.LightCyan}]                크리스탈 가게[/color]",
 						$"[color={RGB.White}]                Crystal Shop[/color]",
-						"      ( 국제화시대에 부응하기 위해 썼음 )"
+						"      (국제화 시대에 부응하기 위해 썼음)"
 					}, true);
 				}
 				else if (x == 33 && y == 22) {
@@ -12692,9 +12692,9 @@ namespace MysticUWP
 			else if (mMapName == "HdsGate") {
 				if (x == 12 && y == 21) {
 					Dialog(new string[] {
-						$"[color={RGB.White}] 진정한 길은 마음으로 보아야한다[/color]",
+						$"[color={RGB.White}] 진정한 길은 마음으로 보아야 한다[/color]",
 						$"[color={RGB.White}] 당신 주위에 있는 인위적인 시각 요소를 배제하라[/color]",
-						$"[color={RGB.White}] 그리고 다시 눈을 떴을때 이미 길은 당신 앞에 펼쳐져 있을 것이다[/color]",
+						$"[color={RGB.White}] 그리고 다시 눈을 떴을 때 이미 길은 당신 앞에 펼쳐져 있을 것이다[/color]",
 					}, true);
 				}
 			}
@@ -17770,8 +17770,8 @@ namespace MysticUWP
 				UpdateTileInfo(mXAxis + 1, mYAxis, tile);
 
 				Talk(new string[] {
-					$"[color={RGB.LightBlue}] 나의 동료가 한 명 생겼군. 나는 1년 반 전에 절도 상해 혐의로 종신형을 선고 받은[/color] [color={RGB.LightCyan}]카노푸스[/color][color={RGB.LightBlue}]라고 하네." +
-					" 우리는 같이 평생을 살 동이니 잘 지내도록 하지.[/color]"
+					$"[color={RGB.LightBlue}] 나의 동료가 한 명 생겼군. 나는 1년 반 전에 절도 상해 혐의로 종신형을 선고받은[/color] [color={RGB.LightCyan}]카노푸스[/color][color={RGB.LightBlue}]라고 하네." +
+					" 우리는 같이 평생을 살 동료이니 잘 지내도록 하지.[/color]"
 				}, SpecialEventType.LiveJail);
 			}
 			else if (mAnimationEvent == AnimationType.LiveJail)
@@ -17787,7 +17787,7 @@ namespace MysticUWP
 				mParty.Sec = 0;
 				UpdateView();
 
-				Dialog(" 때는 674년 1월 19일. 당신은 여기서 약 두달을 지냈다.");
+				Dialog(" 때는 674년 1월 19일. 당신은 여기서 약 두 달을 지냈다.");
 
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
@@ -17826,7 +17826,7 @@ namespace MysticUWP
 
 				Talk(new string[] {
 					"",
-					" 로드 안이 양손을 내리자 에너지 공은 서서히 밑으로 떨어지기 시작했다. 그리고는 바닥에 스며드는 것처럼 땅속으로 사라져 버렸다."
+					" 로드 안이 양손을 내리자 에너지 공은 서서히 밑으로 떨어지기 시작했다. 그러고는 바닥에 스며드는 것처럼 땅속으로 사라져 버렸다."
 				}, SpecialEventType.SendUranos, true);
 			}
 			else if (mAnimationEvent == AnimationType.TransformProtagonist)
@@ -17837,16 +17837,16 @@ namespace MysticUWP
 				Talk(new string[] {
 					"",
 					" 지금 주위에는 아무도 없다는 것을 확인한 로드 안은 갑자기 당신을 향해 독심을 사용하기 시작했다." +
-					" 당신은 긴장을 완전히 풀고 있었던데다가 로드 안의 갑작스런 최면에 말려들어 방어를 할 기회도 없이 그에게 독심술을 당하였다." +
+					" 당신은 긴장을 완전히 풀고 있었던 데다가 로드 안의 갑작스러운 최면에 말려들어 방어를 할 기회도 없이 그에게 독심술을 당하였다." +
 					" 당신은 곧 당신의 자유의사를 잃어버렸고 정신이 아득해지기 시작하였다."
 				}, SpecialEventType.TransformProtagonist2, true);
 			}
 			else if (mAnimationEvent == AnimationType.TransformProtagonist2)
 			{
 				Talk(new string[] {
-					$"[color={RGB.LightGreen}] 당신은 이제 악의 추종자로서의 형체를 갖추었다네. 4 m 가량의 키와 강력한 마력을 겸비한 악의 최대 전투사로서..." +
-					$" 당신은 이제[/color] [color={RGB.LightCyan}]네크로만서[/color][color={RGB.LightGreen}]란 이름으로 이 세상의 평화가 오래 지속 될 때 이 세상을 위협하려 내려올 운명을 가지게 되었다네." +
-					" 당신은 그때 우라누스 테라를 기점으로 세력을 뻗치게 될걸세. 그때는 당신이 우라누스 테라의 주인이 될거라네. 아마 그때서야 내가 당신에게 우라누스 테라를 주겠다는 약속이 지켜질 걸세.[/color]",
+					$"[color={RGB.LightGreen}] 당신은 이제 악의 추종자로서의 형체를 갖추었다네. 4m 가량의 키와 강력한 마력을 겸비한 악의 최대 전투사로서..." +
+					$" 당신은 이제[/color] [color={RGB.LightCyan}]네크로만서[/color][color={RGB.LightGreen}]란 이름으로 이 세상의 평화가 오래 지속될 때 이 세상을 위협하려 내려올 운명을 가지게 되었다네." +
+					" 당신은 그때 우라누스 테라를 기점으로 세력을 뻗치게 될걸세. 그때는 당신이 우라누스 테라의 주인이 될 거라네. 아마 그제야로드 안님이 널 찾으신다. 따라와! 내가 당신에게 우라누스 테라를 주겠다는 약속이 지켜질 걸세.[/color]",
 					"",
 					$"[color={RGB.LightGreen}] 그럼... 안녕, 네크로만서.[/color]"
 				}, SpecialEventType.SendNecromancer);
@@ -17871,12 +17871,12 @@ namespace MysticUWP
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
 
-				Talk(" 674년 1월 17일 날, 로어 세계에서는 커다란 참변이 있었소. 당신은 이전에도 인류와 타종족간에 사이가 않좋았다는 것을 기억 할 거요." +
+				Talk(" 674년 1월 17일 날, 로어 세계에서는 커다란 참변이 있었소. 당신은 이전에도 인류와 타종족간에 사이가 안 좋았다는 것을 기억할 거요." +
 				"또한 사소한 영토분쟁이 많았던 것도 사실이오." +
-				" 그런데 바로 이날 수백년의 역사를 지님 아프로디테 테라의 베스퍼성이 트롤족에 의해 완전히 함락 당했던 것이오." +
-				" 거기서 가까스로 탈출한 사람들의 말을 빌면 그 날 베스퍼성은 처절한 절규와 아비규환 속에서 아이들이나 부녀자 할것없이 모두 처참히 죽어 갔다고 하오." +
+				" 그런데 바로 이날 수백 년의 역사를 지님 아프로디테 테라의 베스퍼성이 트롤족에 의해 완전히 함락 당했던 것이오." +
+				" 거기서 가까스로 탈출한 사람들의 말을 빌면 그날 베스퍼성은 처절한 절규와 아비규환 속에서 아이들이나 부녀자 할 것 없이 모두 처참히 죽어 갔다고 하오." +
 				" 트롤족은 시체가 즐비한 거리에서 환각 작용제를 맞으며 광적인 살인을 계속 해대었다고 하는 탈출자의 말을 듣고" +
-				" 나는 분을 참지 못해 모든 성주들을 불러서 타종족과의 전쟁을 결의 했소. 이렇게 함으로서 베스퍼성에서 죽어간 사람들의 원혼을 달래 주려는 의도라오.",
+				" 나는 분을 참지 못해 모든 성주들을 불러서 타종족과의 전쟁을 결의했소. 이렇게 함으로서 베스퍼성에서 죽어간 사람들의 원혼을 달래 주려는 의도라오.",
 				SpecialEventType.None);
 
 				mParty.Etc[19] = 2;
@@ -17886,16 +17886,16 @@ namespace MysticUWP
 			{
 				Ask(new string[] {
 					$"[color={RGB.LightBlue}] {mPlayerList[0].Name}.[/color]",
-					$"[color={RGB.LightBlue}] 나도 역시 자네처럼 베스퍼성으로 가고 싶네. 이런 감옥에서 평생을 지내느니 한 번 모험을 해보는게 좋을 것 같아서 말이지." +
+					$"[color={RGB.LightBlue}] 나도 역시 자네처럼 베스퍼성으로 가고 싶네. 이런 감옥에서 평생을 지내느니 한 번 모험을 해보는 게 좋을 것 같아서 말이지." +
 					" 나는 전사로서의 교육도 받았으니 아마 자네 일원 중에서는 가장 전투력이 뛰어날 걸세.[/color]"
 				}, MenuMode.JoinCanopus, new string[] {
-					"역시 카노푸스 자네 뿐이야",
+					"역시 카노푸스 자네뿐이야",
 					"자네 도움까지는 필요 없다네"
 				});
 			}
 			else if (mAnimationEvent == AnimationType.RequestPardon)
 			{
-				Talk(" 그렇다면 카노푸스도 당신과 같은 목적을 가진다는 이유로 사면 시켜 달라는 애기군요. 그럼 로드 안 님에게 물어보고 오겠습니다."
+				Talk(" 그렇다면 카노푸스도 당신과 같은 목적을 가진다는 이유로 사면 시켜 달라는 얘기군요. 그럼 로드 안 님에게 물어보고 오겠습니다."
 				, SpecialEventType.ConfirmPardon);
 			}
 			else if (mAnimationEvent == AnimationType.ConfirmPardon)
@@ -17909,7 +17909,7 @@ namespace MysticUWP
 			}
 			else if (mAnimationEvent == AnimationType.ConfirmPardon3)
 			{
-				Talk(" 카노푸스를 풀어줘도 좋다고 로드 안님이 허락하셨습니다. 정말 희안한 일입니다. 예전에는 전혀 없던 일인데 ... 어쨌든 카노푸스는 이제 자유의 몸입니다."
+				Talk(" 카노푸스를 풀어줘도 좋다고 로드 안님이 허락하셨습니다. 정말 희한한 일입니다. 예전에는 전혀 없던 일인데... 어쨌든 카노푸스는 이제 자유의 몸입니다."
 				, SpecialEventType.JoinCanopus);
 			}
 			else if (mAnimationEvent == AnimationType.JoinCanopus)
@@ -17974,7 +17974,7 @@ namespace MysticUWP
 
 				Dialog(new string[] {
 								" 당신은 이제 오크족의 글을 읽을 수가 있소. 만약 당신이 오크족의 말도 배우고 싶다면 이 대륙의 남동쪽 섬으로 가시오.",
-								" 그리고, 다른 세 종족의 말과 글을 배울 수 있는 길이 반드시 있을거요."
+								" 그리고, 다른 세 종족의 말과 글을 배울 수 있는 길이 반드시 있을 거요."
 							});
 
 				SetBit(8);
@@ -18011,7 +18011,7 @@ namespace MysticUWP
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
 
-				Dialog(" 곧이어 당신은 그 시체의 오른 손에 무언가가 꽉 쥐어져 있음을 알아차렸고 그것이 메세지를 전하기 위한 메모 쪽지라는 것을 알게 되었다." +
+				Dialog(" 곧이어 당신은 그 시체의 오른손에 무언가가 꽉 쥐어져 있음을 알아차렸고 그것이 메시지를 전하기 위한 메모 쪽지라는 것을 알게 되었다." +
 				" 당신은 그의 손을 펴보려 했지만 그의 몸은 빳빳하게 굳어 있었고 좀처럼 펼 수가 없었다.", true);
 
 				if (mParty.Item[4] > 0)
@@ -18029,8 +18029,8 @@ namespace MysticUWP
 				Talk(new string[] {
 					"",
 					" 문득 당신은 지금 가지고 있는 부활의 약초가 생각이 났다." +
-					" 비록 지금의 그 시체는 살릴 수 없을 정도로 부패했기 때문에 살려내기는 불가능했지만 최소한 죽은지 얼마안된 상태까지는 만들 수 있을거라 생각했다." +
-					" 당신은 그 시체에게 부활의 약초를 사용했고 예상대로 그의 몸은 약간의 핏기가 돌게 되었고 어렵지않게 그의 손에 쥐여진 종이 쪽지를 빼낼 수가 있었다. 내용은 이러했다."
+					" 비록 지금의 그 시체는 살릴 수 없을 정도로 부패했기 때문에 살려내기는 불가능했지만 최소한 죽은 지 얼마 안 된 상태까지는 만들 수 있을 거라 생각했다." +
+					" 당신은 그 시체에게 부활의 약초를 사용했고 예상대로 그의 몸은 약간의 핏기가 돌게 되었고 어렵지 않게 그의 손에 쥐여진 종이쪽지를 빼낼 수가 있었다. 내용은 이러했다."
 				}, SpecialEventType.ReadVesperMemo, true);
 			}
 			else if (mAnimationEvent == AnimationType.LearnTrollWriting)
@@ -18111,12 +18111,12 @@ namespace MysticUWP
 			else if (mAnimationEvent == AnimationType.MeetCaminus)
 			{
 				Ask(new string[] {
-					" 나는 이번 반란을 지휘하고 있는 카미너스라는 사람이오. 몇일 전에 우리 성에 에인션트 이블의 의지가 다녀갔소. 그리고 이 세상의 진실을 어렴풋이 알게 되었소." +
-					" 우리는 항상 로드 안이 말하는 것을 그대로 믿어왔소. 그건 여태껏 알려진 그의 명성 때문이었다오. 하지만 이제는 예외가 있다는걸 깨닭게 되었소.",
-					" 당신은 그의 명령대로 오크, 트롤, 코볼트, 드라코니안 이 네종족을 제거하여 인간을 이롭게 한건 사실이오. 당신 또한 그 일을 자랑스럽게 생각할지도 모르오." +
-					" 하지만 우리의 입장에서 볼때 그렇다는 것이지, 절대로 다른 종족의 입장에서는 당신이 한 일이 정의를 위한 것이 아니라오." +
-					" 실제로 잘못은 우리가 했으면서 도리어 그들에게 잘못을 덮어 씌워서 그들을 해한 것이지않소. 당신이 에인션트 이블을 만났다는 말을 들었소." +
-					" 그렇다면 우리가 지금 하려는 일을 이해할거요. 우리들은 당신이 우리의 편에 서서 로드 안을 응징해 주기를 바라고 있소.",
+					" 나는 이번 반란을 지휘하고 있는 카미너스라는 사람이오. 며칠 전에 우리 성에 에인션트 이블의 의지가 다녀갔소. 그리고 이 세상의 진실을 어렴풋이 알게 되었소." +
+					" 우리는 항상 로드 안이 말하는 것을 그대로 믿어왔소. 그건 여태껏 알려진 그의 명성 때문이었다오. 하지만 이제는 예외가 있다는 걸 깨닫게 되었소.",
+					" 당신은 그의 명령대로 오크, 트롤, 코볼트, 드라코니안 이 네 종족을 제거하여 인간을 이롭게 한건 사실이오. 당신 또한 그 일을 자랑스럽게 생각할지도 모르오." +
+					" 하지만 우리의 입장에서 볼 때 그렇다는 것이지, 절대로 다른 종족의 입장에서는 당신이 한 일이 정의를 위한 것이 아니라오." +
+					" 실제로 잘못은 우리가 했으면서 도리어 그들에게 잘못을 덮어씌워서 그들을 해한 것이지 않소. 당신이 에인션트 이블을 만났다는 말을 들었소." +
+					" 그렇다면 우리가 지금 하려는 일을 이해할 거요. 우리들은 당신이 우리의 편에 서서 로드 안을 응징해 주기를 바라고 있소.",
 					" 자, 선택은 당신에게 있소."
 				}, MenuMode.ChooseBetrayLordAhn, new string[] {
 					"로드 안을 배신한다",
@@ -18160,7 +18160,7 @@ namespace MysticUWP
 				InvokeAnimation(AnimationType.Ending1Cookie4);
 			}
 			else if (mAnimationEvent == AnimationType.Ending1Cookie4) {
-				Talk($"[color={RGB.LightMagenta}] 아스모데우스여, 방금 에너지 공이 이 방으로 들어가는 것을 보았는데 어떻게 된것인가?[/color]", SpecialEventType.Ending1Talk1);
+				Talk($"[color={RGB.LightMagenta}] 아스모데우스여, 방금 에너지 공이 이 방으로 들어가는 것을 보았는데 어떻게 된 것인가?[/color]", SpecialEventType.Ending1Talk1);
 			}
 			else if (mAnimationEvent == AnimationType.Ending2Cookie1) {
 				mFace = 1;
@@ -18179,7 +18179,7 @@ namespace MysticUWP
 				InvokeAnimation(AnimationType.Ending2Cookie3);
 			}
 			else if (mAnimationEvent == AnimationType.Ending2Cookie3) {
-				Talk(" 그 의식의 주인공은 바로 당신이었다. 새로운 로어 세계의 역사를 창조하는 그 순간을 모든 사람들은 두손 모아 찬미하였다.", SpecialEventType.End2_2);
+				Talk(" 그 의식의 주인공은 바로 당신이었다. 새로운 로어 세계의 역사를 창조하는 그 순간을 모든 사람들은 두 손 모아 찬미하였다.", SpecialEventType.End2_2);
 			}
 			else if (mAnimationEvent == AnimationType.Dying) {
 				mAnimationEvent = AnimationType.None;
